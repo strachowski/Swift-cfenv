@@ -83,8 +83,7 @@ public class AppEnv {
   */
   public func getService(spec: String) -> [String:AnyObject]? {
     let services = getServices()
-    let service: [String:AnyObject]? = services[spec]
-    if service != nil {
+    if let service: [String:AnyObject]? = services[spec] {
       return service
     }
 
@@ -99,7 +98,6 @@ public class AppEnv {
     } catch let error as NSError {
       print("Error code: \(error.code)")
     }
-
   	return nil
   }
 
@@ -112,22 +110,18 @@ public class AppEnv {
   * Foundation's NSURLComponents class.
   */
   public func getServiceURL(spec: String, replacements: [String:AnyObject]?) -> String? {
-    var substitutions: [String:AnyObject] = (replacements == nil) ? [:] : replacements!
+    var substitutions: [String:AnyObject] = replacements ?? [:]
     let service = getService(spec);
-    let credentials = (service != nil) ? service!["credentials"] as? [String:AnyObject] : nil;
+    let credentials = service?["credentials"] as? [String:AnyObject]
     if (credentials == nil) {
         return nil;
     }
 
-    var url: String?
+    let url: String?
     if substitutions["url"] != nil {
       url = credentials![substitutions["url"] as! String] as? String
-    } else if credentials!["url"] != nil {
-      url = credentials!["url"] as? String
-    } else if credentials!["uri"] != nil {
-      url = credentials!["uri"] as? String
     } else {
-      url = nil
+      url = credentials!["url"] as? String ?? credentials!["uri"] as? String
     }
 
     if (url == nil) {
@@ -148,9 +142,8 @@ public class AppEnv {
     for (key, substitution) in substitutions {
       print("\(key) : \(substitution)")
       // TODO: Update parsedURL object accordingly
-      // Probably using reflection...
+      // Probably using reflection (aka mirrors)...
     }
-
     return parsedURL!.string
   }
 
