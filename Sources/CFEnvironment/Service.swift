@@ -18,8 +18,19 @@
 * See https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-SERVICES.
 */
 public struct Service {
-  let name: String
-  let label: String
-  let tags: [String]
-  let credentials: [String:AnyObject]
+  public let name: String
+  public let label: String
+  public let plan : String
+  public let tags: [String]
+  public let credentials: [String:AnyObject]?
+
+  public init(name: String, label: String, plan: String, tags: [String],
+    credentials: [String:AnyObject]?) {
+
+    self.name = name
+    self.label = label
+    self.plan = plan
+    self.tags = tags
+    self.credentials = credentials
+  }
 }

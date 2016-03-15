@@ -63,12 +63,14 @@ public class AppEnv {
   * the dictionary is the name of the service, while the value is a dictionary
   * object that contains all the properties for the service.
   */
-  public func getServices() -> [String:[String:AnyObject]] {
-    var results: [String:[String:AnyObject]] = [:]
+  public func getServices() -> [String:Service] {
+    var results: [String:Service] = [:]
     for (_, servs) in services {
       for service in servs as! [[String:AnyObject]] {
         if let name: String = service["name"] as? String {
-          results[name] = service
+          results[name] = Service(name: name, label: service["label"] as! String,
+          plan: service["name"] as! String, tags: service["tags"] as! [String],
+          credentials: service["credentials"] as? [String:AnyObject])
         }
       }
     }
@@ -81,9 +83,9 @@ public class AppEnv {
   * or a regex to look up the service. If there is no service that matches the
   * spec parameter, this method returns nil.
   */
-  public func getService(spec: String) -> [String:AnyObject]? {
+  public func getService(spec: String) -> Service? {
     let services = getServices()
-    if let service: [String:AnyObject]? = services[spec] {
+    if let service = services[spec] {
       return service
     }
 
@@ -112,7 +114,7 @@ public class AppEnv {
   public func getServiceURL(spec: String, replacements: [String:AnyObject]?) -> String? {
     var substitutions: [String:AnyObject] = replacements ?? [:]
     let service = getService(spec);
-    let credentials = service?["credentials"] as? [String:AnyObject]
+    let credentials = service?.credentials
     if (credentials == nil) {
         return nil;
     }
@@ -155,16 +157,15 @@ public class AppEnv {
   * for the service, an empty dictionary is returned.
   */
   public func getServiceCreds(spec: String) -> [String:AnyObject]? {
-    let service = getService(spec);
-    if (service == nil) {
-        return nil;
+    if let service = getService(spec) {
+      if let credentials = service.credentials {
+        return credentials
+      } else {
+        return [:]
+      }
+    } else {
+      return nil
     }
-
-    if let credentials = service!["credentials"] as? [String:AnyObject] {
-      return credentials
-    }
-
-    return [:]
   }
 
   private class func parseEnvVariable(isLocal: Bool, environmentVars: [String:String],
