@@ -28,7 +28,9 @@ public class AppEnv {
   let bind: String
   let urls: [String]
 
-  // Constructor
+  /**
+  * This vcap option property is ignored if not running locally.
+  */
   public init(options: [String:AnyObject]) throws {
     // NSProcessInfo.processInfo().environment returns [String : String]
     let environmentVars = NSProcessInfo.processInfo().environment
@@ -84,7 +86,7 @@ public class AppEnv {
     port = number!
 
     // Get name
-    if let nameString = options["vcap"]?["name"] as? String {
+    if let nameString = options["name"] as? String {
       name = nameString
     } else if let nameString = app["name"] as? String {
       name = nameString
@@ -92,7 +94,7 @@ public class AppEnv {
       name = nil
     }
 
-    // TODO: Add logic for parsing Package.swft and manifest.yml
+    // TODO: Add logic for parsing manifest.yml
     //https://github.com/behrang/YamlSwift
 
     // Get bind
