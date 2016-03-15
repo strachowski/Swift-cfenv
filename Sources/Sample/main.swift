@@ -19,7 +19,14 @@ import CFEnvironment
 do {
   let appEnv = try CFEnvironment.getAppEnv()
   print("appEnv: \(appEnv)")
-  appEnv.getServices()
+  let services = appEnv.getServices()
+  print("services: \(services)")
+  let service = appEnv.getService("serviceName")
+  print("service: \(service)")
+  let serviceCreds = appEnv.getServiceCreds("serviceName")
+  print("serviceCreds: \(serviceCreds)")
+  let serviceURL = appEnv.getServiceURL("serviceName", replacements: nil)
+  print("serviceURL: \(serviceURL)")
 } catch CFEnvironmentError.VariableNotFound {
   print("Oops, something went wrong...")
 }

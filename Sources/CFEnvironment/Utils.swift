@@ -17,7 +17,6 @@
 import Foundation
 
 class Utils {
-
   class func convertStringToDictionary(text: String?) -> [String:AnyObject]? {
     if let data = text?.dataUsingEncoding(NSUTF8StringEncoding) {
       do {
@@ -29,5 +28,4 @@ class Utils {
     }
     return nil
   }
-
 }
