@@ -14,29 +14,12 @@
  * limitations under the License.
  **/
 
- import Foundation
-
- /**
- * See https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-SERVICES.
- */
-struct App {
-
-  struct Limits {
-    let memory: Int
-    let disk: Int
-    let fds: Int
-  }
-
-  let id: String
+/**
+* See https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-SERVICES.
+*/
+struct Service {
   let name: String
-  let uris: [String]
-  let version: String
-  let host: String
-  let instanceId: String
-  let instanceIndex: Int
-  let limits: Limits
-  let port: Int
-  let spaceId: String
-  let startedAtTs: NSTimeInterval
-  let startedAt: NSDate
+  let label: String
+  let tags: [String]
+  let credentials: [String:AnyObject]
 }
