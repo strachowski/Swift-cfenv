@@ -19,7 +19,7 @@
  /**
  * See https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-SERVICES.
  */
-struct App {
+public struct App {
 
   struct Limits {
     let memory: Int

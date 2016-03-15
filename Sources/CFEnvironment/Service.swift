@@ -17,7 +17,7 @@
 /**
 * See https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-SERVICES.
 */
-struct Service {
+public struct Service {
   let name: String
   let label: String
   let tags: [String]

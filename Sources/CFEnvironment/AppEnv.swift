@@ -29,7 +29,7 @@ public class AppEnv {
   let urls: [String]
 
   /**
-  * This vcap option property is ignored if not running locally.
+  * The vcap option property is ignored if not running locally.
   */
   public init(options: [String:AnyObject]) throws {
     // NSProcessInfo.processInfo().environment returns [String : String]
@@ -37,87 +37,25 @@ public class AppEnv {
     let vcapApplication = environmentVars["VCAP_APPLICATION"]
     isLocal = (vcapApplication == nil)
 
-    // Get App
-    if isLocal {
-      if let appDictionary = options["vcap"]?["application"] as? [String:AnyObject] {
-        app = appDictionary
-      } else {
-        app = [:]
-      }
-    } else {
-       if let appDictionary = Utils.convertStringToDictionary(vcapApplication) {
-         app = appDictionary
-       } else {
-         app = [:]
-       }
-    }
+    // Get app
+    app = AppEnv.parseEnvVariable(isLocal, environmentVars: environmentVars,
+      variableName: "VCAP_APPLICATION", varibleType: "application", options: options)
 
     // Get services
-    let vcapServices = environmentVars["VCAP_SERVICES"]
-    if isLocal {
-      if let servicesDictionary = options["vcap"]?["services"] as? [String:AnyObject] {
-        services = servicesDictionary
-      } else {
-        services = [:]
-      }
-    } else {
-      if let servicesDictionary = Utils.convertStringToDictionary(vcapServices) {
-        services = servicesDictionary
-      } else {
-         services = [:]
-       }
-    }
+    services = AppEnv.parseEnvVariable(isLocal, environmentVars: environmentVars,
+      variableName: "VCAP_SERVICES", varibleType: "services", options: options)
 
     // Get port
-    var portString: String? = environmentVars["PORT"] ?? environmentVars["CF_INSTANCE_PORT"] ??
-      environmentVars["VCAP_APP_PORT"] ?? nil
-
-    if app["name"] == nil && portString == nil {
-      portString = "8090"
-    }
-
-    var number: Int?
-    if portString != nil {
-      number = Int(portString!)
-    }
-    if number == nil {
-        throw CFEnvironmentError.VariableNotFound
-    }
-    port = number!
+    port = try AppEnv.parsePort(environmentVars, app: app)
 
     // Get name
-    if let nameString = options["name"] as? String {
-      name = nameString
-    } else if let nameString = app["name"] as? String {
-      name = nameString
-    } else {
-      name = nil
-    }
-
-    // TODO: Add logic for parsing manifest.yml
-    //https://github.com/behrang/YamlSwift
+    name = AppEnv.parseName(app, options: options)
 
     // Get bind
-    bind = (app["host"] != nil) ? app["host"] as! String : "localhost"
+    bind = app["host"] as? String ?? "localhost"
 
     // Get urls
-    var uris: [String] = (app["uris"] != nil) ? app["uris"] as! [String] : []
-    if isLocal {
-      uris = ["localhost:\(port)"]
-    } else {
-      if (uris.count == 0) {
-        uris = ["localhost"]
-      }
-    }
-
-    let commProtocol: String = (options["protocol"] != nil) ?
-      options["protocol"] as! String : isLocal ? "http" : "https"
-
-    var tmpURLs: [String] = []
-    for uri in uris {
-       tmpURLs.append("\(commProtocol)//\(uri)");
-    }
-    urls = tmpURLs
+    urls = AppEnv.parseURLs(isLocal, app: app, port: port, options: options)
   }
 
   /**
@@ -234,5 +172,63 @@ public class AppEnv {
     }
 
     return [:]
+  }
+
+  private class func parseEnvVariable(isLocal: Bool, environmentVars: [String:String],
+    variableName: String, varibleType: String, options: [String:AnyObject])
+    -> [String:AnyObject] {
+    if isLocal {
+      let dictionary = options["vcap"]?[varibleType] as? [String:AnyObject] ?? [:]
+      return dictionary
+    } else {
+      let dictionary = Utils.convertStringToDictionary(environmentVars[variableName]) ?? [:]
+      return dictionary
+    }
+  }
+
+  private class func parsePort(environmentVars: [String:String], app: [String:AnyObject]) throws -> Int {
+    var portString: String? = environmentVars["PORT"] ?? environmentVars["CF_INSTANCE_PORT"] ??
+      environmentVars["VCAP_APP_PORT"] ?? nil
+
+    if app["name"] == nil && portString == nil {
+      portString = "8090"
+    }
+
+    var number: Int?
+    if portString != nil {
+      number = Int(portString!)
+    }
+    if number == nil {
+        throw CFEnvironmentError.VariableNotFound
+    }
+    return number!
+  }
+
+  private class func parseName(app: [String:AnyObject], options: [String:AnyObject]) -> String? {
+    let name: String? = options["name"] as? String ?? app["name"] as? String
+
+    // TODO: Add logic for parsing manifest.yml to get name
+    // https://github.com/behrang/YamlSwift
+
+    return name
+  }
+
+  private class func parseURLs(isLocal: Bool, app: [String:AnyObject], port: Int,
+    options: [String:AnyObject]) -> [String] {
+    var uris: [String] = app["uris"] as? [String] ?? []
+    if isLocal {
+      uris = ["localhost:\(port)"]
+    } else {
+      if (uris.count == 0) {
+        uris = ["localhost"]
+      }
+    }
+
+    let commProtocol: String = options["protocol"] as? String ?? (isLocal ? "http" : "https")
+    var urls: [String] = []
+    for uri in uris {
+       urls.append("\(commProtocol)//\(uri)");
+    }
+    return urls
   }
 }
