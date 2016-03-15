@@ -28,6 +28,8 @@ let package = Package(
         dependencies: [.Target(name: "CFEnvironment")]
       )
     ],
-    dependencies: [],
+    dependencies: [
+      .Package(url: "https://github.com/behrang/YamlSwift.git", majorVersion: 1),
+    ],
     testDependencies: []
 )
