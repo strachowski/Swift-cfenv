@@ -58,9 +58,29 @@ public class AppEnv {
     urls = AppEnv.parseURLs(isLocal, app: app, port: port, options: options)
   }
 
+  public func getApp() -> App? {
+
+    let limits = App.Limits(memory: app["limits"]!["memory"] as! Int,
+      disk: app["limits"]!["disk"] as! Int, fds: app["limits"]!["fds"] as! Int)
+
+    let dateFormatter = NSDateFormatter()
+    // Example: 2016-03-04 02:43:07 +0000
+    dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZ"
+    let startedAt = dateFormatter.dateFromString(app["startedAt"] as! String)
+    let startedAtTs = startedAt?.timeIntervalSince1970
+
+    let appObj = App(id: app["application_id"] as! String, name: app["application_name"] as! String,
+      uris: app["uris"] as! [String], version: app["version"] as! String,
+      instanceId: app["instance_id"] as! String, instanceIndex: app["instance_index"] as! Int,
+      limits: limits, port: app["port"] as! Int, spaceId: app["space_id"] as! String,
+      startedAtTs: startedAtTs!, startedAt: startedAt!)
+
+    return appObj
+  }
+
   /**
   * Returns all services bound to the application in a dictionary. The key in
-  * the dictionary is the name of the service, while the value is a dictionary
+  * the dictionary is the name of the service, while the value is a Service
   * object that contains all the properties for the service.
   */
   public func getServices() -> [String:Service] {
@@ -78,7 +98,7 @@ public class AppEnv {
   }
 
   /**
-  * Returns a dictionary with the properties for the specified Cloud Foundry
+  * Returns a Service object with the properties for the specified Cloud Foundry
   * service. The spec parameter should be the name of the service
   * or a regex to look up the service. If there is no service that matches the
   * spec parameter, this method returns nil.
@@ -200,6 +220,7 @@ public class AppEnv {
 
     // TODO: Add logic for parsing manifest.yml to get name
     // https://github.com/behrang/YamlSwift
+    // http://stackoverflow.com/questions/24097826/read-and-write-data-from-text-file
 
     return name
   }

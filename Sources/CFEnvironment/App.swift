@@ -21,22 +21,44 @@
  */
 public struct App {
 
-  struct Limits {
+  public struct Limits {
     let memory: Int
     let disk: Int
     let fds: Int
+
+    public init(memory: Int, disk: Int, fds: Int) {
+      self.memory = memory
+      self.disk = disk
+      self.fds = fds
+    }
   }
 
-  let id: String
-  let name: String
-  let uris: [String]
-  let version: String
-  let host: String
-  let instanceId: String
-  let instanceIndex: Int
-  let limits: Limits
-  let port: Int
-  let spaceId: String
-  let startedAtTs: NSTimeInterval
-  let startedAt: NSDate
+  public let id: String
+  public let name: String
+  public let uris: [String]
+  public let version: String
+  public let instanceId: String
+  public let instanceIndex: Int
+  public let limits: Limits
+  public let port: Int
+  public let spaceId: String
+  public let startedAtTs: NSTimeInterval
+  public let startedAt: NSDate
+
+  public init(id: String, name: String, uris: [String], version: String, instanceId: String,
+    instanceIndex: Int, limits: Limits, port: Int, spaceId: String,
+    startedAtTs: NSTimeInterval, startedAt: NSDate) {
+
+    self.id = id
+    self.name = name
+    self.uris = uris
+    self.version = version
+    self.instanceId = instanceId
+    self.instanceIndex = instanceIndex
+    self.limits = limits
+    self.port = port
+    self.spaceId = spaceId
+    self.startedAtTs = startedAtTs
+    self.startedAt = startedAt
+  }
 }
