@@ -194,10 +194,7 @@ public class AppEnv {
       portString = "8090"
     }
 
-    var number: Int?
-    if portString != nil {
-      number = Int(portString!)
-    }
+    let number: Int? = (portString != nil) ? Int(portString!) : nil
     if number == nil {
         throw CFEnvironmentError.VariableNotFound
     }
