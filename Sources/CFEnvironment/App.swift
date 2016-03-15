@@ -33,21 +33,21 @@ public struct App {
     }
   }
 
-  public let id: String
-  public let name: String
-  public let uris: [String]
-  public let version: String
-  public let instanceId: String
-  public let instanceIndex: Int
-  public let limits: Limits
-  public let port: Int
-  public let spaceId: String
-  public let startedAtTs: NSTimeInterval
-  public let startedAt: NSDate
+  public let id: String?
+  public let name: String?
+  public let uris: [String]?
+  public let version: String?
+  public let instanceId: String?
+  public let instanceIndex: Int?
+  public let limits: Limits?
+  public let port: Int?
+  public let spaceId: String?
+  public let startedAtTs: NSTimeInterval?
+  public let startedAt: NSDate?
 
-  public init(id: String, name: String, uris: [String], version: String, instanceId: String,
-    instanceIndex: Int, limits: Limits, port: Int, spaceId: String,
-    startedAtTs: NSTimeInterval, startedAt: NSDate) {
+  public init(id: String?, name: String?, uris: [String]?, version: String?,
+    instanceId: String?, instanceIndex: Int?, limits: Limits?, port: Int?,
+    spaceId: String?, startedAtTs: NSTimeInterval?, startedAt: NSDate?) {
 
     self.id = id
     self.name = name

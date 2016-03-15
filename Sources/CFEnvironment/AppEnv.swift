@@ -64,20 +64,30 @@ public class AppEnv {
   */
   public func getApp() -> App? {
 
-    let limits = App.Limits(memory: app["limits"]!["memory"] as! Int,
-      disk: app["limits"]!["disk"] as! Int, fds: app["limits"]!["fds"] as! Int)
+    let limits: App.Limits?
+    if app["limits"] != nil {
+      limits = App.Limits(memory: app["limits"]!["memory"] as! Int,
+        disk: app["limits"]!["disk"] as! Int, fds: app["limits"]!["fds"] as! Int)
+    } else {
+      limits = nil
+    }
 
-    let dateFormatter = NSDateFormatter()
-    // Example: 2016-03-04 02:43:07 +0000
-    dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZ"
-    let startedAt = dateFormatter.dateFromString(app["startedAt"] as! String)
+    let startedAt: NSDate?
+    if app["startedAt"] != nil {
+      let dateFormatter = NSDateFormatter()
+      // Example: 2016-03-04 02:43:07 +0000
+      dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZ"
+      startedAt = dateFormatter.dateFromString(app["startedAt"] as! String)
+    } else {
+      startedAt = nil
+    }
     let startedAtTs = startedAt?.timeIntervalSince1970
 
-    let appObj = App(id: app["application_id"] as! String, name: app["application_name"] as! String,
-      uris: app["uris"] as! [String], version: app["version"] as! String,
-      instanceId: app["instance_id"] as! String, instanceIndex: app["instance_index"] as! Int,
-      limits: limits, port: app["port"] as! Int, spaceId: app["space_id"] as! String,
-      startedAtTs: startedAtTs!, startedAt: startedAt!)
+    let appObj = App(id: app["application_id"] as? String, name: app["application_name"] as? String,
+      uris: app["uris"] as? [String], version: app["version"] as? String,
+      instanceId: app["instance_id"] as? String, instanceIndex: app["instance_index"] as? Int,
+      limits: limits, port: app["port"] as? Int, spaceId: app["space_id"] as? String,
+      startedAtTs: startedAtTs, startedAt: startedAt)
 
     return appObj
   }

@@ -27,6 +27,8 @@ do {
   print("serviceCreds: \(serviceCreds)")
   let serviceURL = appEnv.getServiceURL("serviceName", replacements: nil)
   print("serviceURL: \(serviceURL)")
+  let app = appEnv.getApp()
+  print("app: \(app)")  
 } catch CFEnvironmentError.VariableNotFound {
   print("Oops, something went wrong...")
 }
