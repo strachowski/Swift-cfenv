@@ -18,15 +18,16 @@ import Foundation
 
 // TODO: Determine feasibility of returning structs/classes instead of
 // dictionaries for the methods and instance variables exposed in this class.
+// TODO: Review usage of optionals in Service and App structs
 public class AppEnv {
 
-  let isLocal: Bool
+  public let isLocal: Bool
+  public let port: Int
+  public let name: String?
+  public let bind: String
+  public let urls: [String]
   let app: [String:AnyObject]
   let services: [String:AnyObject]
-  let port: Int
-  let name: String?
-  let bind: String
-  let urls: [String]
 
   /**
   * The vcap option property is ignored if not running locally.
@@ -58,6 +59,9 @@ public class AppEnv {
     urls = AppEnv.parseURLs(isLocal, app: app, port: port, options: options)
   }
 
+  /**
+  * Returns an App object.
+  */
   public func getApp() -> App? {
 
     let limits = App.Limits(memory: app["limits"]!["memory"] as! Int,
@@ -188,6 +192,9 @@ public class AppEnv {
     }
   }
 
+  /**
+  * Static method for parsing VCAP_APPLICATION and VCAP_SERVICES.
+  */
   private class func parseEnvVariable(isLocal: Bool, environmentVars: [String:String],
     variableName: String, varibleType: String, options: [String:AnyObject])
     -> [String:AnyObject] {
@@ -200,6 +207,9 @@ public class AppEnv {
     }
   }
 
+  /**
+  * Static method for parsing the port number.
+  */
   private class func parsePort(environmentVars: [String:String], app: [String:AnyObject]) throws -> Int {
     var portString: String? = environmentVars["PORT"] ?? environmentVars["CF_INSTANCE_PORT"] ??
       environmentVars["VCAP_APP_PORT"] ?? nil
@@ -215,6 +225,9 @@ public class AppEnv {
     return number!
   }
 
+  /**
+  * Static method for parsing the name for the application.
+  */
   private class func parseName(app: [String:AnyObject], options: [String:AnyObject]) -> String? {
     let name: String? = options["name"] as? String ?? app["name"] as? String
 
@@ -225,6 +238,9 @@ public class AppEnv {
     return name
   }
 
+  /**
+  * Static method for parsing the URLs for the application.
+  */
   private class func parseURLs(isLocal: Bool, app: [String:AnyObject], port: Int,
     options: [String:AnyObject]) -> [String] {
     var uris: [String] = app["uris"] as? [String] ?? []
@@ -236,10 +252,10 @@ public class AppEnv {
       }
     }
 
-    let commProtocol: String = options["protocol"] as? String ?? (isLocal ? "http" : "https")
+    let scheme: String = options["protocol"] as? String ?? (isLocal ? "http" : "https")
     var urls: [String] = []
     for uri in uris {
-       urls.append("\(commProtocol)//\(uri)");
+       urls.append("\(scheme)//\(uri)");
     }
     return urls
   }
