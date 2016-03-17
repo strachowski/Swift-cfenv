@@ -14,16 +14,10 @@
  * limitations under the License.
  **/
 
-import SwiftyJSON
+import XCTest
 
-//https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-APPLICATION
-public class CFEnvironment {
-  public class func getAppEnv(options: JSON) throws -> AppEnv {
-    return try AppEnv(options: options)
-}
+@testable import CFEnvironmenttest
 
-  public class func getAppEnv() throws -> AppEnv  {
-   let options:JSON = [:]
-   return try getAppEnv(options)
- }
-}
+XCTMain([
+    UtilsTests()
+])

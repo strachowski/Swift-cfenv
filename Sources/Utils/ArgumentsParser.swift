@@ -14,16 +14,19 @@
  * limitations under the License.
  **/
 
-import SwiftyJSON
-
-//https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-APPLICATION
-public class CFEnvironment {
-  public class func getAppEnv(options: JSON) throws -> AppEnv {
-    return try AppEnv(options: options)
-}
-
-  public class func getAppEnv() throws -> AppEnv  {
-   let options:JSON = [:]
-   return try getAppEnv(options)
- }
+public func parseAddress() -> Address {
+  let args = Array(Process.arguments[1..<Process.arguments.count])
+  var port = 9080 // default port
+  var ip = "0.0.0.0" // default ip
+  if args.count == 2 && args[0] == "-bind" {
+    let tokens = args[1].bridge().componentsSeparatedByString(":")
+    if (tokens.count == 2) {
+      ip = tokens[0]
+      if let portNumber = Int(tokens[1]) {
+        port = portNumber
+      }
+    }
+  }
+  let address = Address(ip: ip, port: UInt16(port))
+  return address
 }

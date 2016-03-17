@@ -1,0 +1,5 @@
+---
+applications:
+- name:    swift-helloworld
+  random-route: true
+  memory:  128M

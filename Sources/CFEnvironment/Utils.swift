@@ -15,17 +15,41 @@
  **/
 
 import Foundation
+import SwiftyJSON
 
-class Utils {
-  class func convertStringToDictionary(text: String?) -> [String:AnyObject]? {
+/**
+* JSON utilities.
+*/
+public class Utils {
+
+  /**
+  * Converts the speficied string to a JSON object.
+  */
+  public class func convertStringToJSON(text: String?) -> JSON? { //-> [String:AnyObject]? {
     if let data = text?.dataUsingEncoding(NSUTF8StringEncoding) {
-      do {
-        let dictionary = try NSJSONSerialization.JSONObjectWithData(data, options: .MutableContainers) as? [String:AnyObject]
-        return dictionary
-      } catch {
-        return nil
-      }
+      let json = JSON(data: data)
+      return json
     }
+    print("Could not generate JSON object from string: \(text)")
     return nil
+
+    // if let data = text?.dataUsingEncoding(NSUTF8StringEncoding) {
+    //   do {
+    //     let dictionary = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as? [String:AnyObject]
+    //     print("Value returned from method is: \(dictionary)")
+    //     return dictionary
+    //   } catch  let error as NSError {
+    //     print("Error code: \(error.code)")
+    //     return nil
+    //   }
+    // }
+    // return nil
+  }
+
+  /**
+  * Converts a JSON array to an array of Strings.
+  */
+  public class func convertJSONArrayToStringArray(json: JSON, fieldName: String) -> [String] {
+    return json[fieldName].arrayValue.map { $0.stringValue }
   }
 }

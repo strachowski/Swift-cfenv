@@ -14,16 +14,26 @@
  * limitations under the License.
  **/
 
-import SwiftyJSON
+import Foundation
 
-//https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-APPLICATION
-public class CFEnvironment {
-  public class func getAppEnv(options: JSON) throws -> AppEnv {
-    return try AppEnv(options: options)
+#if os(OSX)
+
+public extension String {
+  func bridge() -> NSString {
+    return self as NSString
+  }
 }
 
-  public class func getAppEnv() throws -> AppEnv  {
-   let options:JSON = [:]
-   return try getAppEnv(options)
- }
+public extension NSString {
+  func bridge() -> String {
+    return self as String
+  }
+}
+
+#endif
+
+public extension String {
+    var length: Int {
+        return characters.count
+    }
 }

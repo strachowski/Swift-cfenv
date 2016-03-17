@@ -15,6 +15,7 @@
  **/
 
 import Foundation
+import SwiftyJSON
 
 // TODO: Determine feasibility of returning structs/classes instead of
 // dictionaries for the methods and instance variables exposed in this class.
@@ -26,13 +27,13 @@ public class AppEnv {
   public let name: String?
   public let bind: String
   public let urls: [String]
-  let app: [String:AnyObject]
-  let services: [String:AnyObject]
+  public let app: JSON
+  public let services: JSON
 
   /**
   * The vcap option property is ignored if not running locally.
   */
-  public init(options: [String:AnyObject]) throws {
+  public init(options: JSON) throws {
     // NSProcessInfo.processInfo().environment returns [String : String]
     let environmentVars = NSProcessInfo.processInfo().environment
     let vcapApplication = environmentVars["VCAP_APPLICATION"]
@@ -53,7 +54,7 @@ public class AppEnv {
     name = AppEnv.parseName(app, options: options)
 
     // Get bind
-    bind = app["host"] as? String ?? "localhost"
+    bind = app["host"].string ?? "localhost"
 
     // Get urls
     urls = AppEnv.parseURLs(isLocal, app: app, port: port, options: options)
@@ -62,31 +63,40 @@ public class AppEnv {
   /**
   * Returns an App object.
   */
-  public func getApp() -> App? {
+  public func getApp() -> App {
 
+    // Get limits
     let limits: App.Limits?
-    if app["limits"] != nil {
-      limits = App.Limits(memory: app["limits"]!["memory"] as! Int,
-        disk: app["limits"]!["disk"] as! Int, fds: app["limits"]!["fds"] as! Int)
+    let memory = app["limits"]["mem"].int
+    let disk = app["limits"]["disk"].int
+    let fds = app["limits"]["fds"].int
+    if memory != nil && disk != nil && fds != nil {
+      limits = App.Limits(memory: memory!,
+        disk: disk!, fds: fds!)
     } else {
       limits = nil
     }
 
+    // Get startedAt time
     let startedAt: NSDate?
-    if app["startedAt"] != nil {
+    if let startedAtStr = app["started_at"].string {
       let dateFormatter = NSDateFormatter()
       // Example: 2016-03-04 02:43:07 +0000
       dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZ"
-      startedAt = dateFormatter.dateFromString(app["startedAt"] as! String)
+      startedAt = dateFormatter.dateFromString(startedAtStr)
     } else {
       startedAt = nil
     }
     let startedAtTs = startedAt?.timeIntervalSince1970
 
-    let appObj = App(id: app["application_id"] as? String, name: app["application_name"] as? String,
-      uris: app["uris"] as? [String], version: app["version"] as? String,
-      instanceId: app["instance_id"] as? String, instanceIndex: app["instance_index"] as? Int,
-      limits: limits, port: app["port"] as? Int, spaceId: app["space_id"] as? String,
+    // Get uris
+    let uris = Utils.convertJSONArrayToStringArray(app, fieldName: "uris")
+
+    // Create App object
+    let appObj = App(id: app["application_id"].string, name: app["application_name"].string,
+      uris: uris, version: app["version"].string,
+      instanceId: app["instance_id"].string, instanceIndex: app["instance_index"].int,
+      limits: limits, port: app["port"].int, spaceId: app["space_id"].string,
       startedAtTs: startedAtTs, startedAt: startedAt)
 
     return appObj
@@ -100,11 +110,12 @@ public class AppEnv {
   public func getServices() -> [String:Service] {
     var results: [String:Service] = [:]
     for (_, servs) in services {
-      for service in servs as! [[String:AnyObject]] {
-        if let name: String = service["name"] as? String {
-          results[name] = Service(name: name, label: service["label"] as! String,
-          plan: service["name"] as! String, tags: service["tags"] as! [String],
-          credentials: service["credentials"] as? [String:AnyObject])
+      for service in servs.arrayValue { // as! [[String:AnyObject]] {
+        if let name: String = service["name"].string {
+          let tags = Utils.convertJSONArrayToStringArray(service, fieldName: "tags")
+          results[name] = Service(name: name, label: service["label"].string!,
+          plan: service["name"].string!, tags: tags,
+          credentials: service["credentials"])
         }
       }
     }
@@ -145,9 +156,9 @@ public class AppEnv {
   * The replacements parameter is a dictionary with the properties found in
   * Foundation's NSURLComponents class.
   */
-  public func getServiceURL(spec: String, replacements: [String:AnyObject]?) -> String? {
-    var substitutions: [String:AnyObject] = replacements ?? [:]
-    let service = getService(spec);
+  public func getServiceURL(spec: String, replacements: JSON?) -> String? {
+    var substitutions: JSON = replacements ?? [:]
+    let service = getService(spec)
     let credentials = service?.credentials
     if (credentials == nil) {
         return nil;
@@ -155,9 +166,9 @@ public class AppEnv {
 
     let url: String?
     if substitutions["url"] != nil {
-      url = credentials![substitutions["url"] as! String] as? String
+      url = credentials![substitutions["url"].string!].string
     } else {
-      url = credentials!["url"] as? String ?? credentials!["uri"] as? String
+      url = credentials!["url"].string ?? credentials!["uri"].string
     }
 
     if (url == nil) {
@@ -169,7 +180,7 @@ public class AppEnv {
     // https://nodejs.org/api/url.html#url_url_format_urlobj
     // https://github.com/cloudfoundry-community/node-cfenv/blob/master/lib/cfenv.js
     // https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSURL_Class/#//apple_ref/occ/instp/NSURL/scheme
-    substitutions.removeValueForKey("url")
+    substitutions.dictionaryObject?.removeValueForKey("url")
     let parsedURL = NSURLComponents(string: url!)
     if (parsedURL == nil) {
       return nil
@@ -190,7 +201,7 @@ public class AppEnv {
   * spec parameter, this method returns nil. In the case there is no credentials
   * for the service, an empty dictionary is returned.
   */
-  public func getServiceCreds(spec: String) -> [String:AnyObject]? {
+  public func getServiceCreds(spec: String) -> JSON? {
     if let service = getService(spec) {
       if let credentials = service.credentials {
         return credentials
@@ -206,25 +217,29 @@ public class AppEnv {
   * Static method for parsing VCAP_APPLICATION and VCAP_SERVICES.
   */
   private class func parseEnvVariable(isLocal: Bool, environmentVars: [String:String],
-    variableName: String, varibleType: String, options: [String:AnyObject])
-    -> [String:AnyObject] {
+    variableName: String, varibleType: String, options: JSON)
+    -> JSON {
     if isLocal {
-      let dictionary = options["vcap"]?[varibleType] as? [String:AnyObject] ?? [:]
-      return dictionary
+      return options["vcap"][varibleType]
     } else {
-      let dictionary = Utils.convertStringToDictionary(environmentVars[variableName]) ?? [:]
-      return dictionary
+      let json = Utils.convertStringToJSON(environmentVars[variableName]) ?? [:]
+      return json
     }
   }
 
   /**
   * Static method for parsing the port number.
   */
-  private class func parsePort(environmentVars: [String:String], app: [String:AnyObject]) throws -> Int {
+  private class func parsePort(environmentVars: [String:String], app: JSON) throws -> Int {
     var portString: String? = environmentVars["PORT"] ?? environmentVars["CF_INSTANCE_PORT"] ??
       environmentVars["VCAP_APP_PORT"] ?? nil
 
-    if app["name"] == nil && portString == nil {
+    if portString == nil {
+      if app["name"].string == nil {
+        portString = "8090"
+      }
+      //TODO: Figure out what ports.getPort() does...
+      //portString = "" + (ports.getPort(appEnv.name));
       portString = "8090"
     }
 
@@ -238,8 +253,8 @@ public class AppEnv {
   /**
   * Static method for parsing the name for the application.
   */
-  private class func parseName(app: [String:AnyObject], options: [String:AnyObject]) -> String? {
-    let name: String? = options["name"] as? String ?? app["name"] as? String
+  private class func parseName(app: JSON, options: JSON) -> String? {
+    let name: String? = options["name"].string ?? app["name"].string
 
     // TODO: Add logic for parsing manifest.yml to get name
     // https://github.com/behrang/YamlSwift
@@ -251,9 +266,9 @@ public class AppEnv {
   /**
   * Static method for parsing the URLs for the application.
   */
-  private class func parseURLs(isLocal: Bool, app: [String:AnyObject], port: Int,
-    options: [String:AnyObject]) -> [String] {
-    var uris: [String] = app["uris"] as? [String] ?? []
+  private class func parseURLs(isLocal: Bool, app: JSON, port: Int,
+    options: JSON) -> [String] {
+    var uris: [String] = Utils.convertJSONArrayToStringArray(app, fieldName: "uris")
     if isLocal {
       uris = ["localhost:\(port)"]
     } else {
@@ -262,7 +277,7 @@ public class AppEnv {
       }
     }
 
-    let scheme: String = options["protocol"] as? String ?? (isLocal ? "http" : "https")
+    let scheme: String = options["protocol"].string ?? (isLocal ? "http" : "https")
     var urls: [String] = []
     for uri in uris {
        urls.append("\(scheme)//\(uri)");

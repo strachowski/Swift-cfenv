@@ -16,20 +16,28 @@
 
 import PackageDescription
 
+// Dual pathing for O/S differences
+#if os(Linux)
+   let swiftyJsonUrl = "https://github.com/IBM-Swift/SwiftyJSON.git"
+   let swiftyJsonVersion = 3
+#else
+   let swiftyJsonUrl = "https://github.com/SwiftyJSON/SwiftyJSON.git"
+   let swiftyJsonVersion = 2
+#endif
+
 let package = Package(
-    name: "CFEnvironment",
+    name: "HelloWorldSwift",
     targets: [
+      Target(name: "Utils", dependencies: []),
       Target(
         name: "CFEnvironment",
         dependencies: []
       ),
-      Target(
-        name: "Sample",
-        dependencies: [.Target(name: "CFEnvironment")]
-      )
+      Target(name: "Server", dependencies: [.Target(name: "Utils"), .Target(name: "CFEnvironment")])
     ],
     dependencies: [
-      .Package(url: "https://github.com/behrang/YamlSwift.git", majorVersion: 1),
+      //.Package(url: "https://github.com/behrang/YamlSwift.git", majorVersion: 1),
+      .Package(url: swiftyJsonUrl, majorVersion: swiftyJsonVersion)
     ],
     testDependencies: []
 )
