@@ -64,7 +64,6 @@ class UtilsTests : XCTestCase {
   }
 
   func testGetApp() {
-    //TODO
     let options = "{ \"vcap\": { \"application\": { \"limits\": { \"mem\": 128, \"disk\": 1024, \"fds\": 16384 }, \"application_id\": \"e582416a-9771-453f-8df1-7b467f6d78e4\", \"application_version\": \"e5e029d1-4a1a-4004-9f79-655d550183fb\", \"application_name\": \"swift-test\", \"application_uris\": [ \"swift-test.mybluemix.net\" ], \"version\": \"e5e029d1-4a1a-4004-9f79-655d550183fb\", \"name\": \"swift-test\", \"space_name\": \"dev\", \"space_id\": \"b15eb0bb-cbf3-43b6-bfbc-f76d495981e5\", \"uris\": [ \"swift-test.mybluemix.net\" ], \"users\": null, \"instance_id\": \"7d4f24cfba06462ba23d68aaf1d7354a\", \"instance_index\": 0, \"host\": \"0.0.0.0\", \"port\": 61263, \"started_at\": \"2016-03-04 02:43:07 +0000\", \"started_at_timestamp\": 1457059387, \"start\": \"2016-03-04 02:43:07 +0000\", \"state_timestamp\": 1457059387 } } }"
     do {
       if let json = Utils.convertStringToJSON(options) {
@@ -73,25 +72,31 @@ class UtilsTests : XCTestCase {
         let app = appEnv.getApp()
         print("app: \(app)")
         XCTAssertNotNil(app)
+        XCTAssertEqual(app.port, 61263, "Port number should match.")
+        XCTAssertEqual(app.id, "e582416a-9771-453f-8df1-7b467f6d78e4", "ID value should match.")
+        XCTAssertEqual(app.version, "e5e029d1-4a1a-4004-9f79-655d550183fb", "Version number should match.")
+        XCTAssertEqual(app.name, "swift-test", "App name should match.")
+        XCTAssertEqual(app.instanceId, "7d4f24cfba06462ba23d68aaf1d7354a", "Instance ID value should match.")
+        XCTAssertEqual(app.instanceIndex, 0, "Instance index value should match.")
+        XCTAssertEqual(app.spaceId, "b15eb0bb-cbf3-43b6-bfbc-f76d495981e5", "Space ID value should match.")
         let limits = app.limits
         print("limits: \(limits)")
         XCTAssertNotNil(limits)
-        XCTAssertEqual(app.port, 61263)
-        XCTAssertEqual(app.id, "e582416a-9771-453f-8df1-7b467f6d78e4")
-        XCTAssertEqual(app.version, "e5e029d1-4a1a-4004-9f79-655d550183fb")
-        XCTAssertEqual(app.name, "swift-test")
-        XCTAssertEqual(app.instanceId, "7d4f24cfba06462ba23d68aaf1d7354a")
-        XCTAssertEqual(app.instanceIndex, 0)
-        XCTAssertEqual(app.spaceId, "b15eb0bb-cbf3-43b6-bfbc-f76d495981e5")
-        XCTAssertEqual(limits!.memory, 128)
-        XCTAssertEqual(limits!.disk, 1024)
-        XCTAssertEqual(limits!.fds, 16384)
-
-       //public let uris: [String]?
-       //public let limits: Limits?
-       //public let startedAtTs: NSTimeInterval?
-       //public let startedAt: NSDate?
-
+        XCTAssertEqual(limits!.memory, 128, "Memory value should match.")
+        XCTAssertEqual(limits!.disk, 1024, "Disk value should match.")
+        XCTAssertEqual(limits!.fds, 16384, "FDS value should match.")
+        let uris = app.uris
+        XCTAssertNotNil(uris)
+        XCTAssertEqual(uris!.count, 1)
+        XCTAssertEqual(uris![0], "swift-test.mybluemix.net")
+        XCTAssertEqual(app.name, "swift-test", "App name should match.")
+        let startedAt: NSDate? = app.startedAt
+        XCTAssertNotNil(startedAt)
+        let dateUtils = DateUtils()
+        let startedAtStr = dateUtils.convertNSDateToString(startedAt)
+        XCTAssertEqual(startedAtStr, "2016-03-04 02:43:07 +0000", "StartedAt date should match.")
+        XCTAssertNotNil(app.startedAtTs, "StartedAt date should not be nil.")
+        XCTAssertEqual(app.startedAtTs, 1457059387, "StartedAt ts should match.")
       } else {
         XCTFail("Could not generate JSON object!")
       }

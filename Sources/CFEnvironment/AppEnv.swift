@@ -78,15 +78,8 @@ public class AppEnv {
     }
 
     // Get startedAt time
-    let startedAt: NSDate?
-    if let startedAtStr = app["started_at"].string {
-      let dateFormatter = NSDateFormatter()
-      // Example: 2016-03-04 02:43:07 +0000
-      dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZ"
-      startedAt = dateFormatter.dateFromString(startedAtStr)
-    } else {
-      startedAt = nil
-    }
+    let dateUtils = DateUtils()
+    let startedAt: NSDate? = dateUtils.convertStringToNSDate(app["started_at"].string)
     let startedAtTs = startedAt?.timeIntervalSince1970
 
     // Get uris
