@@ -48,12 +48,12 @@ class UtilsTests : XCTestCase {
       print("JSON object is: \(json)")
       //print("Type is \(json["users"].dynamicType)")
       XCTAssertNil(json["users"] as? AnyObject)
-      XCTAssertEqual(json["instance_id"], "7d4f24cfba06462ba23d68aaf1d7354a")
-      XCTAssertEqual(json["instance_index"], 0)
-      XCTAssertEqual(json["host"], "0.0.0.0")
-      XCTAssertEqual(json["port"], 61263)
-      XCTAssertEqual(json["started_at"], "2016-03-04 02:43:07 +0000")
-      XCTAssertEqual(json["started_at_timestamp"], 1457059387)
+      XCTAssertEqual(json["instance_id"], "7d4f24cfba06462ba23d68aaf1d7354a", "instance_id should match.")
+      XCTAssertEqual(json["instance_index"], 0, "instance_index should match.")
+      XCTAssertEqual(json["host"], "0.0.0.0", "host should match.")
+      XCTAssertEqual(json["port"], 61263, "port should match.")
+      XCTAssertEqual(json["started_at"], "2016-03-04 02:43:07 +0000", "started_at should match.")
+      XCTAssertEqual(json["started_at_timestamp"], 1457059387, "started_at_timestamp should match.")
     } else {
       XCTFail("Could not generate JSON object!")
     }
@@ -109,6 +109,39 @@ class UtilsTests : XCTestCase {
 
   func testGetServices() {
     //TODO
+    let options = "{ \"vcap\": { \"services\": { \"cloudantNoSQLDB\": [ { \"name\": \"Cloudant NoSQL DB-kd\", \"label\": \"cloudantNoSQLDB\", \"tags\": [ \"data_management\", \"ibm_created\", \"ibm_dedicated_public\" ], \"plan\": \"Shared\", \"credentials\": { \"username\": \"09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix\", \"password\": \"06c19ae06b1915d8a6649df5901eca85e885182421ffa9ef89e14bbc1b76efd4\", \"host\": \"09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix.cloudant.com\", \"port\": 443, \"url\": \"https://09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix:06c19ae06b1915d8a6649df5901eca85e885182421ffa9ef89e14bbc1b76efd4@09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix.cloudant.com\" } } ] } } }"
+    do {
+      if let json = Utils.convertStringToJSON(options) {
+        print("json \(json)")
+        let appEnv = try CFEnvironment.getAppEnv(json)
+        let servs = appEnv.services
+        print("servs \(servs)")
+        let services = appEnv.getServices()
+        print("services \(services)")
+        XCTAssertEqual(services.count, 1)
+        for (name, service) in services {
+          XCTAssertEqual(service.name, name, "Key in dictionary and name should match.")
+          XCTAssertEqual(service.name, "Cloudant NoSQL DB-kd", "Name should match.")
+          XCTAssertEqual(service.label, "cloudantNoSQLDB", "Label should match.")
+          XCTAssertEqual(service.plan, "Shared", "Plan should match.")
+          let tags = service.tags
+          XCTAssertEqual(tags.count, 3)
+          XCTAssertEqual(tags[0], "data_management", "Tag #0 should match.")
+          XCTAssertEqual(tags[1], "ibm_created", "Tag #1 should match.")
+          XCTAssertEqual(tags[2], "ibm_dedicated_public", "Tag #2 should match.")
+          let credentials: JSON? = service.credentials
+          XCTAssertNotNil(credentials)
+          let credentialsStr = credentials!.rawString
+          //TODO: Test credentials          
+        }
+      } else {
+        XCTFail("Could not generate JSON object!")
+      }
+    } catch let error as NSError {
+      print("Error domain: \(error.domain)")
+      print("Error code: \(error.code)")
+      XCTFail("Could not get AppEnv object!")
+    }
   }
 
  }

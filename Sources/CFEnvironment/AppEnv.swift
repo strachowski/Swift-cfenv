@@ -107,7 +107,7 @@ public class AppEnv {
         if let name: String = service["name"].string {
           let tags = Utils.convertJSONArrayToStringArray(service, fieldName: "tags")
           results[name] = Service(name: name, label: service["label"].string!,
-          plan: service["name"].string!, tags: tags,
+          plan: service["plan"].string!, tags: tags,
           credentials: service["credentials"])
         }
       }
