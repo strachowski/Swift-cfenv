@@ -31,14 +31,15 @@ import SwiftyJSON
 * Online tool for removing new lines: http://www.textfixer.com/tools/remove-line-breaks.php
 * Online JSON editor: http://jsonviewer.stack.hu/
 */
-class UtilsTests : XCTestCase {
+class Tests : XCTestCase {
 
   var allTests : [(String, () throws -> Void)] {
     return [
         ("testConvertStringToJSON", testConvertStringToJSON),
         ("testConvertJSONArrayToStringArray", testConvertJSONArrayToStringArray),
         ("testGetApp", testGetApp),
-        ("testGetServices", testGetServices)
+        ("testGetServices", testGetServices),
+        ("testGetAppEnv", testGetAppEnv)
     ]
   }
 
@@ -64,9 +65,9 @@ class UtilsTests : XCTestCase {
     if let json = JSONUtils.convertStringToJSON(jsonStr) {
       let strArray: [String] = JSONUtils.convertJSONArrayToStringArray(json, fieldName: "tags")
         XCTAssertEqual(strArray.count, 3, "There should be 3 elements in the string array.")
-        UtilsTests.verifyElementInArrayExists(strArray, element: "data_management")
-        UtilsTests.verifyElementInArrayExists(strArray, element: "ibm_created")
-        UtilsTests.verifyElementInArrayExists(strArray, element: "ibm_dedicated_public")
+        Tests.verifyElementInArrayExists(strArray, element: "data_management")
+        Tests.verifyElementInArrayExists(strArray, element: "ibm_created")
+        Tests.verifyElementInArrayExists(strArray, element: "ibm_dedicated_public")
     } else {
       XCTFail("Could not generate JSON object!")
     }
@@ -160,6 +161,24 @@ class UtilsTests : XCTestCase {
       } else {
         XCTFail("Could not generate JSON object!")
       }
+    } catch let error as NSError {
+      print("Error domain: \(error.domain)")
+      print("Error code: \(error.code)")
+      XCTFail("Could not get AppEnv object!")
+    }
+  }
+
+  func testGetAppEnv() {
+    do {
+      let appEnv = try CFEnvironment.getAppEnv()
+      XCTAssertEqual(appEnv.isLocal, true, "AppEnv's isLocal should be true.")
+      XCTAssertEqual(appEnv.port, 8090, "AppEnv's port should be 8090.")
+      XCTAssertNil(appEnv.name, "AppEnv's name should be nil.")
+      XCTAssertEqual(appEnv.bind, "localhost", "AppEnv's bind should be localhost.")
+      let urls: [String] = appEnv.urls
+      XCTAssertEqual(urls.count, 1, "AppEnv's urls array should contain only 1 element.")
+      XCTAssertEqual(urls[0], "http//localhost:8090", "AppEnv's urls[0] should be 'http//localhost:8090'.")
+      XCTAssertEqual(appEnv.services.count, 0, "AppEnv's services array should contain 0 elements.")
     } catch let error as NSError {
       print("Error domain: \(error.domain)")
       print("Error code: \(error.code)")
