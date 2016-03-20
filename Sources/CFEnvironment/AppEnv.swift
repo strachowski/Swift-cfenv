@@ -83,7 +83,7 @@ public class AppEnv {
     let startedAtTs = startedAt?.timeIntervalSince1970
 
     // Get uris
-    let uris = Utils.convertJSONArrayToStringArray(app, fieldName: "uris")
+    let uris = JSONUtils.convertJSONArrayToStringArray(app, fieldName: "uris")
 
     // Create App object
     let appObj = App(id: app["application_id"].string, name: app["application_name"].string,
@@ -105,7 +105,7 @@ public class AppEnv {
     for (_, servs) in services {
       for service in servs.arrayValue { // as! [[String:AnyObject]] {
         if let name: String = service["name"].string {
-          let tags = Utils.convertJSONArrayToStringArray(service, fieldName: "tags")
+          let tags = JSONUtils.convertJSONArrayToStringArray(service, fieldName: "tags")
           results[name] = Service(name: name, label: service["label"].string!,
           plan: service["plan"].string!, tags: tags,
           credentials: service["credentials"])
@@ -215,7 +215,7 @@ public class AppEnv {
     if isLocal {
       return options["vcap"][varibleType]
     } else {
-      let json = Utils.convertStringToJSON(environmentVars[variableName]) ?? [:]
+      let json = JSONUtils.convertStringToJSON(environmentVars[variableName]) ?? [:]
       return json
     }
   }
@@ -261,7 +261,7 @@ public class AppEnv {
   */
   private class func parseURLs(isLocal: Bool, app: JSON, port: Int,
     options: JSON) -> [String] {
-    var uris: [String] = Utils.convertJSONArrayToStringArray(app, fieldName: "uris")
+    var uris: [String] = JSONUtils.convertJSONArrayToStringArray(app, fieldName: "uris")
     if isLocal {
       uris = ["localhost:\(port)"]
     } else {

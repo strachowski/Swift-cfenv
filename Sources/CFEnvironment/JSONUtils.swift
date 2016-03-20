@@ -20,7 +20,7 @@ import SwiftyJSON
 /**
 * JSON utilities.
 */
-public class Utils {
+public class JSONUtils {
 
   /**
   * Converts the speficied string to a JSON object.

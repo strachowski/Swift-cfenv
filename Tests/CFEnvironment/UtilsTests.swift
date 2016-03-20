@@ -44,7 +44,7 @@ class UtilsTests : XCTestCase {
 
   func testConvertStringToJSON() {
     let VCAP_APPLICATION = "{ \"users\": null,  \"instance_id\": \"7d4f24cfba06462ba23d68aaf1d7354a\",  \"instance_index\": 0,  \"host\": \"0.0.0.0\",  \"port\": 61263,  \"started_at\": \"2016-03-04 02:43:07 +0000\",  \"started_at_timestamp\": 1457059387 }"
-    if let json = Utils.convertStringToJSON(VCAP_APPLICATION) {
+    if let json = JSONUtils.convertStringToJSON(VCAP_APPLICATION) {
       //print("JSON object is: \(json)")
       //print("Type is \(json["users"].dynamicType)")
       XCTAssertNil(json["users"] as? AnyObject)
@@ -61,8 +61,8 @@ class UtilsTests : XCTestCase {
 
   func testConvertJSONArrayToStringArray() {
     let jsonStr = "{ \"tags\": [ \"data_management\", \"ibm_created\", \"ibm_dedicated_public\" ] }"
-    if let json = Utils.convertStringToJSON(jsonStr) {
-      let strArray: [String] = Utils.convertJSONArrayToStringArray(json, fieldName: "tags")
+    if let json = JSONUtils.convertStringToJSON(jsonStr) {
+      let strArray: [String] = JSONUtils.convertJSONArrayToStringArray(json, fieldName: "tags")
         XCTAssertEqual(strArray.count, 3, "There should be 3 elements in the string array.")
         UtilsTests.verifyElementInArrayExists(strArray, element: "data_management")
         UtilsTests.verifyElementInArrayExists(strArray, element: "ibm_created")
@@ -75,7 +75,7 @@ class UtilsTests : XCTestCase {
   func testGetApp() {
     let options = "{ \"vcap\": { \"application\": { \"limits\": { \"mem\": 128, \"disk\": 1024, \"fds\": 16384 }, \"application_id\": \"e582416a-9771-453f-8df1-7b467f6d78e4\", \"application_version\": \"e5e029d1-4a1a-4004-9f79-655d550183fb\", \"application_name\": \"swift-test\", \"application_uris\": [ \"swift-test.mybluemix.net\" ], \"version\": \"e5e029d1-4a1a-4004-9f79-655d550183fb\", \"name\": \"swift-test\", \"space_name\": \"dev\", \"space_id\": \"b15eb0bb-cbf3-43b6-bfbc-f76d495981e5\", \"uris\": [ \"swift-test.mybluemix.net\" ], \"users\": null, \"instance_id\": \"7d4f24cfba06462ba23d68aaf1d7354a\", \"instance_index\": 0, \"host\": \"0.0.0.0\", \"port\": 61263, \"started_at\": \"2016-03-04 02:43:07 +0000\", \"started_at_timestamp\": 1457059387, \"start\": \"2016-03-04 02:43:07 +0000\", \"state_timestamp\": 1457059387 } } }"
     do {
-      if let json = Utils.convertStringToJSON(options) {
+      if let json = JSONUtils.convertStringToJSON(options) {
         let appEnv = try CFEnvironment.getAppEnv(json)
         //print(appEnv.app)
         let app = appEnv.getApp()
@@ -119,7 +119,7 @@ class UtilsTests : XCTestCase {
   func testGetServices() {
     let options = "{ \"vcap\": { \"services\": { \"cloudantNoSQLDB\": [ { \"name\": \"Cloudant NoSQL DB-kd\", \"label\": \"cloudantNoSQLDB\", \"tags\": [ \"data_management\", \"ibm_created\", \"ibm_dedicated_public\" ], \"plan\": \"Shared\", \"credentials\": { \"username\": \"09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix\", \"password\": \"06c19ae06b1915d8a6649df5901eca85e885182421ffa9ef89e14bbc1b76efd4\", \"host\": \"09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix.cloudant.com\", \"port\": 443, \"url\": \"https://09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix:06c19ae06b1915d8a6649df5901eca85e885182421ffa9ef89e14bbc1b76efd4@09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix.cloudant.com\" } } ] } } }"
     do {
-      if let json = Utils.convertStringToJSON(options) {
+      if let json = JSONUtils.convertStringToJSON(options) {
         //print("json \(json)")
         let appEnv = try CFEnvironment.getAppEnv(json)
         //let servs = appEnv.services
