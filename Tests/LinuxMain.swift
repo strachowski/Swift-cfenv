@@ -19,5 +19,5 @@ import XCTest
 @testable import CFEnvironmenttest
 
 XCTMain([
-    UtilsTests()
+    Tests()
 ])
