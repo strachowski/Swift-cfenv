@@ -143,8 +143,8 @@ public class AppEnv {
 
   /**
   * Returns a URL generated from VCAP_SERVICES for the specified service or nil
-  * if not found. The spec parameter should be the name of the service or a regex
-  * to look up the service.
+  * if service is not found. The spec parameter should be the name of the
+  * service or a regex to look up the service.
   *
   * The replacements parameter is a dictionary with the properties found in
   * Foundation's NSURLComponents class.
@@ -181,8 +181,40 @@ public class AppEnv {
 
     for (key, substitution) in substitutions {
       print("\(key) : \(substitution)")
-      // TODO: Update parsedURL object accordingly
-      // Probably using reflection (aka mirrors)...
+      switch key {
+        case "user":
+          parsedURL!.user = substitution.string
+        case "password":
+          parsedURL!.password = substitution.string
+        case "user":
+            parsedURL!.user = substitution.string
+        case "port" :
+            parsedURL!.port = substitution.int
+        case "host":
+          parsedURL!.host = substitution.string
+        case "scheme":
+          parsedURL!.scheme = substitution.string
+        case "query":
+          parsedURL!.query = substitution.string
+        case "queryItems":
+          let queryItems = substitution.arrayValue
+          var urlQueryItems: [NSURLQueryItem] = []
+          for queryItem in queryItems {
+            if let name = queryItem["name"].string {
+              let urlQueryItem = NSURLQueryItem(name: name, value: queryItem["value"].string)
+              urlQueryItems.append(urlQueryItem)
+            }
+          }
+          if urlQueryItems.count > 0 {
+            parsedURL!.queryItems = urlQueryItems
+          }
+        //case "fragment":
+        // parsedURL!.fragment = substitution.string
+        //case "path":
+        // parsedURL!.path = substitution.string
+        default:
+          print("The replacements '\(key)' value was ignored.")
+      }
     }
     return parsedURL!.string
   }

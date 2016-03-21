@@ -39,7 +39,8 @@ class Tests : XCTestCase {
         ("testConvertJSONArrayToStringArray", testConvertJSONArrayToStringArray),
         ("testGetApp", testGetApp),
         ("testGetServices", testGetServices),
-        ("testGetAppEnv", testGetAppEnv)
+        ("testGetAppEnv", testGetAppEnv),
+        ("testGetServiceURL", testGetServiceURL)
     ]
   }
 
@@ -179,6 +180,19 @@ class Tests : XCTestCase {
       XCTAssertEqual(urls.count, 1, "AppEnv's urls array should contain only 1 element.")
       XCTAssertEqual(urls[0], "http//localhost:8090", "AppEnv's urls[0] should be 'http//localhost:8090'.")
       XCTAssertEqual(appEnv.services.count, 0, "AppEnv's services array should contain 0 elements.")
+    } catch let error as NSError {
+      print("Error domain: \(error.domain)")
+      print("Error code: \(error.code)")
+      XCTFail("Could not get AppEnv object!")
+    }
+  }
+
+  func testGetServiceURL() {
+    //TODO
+    do {
+      let appEnv = try CFEnvironment.getAppEnv()
+      let serviceURL = appEnv.getServiceURL("serviceName", replacements: nil)
+      XCTAssertNil(serviceURL, "ServiceURL should be nil.")
     } catch let error as NSError {
       print("Error domain: \(error.domain)")
       print("Error code: \(error.code)")
