@@ -188,8 +188,8 @@ public class AppEnv {
           parsedURL!.password = substitution.string
         case "user":
             parsedURL!.user = substitution.string
-        case "port" :
-            parsedURL!.port = substitution.int
+        case "port":
+            parsedURL!.port = substitution.numberValue
         case "host":
           parsedURL!.host = substitution.string
         case "scheme":
