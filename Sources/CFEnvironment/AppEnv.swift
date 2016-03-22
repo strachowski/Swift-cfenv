@@ -17,8 +17,6 @@
 import Foundation
 import SwiftyJSON
 
-// TODO: Determine feasibility of returning structs/classes instead of
-// dictionaries for the methods and instance variables exposed in this class.
 // TODO: Review usage of optionals in Service and App structs
 public class AppEnv {
 
@@ -64,7 +62,6 @@ public class AppEnv {
   * Returns an App object.
   */
   public func getApp() -> App {
-
     // Get limits
     let limits: App.Limits?
     let memory = app["limits"]["mem"].int
@@ -148,6 +145,10 @@ public class AppEnv {
   *
   * The replacements parameter is a dictionary with the properties found in
   * Foundation's NSURLComponents class.
+  * References:
+  *   https://nodejs.org/api/url.html#url_url_format_urlobj
+  *   https://github.com/cloudfoundry-community/node-cfenv/blob/master/lib/cfenv.js
+  *   https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSURL_Class/#//apple_ref/occ/instp/NSURL/scheme
   */
   public func getServiceURL(spec: String, replacements: JSON?) -> String? {
     var substitutions: JSON = replacements ?? [:]
@@ -168,11 +169,6 @@ public class AppEnv {
       return nil;
     }
 
-    // TODO: Implement substitutions/replacements logic
-    // References:
-    // https://nodejs.org/api/url.html#url_url_format_urlobj
-    // https://github.com/cloudfoundry-community/node-cfenv/blob/master/lib/cfenv.js
-    // https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSURL_Class/#//apple_ref/occ/instp/NSURL/scheme
     substitutions.dictionaryObject?.removeValueForKey("url")
     let parsedURL = NSURLComponents(string: url!)
     if (parsedURL == nil) {
@@ -261,16 +257,18 @@ public class AppEnv {
       if app["name"].string == nil {
         portString = "8090"
       }
-      //TODO: Figure out what ports.getPort() does...
+      //TODO: Should we implement logic similar to what ports.getPort() does...?
       //portString = "" + (ports.getPort(appEnv.name));
       portString = "8090"
     }
 
-    let number: Int? = (portString != nil) ? Int(portString!) : nil
-    if number == nil {
-        throw CFEnvironmentError.VariableNotFound
+    //let number: Int? = (portString != nil) ? Int(portString!) : nil
+    if let number = Int(portString!) {
+      return number
+    } else {
+      //TODO: Add error message
+      throw CFEnvironmentError.VariableNotFound
     }
-    return number!
   }
 
   /**
