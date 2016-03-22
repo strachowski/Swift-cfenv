@@ -66,7 +66,7 @@ do {
   // print("serviceURL: \(serviceURL)")
   // let app = appEnv.getApp()
   // print("app: \(app)")
-} catch CFEnvironmentError.VariableNotFound {
+} catch CFEnvironmentError.InvalidValue {
   print("Oops, something went wrong...")
 }
 //TEST

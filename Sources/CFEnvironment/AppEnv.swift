@@ -17,7 +17,6 @@
 import Foundation
 import SwiftyJSON
 
-// TODO: Review usage of optionals in Service and App structs
 public class AppEnv {
 
   public let isLocal: Bool
@@ -61,7 +60,7 @@ public class AppEnv {
   /**
   * Returns an App object.
   */
-  public func getApp() -> App {
+  public func getApp() -> App? {
     // Get limits
     let limits: App.Limits?
     let memory = app["limits"]["mem"].int
@@ -83,13 +82,27 @@ public class AppEnv {
     let uris = JSONUtils.convertJSONArrayToStringArray(app, fieldName: "uris")
 
     // Create App object
-    let appObj = App(id: app["application_id"].string, name: app["application_name"].string,
-      uris: uris, version: app["version"].string,
-      instanceId: app["instance_id"].string, instanceIndex: app["instance_index"].int,
-      limits: limits, port: app["port"].int, spaceId: app["space_id"].string,
-      startedAtTs: startedAtTs, startedAt: startedAt)
+    let name = app["application_name"].string
+    let id = app["application_id"].string
+    let version = app["version"].string
+    let instanceId = app["instance_id"].string
+    let instanceIndex = app["instance_index"].int
+    let port = app["port"].int
+    let spaceId = app["space_id"].string
 
-    return appObj
+    // App instance should only be created if all required variables exist
+    if limits != nil && startedAt != nil && startedAtTs != nil &&
+      id != nil && name != nil && version != nil &&
+      instanceId != nil && instanceIndex != nil && port != nil &&
+      spaceId != nil {
+        let appObj = App(id: id!, name: name!, uris: uris, version: version!,
+          instanceId: instanceId!, instanceIndex: instanceIndex!,
+          limits: limits!, port: port!, spaceId: spaceId!,
+          startedAtTs: startedAtTs!, startedAt: startedAt!)
+        return appObj
+    }
+
+    return nil
   }
 
   /**
@@ -257,7 +270,7 @@ public class AppEnv {
       if app["name"].string == nil {
         portString = "8090"
       }
-      //TODO: Should we implement logic similar to what ports.getPort() does...?
+      //TODO: Are there any benefits in implementing logic similar to what ports.getPort()...?
       //portString = "" + (ports.getPort(appEnv.name));
       portString = "8090"
     }
@@ -266,7 +279,6 @@ public class AppEnv {
     if let number = Int(portString!) {
       return number
     } else {
-      //TODO: Add error message
       throw CFEnvironmentError.InvalidValue("Invalid PORT value: \(portString)")
     }
   }
@@ -276,11 +288,9 @@ public class AppEnv {
   */
   private class func parseName(app: JSON, options: JSON) -> String? {
     let name: String? = options["name"].string ?? app["name"].string
-
     // TODO: Add logic for parsing manifest.yml to get name
     // https://github.com/behrang/YamlSwift
     // http://stackoverflow.com/questions/24097826/read-and-write-data-from-text-file
-
     return name
   }
 

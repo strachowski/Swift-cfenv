@@ -92,34 +92,37 @@ class Tests : XCTestCase {
     do {
       let appEnv = try CFEnvironment.getAppEnv(jsonOptions)
       //print(appEnv.app)
-      let app = appEnv.getApp()
-      //print("app: \(app)")
-      XCTAssertNotNil(app)
-      XCTAssertEqual(app.port, 61263, "Application port number should match.")
-      XCTAssertEqual(app.id, "e582416a-9771-453f-8df1-7b467f6d78e4", "Application ID value should match.")
-      XCTAssertEqual(app.version, "e5e029d1-4a1a-4004-9f79-655d550183fb", "Application version number should match.")
-      XCTAssertEqual(app.name, "swift-test", "App name should match.")
-      XCTAssertEqual(app.instanceId, "7d4f24cfba06462ba23d68aaf1d7354a", "Application instance ID value should match.")
-      XCTAssertEqual(app.instanceIndex, 0, "Application instance index value should match.")
-      XCTAssertEqual(app.spaceId, "b15eb0bb-cbf3-43b6-bfbc-f76d495981e5", "Application space ID value should match.")
-      let limits = app.limits
-      //print("limits: \(limits)")
-      XCTAssertNotNil(limits)
-      XCTAssertEqual(limits!.memory, 128, "Memory value should match.")
-      XCTAssertEqual(limits!.disk, 1024, "Disk value should match.")
-      XCTAssertEqual(limits!.fds, 16384, "FDS value should match.")
-      let uris = app.uris
-      XCTAssertNotNil(uris)
-      XCTAssertEqual(uris!.count, 1, "There should be only 1 uri in the uris array.")
-      XCTAssertEqual(uris![0], "swift-test.mybluemix.net", "URI value should match.")
-      XCTAssertEqual(app.name, "swift-test", "Application name should match.")
-      let startedAt: NSDate? = app.startedAt
-      XCTAssertNotNil(startedAt)
-      let dateUtils = DateUtils()
-      let startedAtStr = dateUtils.convertNSDateToString(startedAt)
-      XCTAssertEqual(startedAtStr, "2016-03-04 02:43:07 +0000", "Application startedAt date should match.")
-      XCTAssertNotNil(app.startedAtTs, "Application startedAt ts should not be nil.")
-      XCTAssertEqual(app.startedAtTs, 1457059387, "Application startedAt ts should match.")
+      if let app = appEnv.getApp() {
+        //print("app: \(app)")
+        XCTAssertNotNil(app)
+        XCTAssertEqual(app.port, 61263, "Application port number should match.")
+        XCTAssertEqual(app.id, "e582416a-9771-453f-8df1-7b467f6d78e4", "Application ID value should match.")
+        XCTAssertEqual(app.version, "e5e029d1-4a1a-4004-9f79-655d550183fb", "Application version number should match.")
+        XCTAssertEqual(app.name, "swift-test", "App name should match.")
+        XCTAssertEqual(app.instanceId, "7d4f24cfba06462ba23d68aaf1d7354a", "Application instance ID value should match.")
+        XCTAssertEqual(app.instanceIndex, 0, "Application instance index value should match.")
+        XCTAssertEqual(app.spaceId, "b15eb0bb-cbf3-43b6-bfbc-f76d495981e5", "Application space ID value should match.")
+        let limits = app.limits
+        //print("limits: \(limits)")
+        //XCTAssertNotNil(limits)
+        XCTAssertEqual(limits.memory, 128, "Memory value should match.")
+        XCTAssertEqual(limits.disk, 1024, "Disk value should match.")
+        XCTAssertEqual(limits.fds, 16384, "FDS value should match.")
+        let uris = app.uris
+        //XCTAssertNotNil(uris)
+        XCTAssertEqual(uris.count, 1, "There should be only 1 uri in the uris array.")
+        XCTAssertEqual(uris[0], "swift-test.mybluemix.net", "URI value should match.")
+        XCTAssertEqual(app.name, "swift-test", "Application name should match.")
+        let startedAt: NSDate? = app.startedAt
+        XCTAssertNotNil(startedAt)
+        let dateUtils = DateUtils()
+        let startedAtStr = dateUtils.convertNSDateToString(startedAt)
+        XCTAssertEqual(startedAtStr, "2016-03-04 02:43:07 +0000", "Application startedAt date should match.")
+        XCTAssertNotNil(app.startedAtTs, "Application startedAt ts should not be nil.")
+        XCTAssertEqual(app.startedAtTs, 1457059387, "Application startedAt ts should match.")
+      } else {
+        XCTFail("Could not get App object!")
+      }
     } catch let error as NSError {
       print("Error domain: \(error.domain)")
       print("Error code: \(error.code)")
@@ -275,6 +278,8 @@ class Tests : XCTestCase {
       }
     }
   }
+
+
 
   private class func verifyElementInArrayExists(strArray: [String], element: String) {
     let index: Int? = strArray.indexOf(element)
