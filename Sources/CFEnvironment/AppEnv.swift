@@ -180,14 +180,12 @@ public class AppEnv {
     }
 
     for (key, substitution) in substitutions {
-      print("\(key) : \(substitution)")
+      //print("\(key) : \(substitution)")
       switch key {
         case "user":
           parsedURL!.user = substitution.string
         case "password":
           parsedURL!.password = substitution.string
-        case "user":
-            parsedURL!.user = substitution.string
         case "port":
             parsedURL!.port = substitution.numberValue
         case "host":
