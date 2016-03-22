@@ -206,45 +206,47 @@ class Tests : XCTestCase {
   func testGetServiceURL() {
     //TODO
     do {
-      // Case #1 - Running locally, no options
+      // Service name
       let name = "Cloudant NoSQL DB-kd"
+
+      // Case #1 - Running locally, no options
       let appEnv = try CFEnvironment.getAppEnv()
       let serviceURL = appEnv.getServiceURL(name, replacements: nil)
-      XCTAssertNil(serviceURL, "ServiceURL should be nil.")
+      XCTAssertNil(serviceURL, "The serviceURL should be nil.")
 
       // Case #2 - Running locally with options and no replacements
-      if let json = JSONUtils.convertStringToJSON(options) {
-        let appEnv = try CFEnvironment.getAppEnv(json)
-        if let serviceURL = appEnv.getServiceURL(name, replacements: nil) {
-            XCTAssertEqual(serviceURL, "https://09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix:06c19ae06b1915d8a6649df5901eca85e885182421ffa9ef89e14bbc1b76efd4@09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix.cloudant.com", "ServiceURL should match (case #2).")
-        } else {
-          XCTFail("A serviceURL should have been returned (case #2)!")
-        }
-      } else {
-        XCTFail("Could not generate JSON object!")
-      }
+      try verifyServiceURLWithOptions(name, replacements: nil, expectedServiceURL: "https://09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix:06c19ae06b1915d8a6649df5901eca85e885182421ffa9ef89e14bbc1b76efd4@09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix.cloudant.com")
 
       // Case #3 - Running locally with options and replacements
       //let replacements = "{ \"user\": \"username01\", \"password\": \"passw0rd\", \"port\": 9080, \"host\": \"bluemix.ibm.com\", \"scheme\": \"https\", \"query\": \"name0=value0&name1=value1\", \"queryItems\": [ { \"name\": \"name2\", \"value\": \"value2\" }, { \"name\": \"name3\", \"value\": \"value3\" } ] }"
-      let replacements = "{ \"user\": \"username01\", \"password\": \"passw0rd\", \"port\": 9080, \"host\": \"bluemix.ibm.com\", \"scheme\": \"https\", \"queryItems\": [ { \"name\": \"name2\", \"value\": \"value2\" }, { \"name\": \"name3\", \"value\": \"value3\" } ] }"
-      if let json = JSONUtils.convertStringToJSON(options) {
-        let appEnv = try CFEnvironment.getAppEnv(json)
-        if let substitutions = JSONUtils.convertStringToJSON(replacements) {
-          if let serviceURL = appEnv.getServiceURL(name, replacements: substitutions) {
-              XCTAssertEqual(serviceURL, "https://username01:passw0rd@bluemix.ibm.com:9080?name2=value2&name3=value3", "ServiceURL should match (case #3).")
-          } else {
-            XCTFail("A serviceURL should have been returned (case #3)!")
-          }
-        } else {
-          XCTFail("Could not generate JSON object for replacements!")
-        }
-      } else {
-        XCTFail("Could not generate JSON object!")
-      }
+      var replacements = "{ \"user\": \"username01\", \"password\": \"passw0rd\", \"port\": 9080, \"host\": \"bluemix.ibm.com\", \"scheme\": \"https\", \"queryItems\": [ { \"name\": \"name2\", \"value\": \"value2\" }, { \"name\": \"name3\", \"value\": \"value3\" } ] }"
+      try verifyServiceURLWithOptions(name, replacements: replacements, expectedServiceURL: "https://username01:passw0rd@bluemix.ibm.com:9080?name2=value2&name3=value3")
+
+      // Case #4
+      replacements = "{ \"user\": \"username01\", \"password\": \"passw0rd\", \"port\": 9080, \"host\": \"bluemix.ibm.com\", \"scheme\": \"https\", \"query\": \"name0=value0&name1=value1\" }"
+      try verifyServiceURLWithOptions(name, replacements: replacements, expectedServiceURL: "https://username01:passw0rd@bluemix.ibm.com:9080?name0=value0&name1=value1")
+
+      // Case #5
+      replacements = "{ \"user\": \"username01\", \"password\": \"passw0rd\", \"port\": 9080, \"host\": \"bluemix.ibm.com\", \"scheme\": \"https\", \"query\": \"name0=value0&name1=value1\", \"queryItems\": [ { \"name\": \"name2\", \"value\": \"value2\" }, { \"name\": \"name3\", \"value\": \"value3\" } ] }"
+      try verifyServiceURLWithOptions(name, replacements: replacements, expectedServiceURL: "https://username01:passw0rd@bluemix.ibm.com:9080?name2=value2&name3=value3")
     } catch let error as NSError {
       print("Error domain: \(error.domain)")
       print("Error code: \(error.code)")
       XCTFail("Could not get AppEnv object!")
+    }
+  }
+
+  private func verifyServiceURLWithOptions(name: String, replacements: String?, expectedServiceURL: String) throws {
+    if let json = JSONUtils.convertStringToJSON(options) {
+      let appEnv = try CFEnvironment.getAppEnv(json)
+      let substitutions = JSONUtils.convertStringToJSON(replacements)
+      if let serviceURL = appEnv.getServiceURL(name, replacements: substitutions) {
+          XCTAssertEqual(serviceURL, expectedServiceURL, "ServiceURL should match '\(expectedServiceURL)'.")
+      } else {
+        XCTFail("A serviceURL should have been returned!")
+      }
+    } else {
+      XCTFail("Could not generate JSON object!")
     }
   }
 
