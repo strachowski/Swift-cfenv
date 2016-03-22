@@ -267,7 +267,7 @@ public class AppEnv {
       return number
     } else {
       //TODO: Add error message
-      throw CFEnvironmentError.VariableNotFound
+      throw CFEnvironmentError.InvalidValue("Invalid PORT value: \(portString)")
     }
   }
 
