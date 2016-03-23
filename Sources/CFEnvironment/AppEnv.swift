@@ -215,6 +215,7 @@ public class AppEnv {
           if urlQueryItems.count > 0 {
             parsedURL!.queryItems = urlQueryItems
           }
+        // These are being ignored
         //case "fragment":
         // parsedURL!.fragment = substitution.string
         //case "path":
@@ -270,7 +271,7 @@ public class AppEnv {
       if app["name"].string == nil {
         portString = "8090"
       }
-      //TODO: Are there any benefits in implementing logic similar to what ports.getPort()...?
+      //TODO: Are there any benefits in implementing logic similar to ports.getPort() (npm module)...?
       //portString = "" + (ports.getPort(appEnv.name));
       portString = "8090"
     }

@@ -41,7 +41,8 @@ class Tests : XCTestCase {
         ("testGetServices", testGetServices),
         ("testGetService", testGetService),
         ("testGetAppEnv", testGetAppEnv),
-        ("testGetServiceURL", testGetServiceURL)
+        ("testGetServiceURL", testGetServiceURL),
+        ("testGetServiceCreds", testGetServiceCreds)
     ]
   }
 
@@ -166,20 +167,21 @@ class Tests : XCTestCase {
   func testGetService() {
     do {
       let appEnv = try CFEnvironment.getAppEnv(jsonOptions)
+      let checkService = { (name: String) in
+        if let service = appEnv.getService(name) {
+          self.verifyService(service)
+        } else {
+          XCTFail("A service object should have been found for '\(name)'.")
+        }
+      }
+
+      // Case #1
       let name = "Cloudant NoSQL DB-kd"
+      checkService(name)
 
-      if let service = appEnv.getService(name) {
-        verifyService(service)
-      } else {
-        XCTFail("A service object should have been found for '\(name)'.")
-      }
-
+      // Case #2
       let regex = "Cloudant NoSQL*"
-      if let service = appEnv.getService(regex) {
-        verifyService(service)
-      } else {
-        XCTFail("A service object should have been found for '\(regex)'.")
-      }
+      checkService(regex)
     } catch let error as NSError {
       print("Error domain: \(error.domain)")
       print("Error code: \(error.code)")
@@ -231,7 +233,6 @@ class Tests : XCTestCase {
       try verifyServiceURLWithOptions(name, replacements: nil, expectedServiceURL: "https://09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix:06c19ae06b1915d8a6649df5901eca85e885182421ffa9ef89e14bbc1b76efd4@09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix.cloudant.com")
 
       // Case #3 - Running locally with options and replacements
-      //let replacements = "{ \"user\": \"username01\", \"password\": \"passw0rd\", \"port\": 9080, \"host\": \"bluemix.ibm.com\", \"scheme\": \"https\", \"query\": \"name0=value0&name1=value1\", \"queryItems\": [ { \"name\": \"name2\", \"value\": \"value2\" }, { \"name\": \"name3\", \"value\": \"value3\" } ] }"
       var replacements = "{ \"user\": \"username01\", \"password\": \"passw0rd\", \"port\": 9080, \"host\": \"bluemix.ibm.com\", \"scheme\": \"https\", \"queryItems\": [ { \"name\": \"name2\", \"value\": \"value2\" }, { \"name\": \"name3\", \"value\": \"value3\" } ] }"
       try verifyServiceURLWithOptions(name, replacements: replacements, expectedServiceURL: "https://username01:passw0rd@bluemix.ibm.com:9080?name2=value2&name3=value3")
 
@@ -242,6 +243,37 @@ class Tests : XCTestCase {
       // Case #5
       replacements = "{ \"user\": \"username01\", \"password\": \"passw0rd\", \"port\": 9080, \"host\": \"bluemix.ibm.com\", \"scheme\": \"https\", \"query\": \"name0=value0&name1=value1\", \"queryItems\": [ { \"name\": \"name2\", \"value\": \"value2\" }, { \"name\": \"name3\", \"value\": \"value3\" } ] }"
       try verifyServiceURLWithOptions(name, replacements: replacements, expectedServiceURL: "https://username01:passw0rd@bluemix.ibm.com:9080?name2=value2&name3=value3")
+    } catch let error as NSError {
+      print("Error domain: \(error.domain)")
+      print("Error code: \(error.code)")
+      XCTFail("Could not get AppEnv object!")
+    }
+  }
+
+  func testGetServiceCreds() {
+    do {
+      let appEnv = try CFEnvironment.getAppEnv(jsonOptions)
+      let checkServiceCreds = { (name: String) in
+        if let serviceCreds = appEnv.getServiceCreds(name) {
+          self.verifyServiceCreds(serviceCreds)
+        } else {
+          XCTFail("Service credentials should have been found for '\(name)'.")
+        }
+      }
+
+      // Case #1
+      let name = "Cloudant NoSQL DB-kd"
+      checkServiceCreds(name)
+
+      // Case #2
+      let regex = "Cloudant NoSQL*"
+      checkServiceCreds(regex)
+
+      // Case #3
+      let badName = "Unknown Service"
+      if appEnv.getServiceCreds(badName) != nil {
+        XCTFail("Service credentials should not have been found for '\(badName)'.")
+      }
     } catch let error as NSError {
       print("Error domain: \(error.domain)")
       print("Error code: \(error.code)")
@@ -270,8 +302,12 @@ class Tests : XCTestCase {
     XCTAssertEqual(tags[2], "ibm_dedicated_public", "Serivce tag #2 should match.")
     let credentials: JSON? = service.credentials
     XCTAssertNotNil(credentials)
-    XCTAssertEqual(credentials!.count, 5, "There should be 5 elements in the credentials object.")
-    for (key, value) in credentials! {
+    verifyServiceCreds(credentials!)
+  }
+
+  private func verifyServiceCreds(serviceCreds: JSON) {
+    XCTAssertEqual(serviceCreds.count, 5, "There should be 5 elements in the credentials object.")
+    for (key, value) in serviceCreds {
       switch key {
         case "password":
           XCTAssertEqual(value, "06c19ae06b1915d8a6649df5901eca85e885182421ffa9ef89e14bbc1b76efd4", "Password in credentials object should match.")
@@ -288,8 +324,6 @@ class Tests : XCTestCase {
       }
     }
   }
-
-
 
   private class func verifyElementInArrayExists(strArray: [String], element: String) {
     let index: Int? = strArray.indexOf(element)
