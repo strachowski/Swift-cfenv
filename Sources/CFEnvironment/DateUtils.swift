@@ -29,7 +29,8 @@ public class DateUtils {
   }
 
   /**
-  *
+  * Converts to a NSDate object a string that comforms to the following
+  * format yyyy-MM-dd HH:mm:ss ZZZ.
   */
   public func convertStringToNSDate(dateString: String?) -> NSDate? {
     let nsDate: NSDate?
@@ -42,7 +43,8 @@ public class DateUtils {
   }
 
   /**
-  *
+  * Converts a NSDate object to a string that follows the following format:
+  * yyyy-MM-dd HH:mm:ss ZZZ.
   */
   public func convertNSDateToString(nsDate: NSDate?) -> String? {
     let dateString: String?

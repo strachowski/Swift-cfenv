@@ -32,18 +32,6 @@ public class JSONUtils {
     }
     print("Could not generate JSON object from string: \(text)")
     return nil
-
-    // if let data = text?.dataUsingEncoding(NSUTF8StringEncoding) {
-    //   do {
-    //     let dictionary = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as? [String:AnyObject]
-    //     print("Value returned from method is: \(dictionary)")
-    //     return dictionary
-    //   } catch  let error as NSError {
-    //     print("Error code: \(error.code)")
-    //     return nil
-    //   }
-    // }
-    // return nil
   }
 
   /**
