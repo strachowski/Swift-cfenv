@@ -42,15 +42,25 @@ fdSet(server_sockfd, set: &active_fd_set)
 
 let FD_SETSIZE = Int32(1024)
 
+//https://developer.ibm.com/bluemix/2014/07/17/node-cfenv-makes-it-easy/
 // Generate HTTP response
 // Get environment variables
 let environmentVars = NSProcessInfo.processInfo().environment
 //TEST
 
-let stdout = NSFileHandle.fileHandleWithStandardOutput()
-if let data = "A freaking logging test".dataUsingEncoding(NSUTF8StringEncoding) {
-  stdout.writeData(data)
+
+var responseBody = "<html><body>Hello from Swift on Linux!" +
+  "<br />" +
+  "<br />"
+
+// Environment variables
+responseBody += "<table border=\"1\">" +
+  "<tr><th>Environment Variable</th><th>Value</th></tr>"
+
+for (variable, value) in environmentVars {
+    responseBody += "<tr><td>\(variable)</td><td>\(value)</td></tr>\n"
 }
+responseBody += "</table><br /><br />"
 
 var appEnv: AppEnv? = nil
 do {
@@ -69,46 +79,38 @@ do {
 } catch CFEnvironmentError.InvalidValue {
   print("Oops, something went wrong...")
 }
-//TEST
 
-//let dictionary = Utils.convertStringToJSON(environmentVars["VCAP_APPLICATION"])
-
-var responseBody = "<html><body>Hello from Swift on Linux!" +
-  "<br />" +
-  "<br />" +
-  "size = \(appEnv!.app.count)" +
-  "<br /> isLocal = \(appEnv!.isLocal)" +
-  "<br /> App obj = \(appEnv!.getApp())" +
-  "<table border=\"1\">" +
-  "<tr><th>App Variable</th><th>Value</th></tr>"
+// JSON object for App
+responseBody += "<table border=\"1\">" +
+  "<tr><th>App Property (JSON)</th><th>Value</th></tr>"
 
 for (variable, value) in appEnv!.app {
     responseBody += "<tr><td>\(variable)</td><td>\(value)</td></tr>\n"
 }
+responseBody += "</table>"
 
-//TEST
-responseBody += "</table><br /><br /><br />"
-
+// App object
+let app = appEnv!.getApp()
+responseBody += "<br /><br />"
 responseBody += "<table border=\"1\">" +
-  "<tr><th>Service name</th><th>Value</th></tr>"
+  "<tr><th>Object</th><th>Value</th></tr>"
 
-  for (variable, value) in appEnv!.app {
-      responseBody += "<tr><td>\(variable)</td><td>\(value)</td></tr>\n"
-  }
-
-responseBody += "</table><br /><br /><br />"
-responseBody += "<table border=\"1\">" +
-    "<tr><th>Env Variable</th><th>Value</th></tr>"
-
-
-for (variable, value) in environmentVars {
-    responseBody += "<tr><td>\(variable)</td><td>\(value)</td></tr>\n"
+let mirror = Mirror(reflecting: app)
+for case let (label?, value) in mirror.children {
+  responseBody += "<tr><td>\(label)</td><td>\(value)</td></tr>\n"
 }
+for element in mirror.children {
+  responseBody += "<tr><td>Element</td><td>\(element.value)</td></tr>\n"
+}
+responseBody += "</table>"
 
-//TEST
-
+// Services
+responseBody += "<br /><br />"
+responseBody += "<table border=\"1\">" +
+  "<tr><th>Service Property</th><th>Value</th></tr>"
 responseBody += "</table></body></html>"
 
+//TEST
 let httpResponse = "HTTP/1.0 200 OK\n" +
   "Content-Type: text/html\n" +
   "Content-Length: \(responseBody.length) \n\n" +
@@ -116,7 +118,6 @@ let httpResponse = "HTTP/1.0 200 OK\n" +
 
 var clientname = sockaddr_in()
 while true {
-  print("INSIDE WHILE LOOP!!")
   // Block until input arrives on one or more active sockets
   var read_fd_set = active_fd_set;
   select(FD_SETSIZE, &read_fd_set, nil, nil, nil)
@@ -132,9 +133,6 @@ while true {
             UnsafeMutablePointer(up1),
             UnsafeMutablePointer(up2))
             print("Received connection request from client: " + String(inet_ntoa (clientname.sin_addr)) + ", port " + String(UInt16(clientname.sin_port).bigEndian))
-            if let data = "A freaking logging test".dataUsingEncoding(NSUTF8StringEncoding) {
-              stdout.writeData(data)
-            }
             fdSet(client_sockfd, set: &active_fd_set)
         }
       }

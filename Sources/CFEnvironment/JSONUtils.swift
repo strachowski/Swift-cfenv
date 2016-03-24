@@ -25,7 +25,7 @@ public class JSONUtils {
   /**
   * Converts the speficied string to a JSON object.
   */
-  public class func convertStringToJSON(text: String?) -> JSON? { //-> [String:AnyObject]? {
+  public class func convertStringToJSON(text: String?) -> JSON? {
     if let data = text?.dataUsingEncoding(NSUTF8StringEncoding) {
       let json = JSON(data: data)
       return json
