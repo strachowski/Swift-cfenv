@@ -20,6 +20,11 @@
 * back to the client.
 **/
 
+/*
+Address.swift
+main.swift
+*/
+
 #if os(Linux)
 import Glibc
 #else
@@ -29,25 +34,11 @@ import Utils
 import Foundation
 import CFEnvironment
 
-// Create server socket
-let address = parseAddress()
-let server_sockfd = createSocket(address)
-// Listen on socket with queue of 5
-listen(server_sockfd, 5)
-var active_fd_set = fd_set()
-print("Server is listening on port: \(address.port)\n")
-
-// Initialize the set of active sockets
-fdSet(server_sockfd, set: &active_fd_set)
-
-let FD_SETSIZE = Int32(1024)
-
 //https://developer.ibm.com/bluemix/2014/07/17/node-cfenv-makes-it-easy/
 // Generate HTTP response
 // Get environment variables
 let environmentVars = NSProcessInfo.processInfo().environment
 //TEST
-
 
 var responseBody = "<html><body>Hello from Swift on Linux!" +
   "<br />" +
@@ -65,6 +56,7 @@ responseBody += "</table><br /><br />"
 var appEnv: AppEnv? = nil
 do {
   appEnv = try CFEnvironment.getAppEnv()
+  print("bind value: \(appEnv!.bind)")
   // print("appEnv: \(appEnv)")
   // let services = appEnv.getServices()
   // print("services: \(services)")
@@ -94,12 +86,18 @@ let app = appEnv!.getApp()
 let services = appEnv!.getServices()
 responseBody += "<br /><br />"
 responseBody += "<table border=\"1\">"
+
+responseBody += "<tr><th colspan=\"2\">Application Environment Object</th></tr>\n"
+responseBody += "<tr><td>AppEnv</td><td>isLocal: \(appEnv!.isLocal), port: \(appEnv!.port), name: \(appEnv!.name), bind: \(appEnv!.bind), urls: \(appEnv!.urls), app: \(appEnv!.app), services: \(appEnv!.services)</td></tr>\n"
 responseBody += "<tr><th colspan=\"2\">Application Object</th></tr>\n"
 responseBody += "<tr><td>App</td><td>\(app)</td></tr>\n"
-responseBody += "<tr><th colspan=\"2\">Service Objects</th></tr>\n"
 
-for (name, service) in services {
-  responseBody += "<tr><td>\(name)</td><td>\(service)</td></tr>\n"
+// Service objects
+if services.count > 0 {
+  responseBody += "<tr><th colspan=\"2\">Service Objects</th></tr>\n"
+  for (name, service) in services {
+    responseBody += "<tr><td>\(name)</td><td>\(service)</td></tr>\n"
+  }
 }
 
 /*
@@ -123,8 +121,24 @@ let httpResponse = "HTTP/1.0 200 OK\n" +
 // User values from AppEnv to set the port
 
 // Create server socket
-//let address2 = Address(ip: "0.0.0.0", port: UInt16(port))
 
+// Create server socket
+//let address = parseAddress()
+//http://www.binarytides.com/hostname-to-ip-address-c-sockets-linux/
+
+let address = Address(ip: appEnv!.bind, port: UInt16(appEnv!.port))
+//let address = Address(ip: appEnv!.bind, port: UInt16(8090))
+//let address = parseAddress()
+let server_sockfd = createSocket(address)
+// Listen on socket with queue of 5
+listen(server_sockfd, 5)
+var active_fd_set = fd_set()
+print("Server is listening on port: \(address.port)\n")
+
+// Initialize the set of active sockets
+fdSet(server_sockfd, set: &active_fd_set)
+
+let FD_SETSIZE = Int32(1024)
 //test
 
 var clientname = sockaddr_in()

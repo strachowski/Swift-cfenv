@@ -50,8 +50,8 @@ public class AppEnv {
     // Get name
     name = AppEnv.parseName(app, options: options)
 
-    // Get bind
-    bind = app["host"].string ?? "localhost"
+    // Get bind (IP address of the application instance)
+    bind = app["host"].string ?? "0.0.0.0"
 
     // Get urls
     urls = AppEnv.parseURLs(isLocal, app: app, port: port, options: options)
