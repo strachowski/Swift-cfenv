@@ -91,10 +91,18 @@ responseBody += "</table>"
 
 // App object
 let app = appEnv!.getApp()
+let services = appEnv!.getServices()
 responseBody += "<br /><br />"
-responseBody += "<table border=\"1\">" +
-  "<tr><th>Object</th><th>Value</th></tr>"
+responseBody += "<table border=\"1\">"
+responseBody += "<tr><th colspan=\"2\">Application Object</th></tr>\n"
+responseBody += "<tr><td>App</td><td>\(app)</td></tr>\n"
+responseBody += "<tr><th colspan=\"2\">Service Objects</th></tr>\n"
 
+for (name, service) in services {
+  responseBody += "<tr><td>\(name)</td><td>\(service)</td></tr>\n"
+}
+
+/*
 let mirror = Mirror(reflecting: app)
 for case let (label?, value) in mirror.children {
   responseBody += "<tr><td>\(label)</td><td>\(value)</td></tr>\n"
@@ -102,19 +110,22 @@ for case let (label?, value) in mirror.children {
 for element in mirror.children {
   responseBody += "<tr><td>Element</td><td>\(element.value)</td></tr>\n"
 }
+*/
 responseBody += "</table>"
-
-// Services
-responseBody += "<br /><br />"
-responseBody += "<table border=\"1\">" +
-  "<tr><th>Service Property</th><th>Value</th></tr>"
-responseBody += "</table></body></html>"
+responseBody += "</html>"
 
 //TEST
 let httpResponse = "HTTP/1.0 200 OK\n" +
   "Content-Type: text/html\n" +
   "Content-Length: \(responseBody.length) \n\n" +
   responseBody
+
+// User values from AppEnv to set the port
+
+// Create server socket
+//let address2 = Address(ip: "0.0.0.0", port: UInt16(port))
+
+//test
 
 var clientname = sockaddr_in()
 while true {
