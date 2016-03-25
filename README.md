@@ -120,7 +120,7 @@ App is a structure that contains the following [`VCAP_APPLICATION`](https://docs
 - `version`: A GUID string identifying a version of the application.
 - `instanceId`: A GUID string that identifies the application instance.
 - `instanceIndex`: An integer that represents the index number of the instance.
-- `limits`: A [App.Limits](#applimits) object that contains memory, disk, and number of files for the application instance (see below).
+- `limits`: An [App.Limits](#applimits) object that contains memory, disk, and number of files for the application instance (see below).
 - `port`: An integer that contains the port number of the application instance.
 - `spaceId`: A GUID string identifying the application’s space.
 - `startedAtTs`: An NSTimeInterval instance that contains the Unix epoch timestamp for the time the application instance was started.
