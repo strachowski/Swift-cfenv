@@ -58,7 +58,6 @@ The `options` JSON parameter can contain the following properties:
 An instance of the `AppEnv` class has the following properties:
 
 - `isLocal`: Bool property is set to true if the VCAP_APPLICATION environment variable was set.
-REVIEW LOGIC!!!
 - `app`: A JSON object version of the VCAP_APPLICATION environment variable.
 - `services`: A JSON object version of the VCAP_SERVICES environment variable.
 - `name`: A string that contains the name of the application.
@@ -69,9 +68,16 @@ REVIEW LOGIC!!!
 
 If no value can be determined for the `port` property, a default port of 8090 is assigned to it.
 
-These are the instance methods for an `AppEnv` object:
+If running locally, the protocol used for the URLs will be `http`, otherwise it will be `https`. You can override this logic by specifying a particular protocol using the `protocol` property on the `options` parameter.
 
-- getServices()
-- appEnv.getService(spec)
-- getServiceURL(spec, replacements)
-- appEnv.getServiceCreds(spec)
+If the actual hostnames cannot be determined when running on the cloud (i.e. in Cloud Foundry), the url and urls values will have `localhost` as their hostname value.
+
+The following are the instance methods for an `AppEnv` object:
+
+- `getServices()`: Returns all services bound to the application in a dictionary. The key in the dictionary is the name of the service, while the value is a Service object. Please note that this returned value is different than the `services` property returned from the `AppEnv` instance.
+- `appEnv.getService(spec: String)`: Returns a Service object for the specified Cloud Foundry service. The `spec` parameter should be the name of the service or a regular expression to look up the service. If there is no service that matches the `spec` parameter, this method returns nil.
+- `getServiceURL(spec: String, replacements: JSON?)`: Returns a service URL generated from the `VCAP_SERVICES` environment variable for the specified service or nil if service cannot be found. The `spec` parameter should be the name of the service or a regular expression to look up the service. The `replacements` parameter is a JSON object with the properties (e.g. `user`, `password`, `port`, etc.) found in Foundation's [NSURLComponents](https://developer.apple.com/library/ios/documentation/Foundation/Reference/NSURLComponents_class/index.html) class. To generate the service URL, the `url` property in the service credentials is first used to create an instance of the NSURLComponents class. The initial set of properties in the NSURLComponents instance can then be overridden by properties specified in the optional `replacements` JSON parameter. If there is not a `url` property in the service credentials, this method returns nil. Having said this, note that you have the capability to override the `url` property in the service credentials, with a `replacements` property of `url` and a value that specifies the name of the property in the service credentials that contains the base URL. For instance, you may find this useful in the case there is no `url` property in the service credentials.
+- `appEnv.getServiceCreds(spec: String)` - Returns a JSON object that contains the credentials for the specified service. The `spec` parameter should be the name of the service or a regular expression to look up the service. If there is no service that matches the `spec` parameter, this method returns nil. In the case there is no credentials property for the specified service, an empty JSON object is returned.
+
+## License
+This Swift package is licensed under Apache 2.0. Full license text is available in [LICENSE](LICENSE.txt).

@@ -158,12 +158,8 @@ public class AppEnv {
   * if service is not found. The spec parameter should be the name of the
   * service or a regex to look up the service.
   *
-  * The replacements parameter is a dictionary with the properties found in
+  * The replacements parameter is a JSON object with the properties found in
   * Foundation's NSURLComponents class.
-  * References:
-  *   https://nodejs.org/api/url.html#url_url_format_urlobj
-  *   https://github.com/cloudfoundry-community/node-cfenv/blob/master/lib/cfenv.js
-  *   https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSURL_Class/#//apple_ref/occ/instp/NSURL/scheme
   */
   public func getServiceURL(spec: String, replacements: JSON?) -> String? {
     var substitutions: JSON = replacements ?? [:]
@@ -185,56 +181,53 @@ public class AppEnv {
     }
 
     substitutions.dictionaryObject?.removeValueForKey("url")
-    let parsedURL = NSURLComponents(string: url!)
-    if (parsedURL == nil) {
-      return nil
-    }
-
-    for (key, substitution) in substitutions {
-      //print("\(key) : \(substitution)")
-      switch key {
-        case "user":
-          parsedURL!.user = substitution.string
-        case "password":
-          parsedURL!.password = substitution.string
-        case "port":
-            parsedURL!.port = substitution.numberValue
-        case "host":
-          parsedURL!.host = substitution.string
-        case "scheme":
-          parsedURL!.scheme = substitution.string
-        case "query":
-          parsedURL!.query = substitution.string
-        case "queryItems":
-          let queryItems = substitution.arrayValue
-          var urlQueryItems: [NSURLQueryItem] = []
-          for queryItem in queryItems {
-            if let name = queryItem["name"].string {
-              let urlQueryItem = NSURLQueryItem(name: name, value: queryItem["value"].string)
-              urlQueryItems.append(urlQueryItem)
+    if let parsedURL = NSURLComponents(string: url!) {
+      for (key, substitution) in substitutions {
+        switch key {
+          case "user":
+            parsedURL.user = substitution.string
+          case "password":
+            parsedURL.password = substitution.string
+          case "port":
+            parsedURL.port = substitution.numberValue
+          case "host":
+            parsedURL.host = substitution.string
+          case "scheme":
+            parsedURL.scheme = substitution.string
+          case "query":
+            parsedURL.query = substitution.string
+          case "queryItems":
+            let queryItems = substitution.arrayValue
+            var urlQueryItems: [NSURLQueryItem] = []
+            for queryItem in queryItems {
+              if let name = queryItem["name"].string {
+                let urlQueryItem = NSURLQueryItem(name: name, value: queryItem["value"].string)
+                urlQueryItems.append(urlQueryItem)
+              }
             }
-          }
-          if urlQueryItems.count > 0 {
-            parsedURL!.queryItems = urlQueryItems
-          }
-        // These are being ignored
-        //case "fragment":
-        // parsedURL!.fragment = substitution.string
-        //case "path":
-        // parsedURL!.path = substitution.string
-        default:
-          print("The replacements '\(key)' value was ignored.")
+            if urlQueryItems.count > 0 {
+              parsedURL.queryItems = urlQueryItems
+            }
+          // These are being ignored
+          //case "fragment":
+          // parsedURL.fragment = substitution.string
+          //case "path":
+          // parsedURL.path = substitution.string
+          default:
+            print("The replacements '\(key)' value was ignored.")
+        }
       }
+      return parsedURL.string
     }
-    return parsedURL!.string
+    return nil
   }
 
   /**
-  * Returns a dictionary that contains the credentials for the specified
+  * Returns a JSON object that contains the credentials for the specified
   * Cloud Foundry service. The spec parameter should be the name of the service
   * or a regex to look up the service. If there is no service that matches the
   * spec parameter, this method returns nil. In the case there is no credentials
-  * for the service, an empty dictionary is returned.
+  * property for the specified service, an empty JSON is returned.
   */
   public func getServiceCreds(spec: String) -> JSON? {
     if let service = getService(spec) {
