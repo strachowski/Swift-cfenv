@@ -80,7 +80,7 @@ If the actual hostnames cannot be determined when running on the cloud (i.e. in 
 
 The following are the instance methods for an `AppEnv` object:
 
-- `getApp()`: Returns an App object that encapsulates the properties for the [VCAP_APPLICATION](https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-APPLICATION) environment variable.
+- `getApp()`: Returns an [App](#app) object that encapsulates the properties for the [VCAP_APPLICATION](https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-APPLICATION) environment variable.
 
 - `getServices()`: Returns all services bound to the application in a dictionary. The key in the dictionary is the name of the service, while the value is a Service object. Please note that this returned value is different than the `services` property returned from the `AppEnv` instance.
 
@@ -90,7 +90,7 @@ The following are the instance methods for an `AppEnv` object:
 
 - `appEnv.getServiceCreds(spec: String)`: Returns a JSON object that contains the credentials for the specified service. The `spec` parameter should be the name of the service or a regular expression to look up the service. If there is no service that matches the `spec` parameter, this method returns nil. In the case there is no credentials property for the specified service, an empty JSON object is returned.
 
-### App
+### App(#app)
 App is a structure that contains the following [`VCAP_APPLICATION`](https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-APPLICATION) environment variable properties:
 
 - `id`: A GUID string identifying the application.
