@@ -38,8 +38,7 @@ The following environment variables, which are set when your application is runn
 If these aren't set, it is then assumed that your application is running locally. For such cases, the AppEnv instance returns values that are still useful for starting your application. Therefore, this Swift package can be used when running in Cloud Foundry and when running locally.
 
 ## API
-================================================================================
-
+### `CFEnvironment`
 To get an instance of the `AppEnv` class, you can use one of the following `CFEnvironment` class methods:
 
 `getAppEnv(options: JSON)`
@@ -50,4 +49,7 @@ An instance of AppEnv class gives you access to the Cloud Foundry configuration 
 The options JSON parameter can contain the following properties:
 
   - name - This is the name of the application. This value is used as the default name property of the AppEnv object. If the property is not specified, the name property of the VCAP_APPLICATION environment variable is used.
-  - protocol - protocol used in the generated URLs
+  - protocol - The protocol used in the generated URLs. It overrides the default protocol used when generating
+  the URLs in the AppEnv object.  It should be the same format as
+  [node's url `protocol` property](http://nodejs.org/api/url.html).
+  That is, it should end with a `:` character.

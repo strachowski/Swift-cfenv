@@ -314,7 +314,7 @@ public class AppEnv {
     let scheme: String = options["protocol"].string ?? (isLocal ? "http" : "https")
     var urls: [String] = []
     for uri in uris {
-       urls.append("\(scheme)//\(uri)");
+       urls.append("\(scheme)://\(uri)");
     }
     return urls
   }
