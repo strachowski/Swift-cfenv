@@ -151,7 +151,7 @@ Create a dummy service named `cf-dummy-service`:
 
 The Cloud Foundry command line will then prompt you for the following (please enter some reasonable values):
 
-    url>      http://swift-cfenv-service.test.com
+    url> http://swift-cfenv-service.test.com
     username> username00
     password> password00
     database> CloudantDB
