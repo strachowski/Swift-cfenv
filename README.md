@@ -142,5 +142,35 @@ Service is a structure that contains the following properties for a Cloud Foundr
 - `tags`: An array of strings that contains values to identify a service instance.
 - `credentials`: An optional JSON object that contains the service credentials required to access the service instance. Note that the credential properties for accessing a service could be completely different from one to another. For instance, the JSON credentials for a service may simply contain a `uri` property while the JSON credentials for another service may contain a `hostname`, `username`, and `password` properties.
 
+## Testing with Bluemix (or other Cloud Foundry PaaS)
+To test this Swift library on Bluemix, you can follow the steps described in this section.
+
+Create a dummy service named `cf-dummy-service`:
+
+`cf cups cf-dummy-service -p "url, username, password, database"`
+
+The Cloud Foundry command line will then prompt you for the following (please enter some reasonable values):
+
+    url>      http://swift-cfenv-service.test.com
+    username> username00
+    password> password00
+    database> CloudantDB
+
+Once the dummy service is created, you can clone Bluemix's swift-helloworld application (**develop branch**) using the following command:
+
+`git clone -b develop https://github.com/IBM-Bluemix/swift-helloworld.git`
+
+Then push the swift-helloworld application using the following command:
+
+`cf push -b https://github.com/cloudfoundry-community/swift-buildpack.git`
+
+Once the application is successfully pushed, you need to bind the service you created previously to the new application and then restage the application:
+
+`cf bind-service swift-helloworld cf-dummy-service`
+
+`cf restage swift-helloworld`
+
+After the application is restaged, you can visit the route (i.e. URL) assigned to the app and you should see the output of various Swift-cfenv invocations.
+
 ## License
 This Swift package is licensed under Apache 2.0. Full license text is available in [LICENSE](LICENSE.txt).
