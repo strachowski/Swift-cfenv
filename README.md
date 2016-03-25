@@ -85,7 +85,7 @@ The following are the instance methods for an `AppEnv` object:
 - `appEnv.getServiceCreds(spec: String)`: Returns a JSON object that contains the credentials for the specified service. The `spec` parameter should be the name of the service or a regular expression to look up the service. If there is no service that matches the `spec` parameter, this method returns nil. In the case there is no credentials property for the specified service, an empty JSON object is returned.
 
 ### App
-App is a structure that contains the following `VCAP_APPLICATION` environment variable properties:
+App is a structure that contains the following [`VCAP_APPLICATION`](https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-APPLICATION) environment variable properties:
 
 - `id`: A GUID string identifying the application.
 - `name`: A string that contains the name assigned to the application.
@@ -107,13 +107,13 @@ The App.Limits structure contains the memory, disk, and number of files for an a
 - `fds`: An integer that represents the number of files.
 
 ### Service
-Service is a structure that contains the following [properties](https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-SERVICES) for a Cloud Foundry service:
+Service is a structure that contains the following properties for a Cloud Foundry [service](https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-SERVICES):
 
 - `name`: A string that contains the name assigned to the service instance.
 - `label`: A string that contains the name of the service offering.
 - `plan` : A string that states the service plan selected when the service instance was created.
-- `tags`: An array of strings that an app can use to identify a service instance.
-- `credentials`: An optional JSON object that contains the service credentials required to access the service instance. Note that the credential properties for accessing a service could be completely from one to another. For instance, the JSON credentials for a service may simply contain a `uri` property while the JSON credentials for another service may contain a `hostname`, `username`, and `password` properties.
+- `tags`: An array of strings that contains values to identify a service instance.
+- `credentials`: An optional JSON object that contains the service credentials required to access the service instance. Note that the credential properties for accessing a service could be completely different from one to another. For instance, the JSON credentials for a service may simply contain a `uri` property while the JSON credentials for another service may contain a `hostname`, `username`, and `password` properties.
 
 ## License
 This Swift package is licensed under Apache 2.0. Full license text is available in [LICENSE](LICENSE.txt).
