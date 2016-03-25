@@ -117,6 +117,7 @@ let server_sockfd = createSocket(address)
 // Listen on socket with queue of 5
 listen(server_sockfd, 5)
 var active_fd_set = fd_set()
+print("Server is starting on \(appEnv.url).")
 print("Server is listening on port: \(address.port)\n")
 
 // Initialize the set of active sockets

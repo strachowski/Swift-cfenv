@@ -1,10 +1,12 @@
 # Swift-cfenv
 
-The Swift-cfenv package provides classes and methods to parse Cloud Foundry-provided environment variables, such as port number, host name/ip address, and URL of the application. It also provides default values when running the application locally.
+The Swift-cfenv package provides classes and methods to parse Cloud Foundry-provided environment variables, such as port number, IP address, and URL of the application. It also provides default values when running the application locally.
 
 This library determines if you are running your application "locally" or on the cloud (i.e. Cloud Foundry app), based on whether the VCAP_APPLICATION environment variable is set. If not set, it is assumed you are running in "local" mode instead of "cloud mode".
 
-## Usage
+For the implementation of this Swift package, we used as inspiration an equivalent module that had been developed for Node.js applications, [node-cfenv](https://github.com/cloudfoundry-community/node-cfenv).
+
+## Basic Usage
 ```swift
 import CFEnvironment
 ...
@@ -26,4 +28,11 @@ The code snippet shown above binds the server to host and port values obtained f
 
 This library simplifies accessing the configuration values provided by Cloud Foundry.
 
-As reference, see https://www.npmjs.com/package/cfenv.
+## Running your application in Cloud Foundry vs. locally
+The following environment variables, which are set when your application is running in Cloud Foundry, are inspected by this Swift package:
+
+VCAP_SERVICES
+VCAP_APPLICATION
+PORT
+
+If these aren't set, it is then assumed that your application is running locally. In such cases, the CFEnvironment.getAppEnv() method returns values that are still useful for starting your application. Therefore, this Swift package can be used when running in Cloud Foundry AND when running locally.

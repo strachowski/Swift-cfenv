@@ -24,6 +24,7 @@ public class AppEnv {
   public let name: String?
   public let bind: String
   public let urls: [String]
+  public let url: String
   public let app: JSON
   public let services: JSON
 
@@ -55,6 +56,7 @@ public class AppEnv {
 
     // Get urls
     urls = AppEnv.parseURLs(isLocal, app: app, port: port, options: options)
+    url = urls[0]
   }
 
   /**
