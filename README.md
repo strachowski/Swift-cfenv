@@ -32,7 +32,7 @@ do {
 }
 ```
 
-The code snippet above gets the binding host and port values through the AppEnv object, which were obtained from parsing the Cloud Foundry environment variables. These can then be used for biding the server. Also, the url value for the application, also obtained from environment variables, is used for logging purposes.
+The code snippet above gets the binding host and port values through the [`AppEnv`](#appenv) object, which were obtained from parsing the Cloud Foundry environment variables. These can then be used for biding the server. Also, the url value for the application, also obtained from environment variables, is used for logging purposes.
 
 This library simplifies accessing the configuration values provided by Cloud Foundry.
 
@@ -43,11 +43,11 @@ The following environment variables, which are set when your application is runn
 - `VCAP_SERVICES`
 - `PORT`
 
-If the `VCAP_APPLICATION` isn't set, it is then assumed that your application is running locally. For such cases, the AppEnv instance returns values that are still useful for starting your application. Therefore, this Swift package can be used when running in Cloud Foundry and when running locally.
+If the `VCAP_APPLICATION` isn't set, it is then assumed that your application is running locally. For such cases, the [`AppEnv`](#appenv) instance returns values that are still useful for starting your application. Therefore, this Swift package can be used when running in Cloud Foundry and when running locally.
 
 ## API
 ### `CFEnvironment`
-To get an instance of the `AppEnv` class, you can use one of the following `CFEnvironment` class methods:
+To get an instance of the [`AppEnv`](#appenv) class, you can use one of the following `CFEnvironment` class methods:
 
 - `getAppEnv(options: JSON)`
 - `getAppEnv()`
