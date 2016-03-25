@@ -11,16 +11,22 @@ For the implementation of this Swift package, we used as inspiration a similar m
 
 ```swift
 import CFEnvironment
+
 ...
+
 do {
   let appEnv = try CFEnvironment.getAppEnv()
   // Let's use the given port and binding host to create a socket for our server...
   let ip: String = appEnv.bind
   let port: UInt16 = UInt16(appEnv.port)
+
   ...
+
   // Once the server starts, print the url value
   print("Server is starting on \(appEnv.url).")
+
   ...
+
 } catch CFEnvironmentError.InvalidValue {
   print("Oops, something went wrong... Server did not start!")
 }
