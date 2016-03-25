@@ -50,6 +50,4 @@ The options JSON parameter can contain the following properties:
 
   - name - This is the name of the application. This value is used as the default name property of the AppEnv object. If the property is not specified, the name property of the VCAP_APPLICATION environment variable is used.
   - protocol - The protocol used in the generated URLs. It overrides the default protocol used when generating
-  the URLs in the AppEnv object.  It should be the same format as
-  [node's url `protocol` property](http://nodejs.org/api/url.html).
-  That is, it should end with a `:` character.
+  the URLs in the AppEnv object.
