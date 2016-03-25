@@ -29,13 +29,13 @@ The code snippet above gets the binding host and port values through the AppEnv 
 This library simplifies accessing the configuration values provided by Cloud Foundry.
 
 ## Running your application in Cloud Foundry vs. locally
-The following environment variables, which are set when your application is running in Cloud Foundry, are inspected by this Swift package:
+The following environment variables, which are set when your application is running in Cloud Foundry, are inspected by the Swift-cfenv package:
 
-- `VCAP_SERVICES`
 - `VCAP_APPLICATION`
+- `VCAP_SERVICES`
 - `PORT`
 
-If these aren't set, it is then assumed that your application is running locally. For such cases, the AppEnv instance returns values that are still useful for starting your application. Therefore, this Swift package can be used when running in Cloud Foundry and when running locally.
+If the `VCAP_APPLICATION` isn't set, it is then assumed that your application is running locally. For such cases, the AppEnv instance returns values that are still useful for starting your application. Therefore, this Swift package can be used when running in Cloud Foundry and when running locally.
 
 ## API
 ### `CFEnvironment`
@@ -48,5 +48,8 @@ An instance of `AppEnv` class gives you access to the Cloud Foundry configuratio
 
 The `options` JSON parameter can contain the following properties:
 
-  - `name` - This is the name of the application. This value is used as the default name property of the `AppEnv` object. If the property is not specified, the `name` property of the `VCAP_APPLICATION` environment variable is used.
+  - `name` - A string value for the name of the application. This value is used as the default name property of the `AppEnv` object. If the property is not specified, the `name` property of the `VCAP_APPLICATION` environment variable is used.
   - `protocol` - The protocol used in the generated URLs. It overrides the default protocol used when generating the URLs in the `AppEnv` object.
+  - `vcap` - JSON object that provides values when running locally for the `VCAP_APPLICATION` and `VCAP_SERVICES` environment variables. This JSON object can have application and/or services properties, whose values are the same as the values serialized in the `VCAP_APPLICATION` and `VCAP_SERVICES` environment variables. Please, note that, when running locally, the `url` and `urls` properties of the `AppEnv` instance are not based on the `vcap` application object. Also, note that the `vcap` property is ignored if not running locally.
+
+### `AppEnv`
