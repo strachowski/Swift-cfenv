@@ -38,11 +38,11 @@ public class AppEnv {
     isLocal = (vcapApplication == nil)
 
     // Get app
-    app = AppEnv.parseEnvVariable(isLocal, environmentVars: environmentVars,
+    app = try AppEnv.parseEnvVariable(isLocal, environmentVars: environmentVars,
       variableName: "VCAP_APPLICATION", varibleType: "application", options: options)
 
     // Get services
-    services = AppEnv.parseEnvVariable(isLocal, environmentVars: environmentVars,
+    services = try AppEnv.parseEnvVariable(isLocal, environmentVars: environmentVars,
       variableName: "VCAP_SERVICES", varibleType: "services", options: options)
 
     // Get port
@@ -252,13 +252,15 @@ public class AppEnv {
   * Static method for parsing VCAP_APPLICATION and VCAP_SERVICES.
   */
   private class func parseEnvVariable(isLocal: Bool, environmentVars: [String:String],
-    variableName: String, varibleType: String, options: JSON)
+    variableName: String, varibleType: String, options: JSON) throws
     -> JSON {
     if isLocal {
       return options["vcap"][varibleType]
     } else {
-      let json = JSONUtils.convertStringToJSON(environmentVars[variableName]) ?? [:]
-      return json
+      if let json = JSONUtils.convertStringToJSON(environmentVars[variableName]) {
+        return json
+      }
+      throw CFEnvironmentError.InvalidValue("Environment variable \(variableName) is not a valid JSON string!")
     }
   }
 

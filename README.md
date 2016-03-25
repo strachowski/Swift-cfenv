@@ -7,6 +7,8 @@ This library determines if you are running your application "locally" or on the 
 For the implementation of this Swift package, we used as inspiration a similar module that had been developed for Node.js applications, [node-cfenv](https://github.com/cloudfoundry-community/node-cfenv).
 
 ## Usage
+[Add description for the Package.swift file.]
+
 ```swift
 import CFEnvironment
 ...
@@ -50,6 +52,26 @@ The `options` JSON parameter can contain the following properties:
 
   - `name` - A string value for the name of the application. This value is used as the default name property of the `AppEnv` object. If the property is not specified, the `name` property of the `VCAP_APPLICATION` environment variable is used.
   - `protocol` - The protocol used in the generated URLs. It overrides the default protocol used when generating the URLs in the `AppEnv` object.
-  - `vcap` - JSON object that provides values when running locally for the `VCAP_APPLICATION` and `VCAP_SERVICES` environment variables. This JSON object can have application and/or services properties, whose values are the same as the values serialized in the `VCAP_APPLICATION` and `VCAP_SERVICES` environment variables. Please, note that, when running locally, the `url` and `urls` properties of the `AppEnv` instance are not based on the `vcap` application object. Also, note that the `vcap` property is ignored if not running locally.
+  - `vcap` - JSON object that provides values when running locally for the `VCAP_APPLICATION` and `VCAP_SERVICES` environment variables. This JSON object can have application and/or services properties, whose values are the same as the values serialized in the `VCAP_APPLICATION` and `VCAP_SERVICES` variables. Please, note that, when running locally, the `url` and `urls` properties of the `AppEnv` instance are not based on the `vcap` application object. Also, note that the `vcap` property is ignored if not running locally.
 
 ### `AppEnv`
+An instance of the `AppEnv` class has the following properties:
+
+- `isLocal`: Bool property is set to true if the VCAP_APPLICATION environment variable was set.
+REVIEW LOGIC!!!
+- `app`: A JSON object version of the VCAP_APPLICATION environment variable.
+- `services`: A JSON object version of the VCAP_SERVICES environment variable.
+- `name`: A string that contains the name of the application.
+- `port`: An integer that contains the HTTP port number.
+- `bind`: A string with the ip address for binding the server.
+- `urls`: A string array that contains the URLs for accessing the servers.
+- `url`: The first string in the urls array.
+
+If no value can be determined for the `port` property, a default port of 8090 is assigned to it.
+
+These are the instance methods for an `AppEnv` object:
+
+- getServices()
+- appEnv.getService(spec)
+- getServiceURL(spec, replacements)
+- appEnv.getServiceCreds(spec)
