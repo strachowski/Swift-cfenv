@@ -7,10 +7,10 @@ This library determines if you are running your application "locally" or on the 
 For the implementation of this Swift package, we used as inspiration a similar module that had been developed for Node.js applications, [node-cfenv](https://github.com/cloudfoundry-community/node-cfenv).
 
 ## Swift version
-The latest version of Swift-cfenv works with the DEVELOPMENT-SNAPSHOT-2016-03-01-a version of the Swift binaries. You can download this version of the Swift binaries by following this [link](https://swift.org/download/).
+The latest version of Swift-cfenv works with the `DEVELOPMENT-SNAPSHOT-2016-03-01-a` version of the Swift binaries. You can download this version of the Swift binaries by following this [link](https://swift.org/download/).
 
 ## Usage
-Swift applications that want to leverage the Swift-cfenv package should specify a dependency for it in the `Package.swift` file:
+To leverage the Swift-cfenv package in your Swift application, you should specify a dependency for it in your `Package.swift` file:
 
 ```swift
  import PackageDescription
@@ -28,7 +28,7 @@ Swift applications that want to leverage the Swift-cfenv package should specify 
      ])
  ```
 
- Once the Package.swift file of your application has been updated accordingly, you can import the `CFEnvironment` module as shown next:
+ Once the Package.swift file of your application has been updated accordingly, you can import the `CFEnvironment` module in your code:
 
 ```swift
 import CFEnvironment
@@ -53,7 +53,7 @@ do {
 }
 ```
 
-The code snippet above gets the binding host and port values through the [`AppEnv`](#appenv) object, which were obtained from parsing the Cloud Foundry environment variables. These can then be used for biding the server. Also, the url value for the application, also obtained from environment variables, is used for logging purposes.
+The code snippet above gets the binding host and port values through the [`AppEnv`](#appenv) object, which were obtained from parsing the Cloud Foundry environment variables. These values can then be used for biding the server. Also, the url value for the application (also obtained from environment variables) is used for logging purposes.
 
 This library simplifies accessing the configuration values provided by Cloud Foundry.
 
