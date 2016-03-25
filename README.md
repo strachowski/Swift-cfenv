@@ -6,6 +6,9 @@ This library determines if you are running your application "locally" or on the 
 
 For the implementation of this Swift package, we used as inspiration a similar module that had been developed for Node.js applications, [node-cfenv](https://github.com/cloudfoundry-community/node-cfenv).
 
+## Swift version
+The latest version of Swift-cfenv works with the DEVELOPMENT-SNAPSHOT-2016-03-01-a version of the Swift binaries. You can download this version of the Swift binaries by following this [link](https://swift.org/download/).
+
 ## Usage
 [Add description for the Package.swift file.]
 

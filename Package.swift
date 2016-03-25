@@ -26,14 +26,12 @@ import PackageDescription
 #endif
 
 let package = Package(
-    name: "HelloWorldSwift",
+    name: "CFEnvironment",
     targets: [
-      Target(name: "Utils", dependencies: []),
       Target(
         name: "CFEnvironment",
         dependencies: []
       ),
-      Target(name: "Server", dependencies: [.Target(name: "Utils"), .Target(name: "CFEnvironment")])
     ],
     dependencies: [
       //.Package(url: "https://github.com/behrang/YamlSwift.git", majorVersion: 1),
