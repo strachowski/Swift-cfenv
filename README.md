@@ -10,7 +10,19 @@ For the implementation of this Swift package, we used as inspiration a similar m
 The latest version of Swift-cfenv works with the DEVELOPMENT-SNAPSHOT-2016-03-01-a version of the Swift binaries. You can download this version of the Swift binaries by following this [link](https://swift.org/download/).
 
 ## Usage
-[Add description for the Package.swift file.]
+Swift applications that want to leverage the Swift-cfenv package should specify a dependency for it in the `Package.swift` file:
+
+```swift
+ import PackageDescription
+
+ let package = Package(
+     name: "MyAwesomeSwiftProject",
+     dependencies: [
+         .Package(url: "https://github.com/IBM-Swift/Swift-cfenv.git", majorVersion: 0)
+     ])
+ ```
+
+ Once the Package.swift file of your application has been updated accordingly, you can import the `CFEnvironment` module as shown next:
 
 ```swift
 import CFEnvironment
