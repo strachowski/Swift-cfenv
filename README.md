@@ -84,7 +84,7 @@ The following are the instance methods for an `AppEnv` object:
 
 - `getServices()`: Returns all services bound to the application in a dictionary. The key in the dictionary is the name of the service, while the value is a Service object. Please note that this returned value is different than the `services` property returned from the `AppEnv` instance.
 
-- `appEnv.getService(spec: String)`: Returns a Service object for the specified Cloud Foundry service. The `spec` parameter should be the name of the service or a regular expression to look up the service. If there is no service that matches the `spec` parameter, this method returns nil.
+- `appEnv.getService(spec: String)`: Returns a [Service](#service) object for the specified Cloud Foundry service. The `spec` parameter should be the name of the service or a regular expression to look up the service. If there is no service that matches the `spec` parameter, this method returns nil.
 
 - `getServiceURL(spec: String, replacements: JSON?)`: Returns a service URL generated from the `VCAP_SERVICES` environment variable for the specified service or nil if service cannot be found. The `spec` parameter should be the name of the service or a regular expression to look up the service. The `replacements` parameter is a JSON object with the properties (e.g. `user`, `password`, `port`, etc.) found in Foundation's [NSURLComponents](https://developer.apple.com/library/ios/documentation/Foundation/Reference/NSURLComponents_class/index.html) class. To generate the service URL, the `url` property in the service credentials is first used to create an instance of the NSURLComponents class. The initial set of properties in the NSURLComponents instance can then be overridden by properties specified in the optional `replacements` JSON parameter. If there is not a `url` property in the service credentials, this method returns nil. Having said this, note that you have the capability to override the `url` property in the service credentials, with a `replacements` property of `url` and a value that specifies the name of the property in the service credentials that contains the base URL. For instance, you may find this useful in the case there is no `url` property in the service credentials.
 
@@ -99,7 +99,7 @@ App is a structure that contains the following [`VCAP_APPLICATION`](https://docs
 - `version`: A GUID string identifying a version of the application.
 - `instanceId`: A GUID string that identifies the application instance.
 - `instanceIndex`: An integer that represents the index number of the instance.
-- `limits`: A [App.Limits](#app.limits) object that contains memory, disk, and number of files for the application instance (see below).
+- `limits`: A [App.Limits](#app_limits) object that contains memory, disk, and number of files for the application instance (see below).
 - `port`: An integer that contains the port number of the application instance.
 - `spaceId`: A GUID string identifying the application’s space.
 - `startedAtTs`: An NSTimeInterval instance that contains the Unix epoch timestamp for the time the application instance was started.
