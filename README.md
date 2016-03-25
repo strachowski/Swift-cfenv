@@ -74,10 +74,46 @@ If the actual hostnames cannot be determined when running on the cloud (i.e. in 
 
 The following are the instance methods for an `AppEnv` object:
 
+- `getApp()`: Returns an App object that encapsulates the properties for the [VCAP_APPLICATION](https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-APPLICATION) environment variable.
+
 - `getServices()`: Returns all services bound to the application in a dictionary. The key in the dictionary is the name of the service, while the value is a Service object. Please note that this returned value is different than the `services` property returned from the `AppEnv` instance.
+
 - `appEnv.getService(spec: String)`: Returns a Service object for the specified Cloud Foundry service. The `spec` parameter should be the name of the service or a regular expression to look up the service. If there is no service that matches the `spec` parameter, this method returns nil.
+
 - `getServiceURL(spec: String, replacements: JSON?)`: Returns a service URL generated from the `VCAP_SERVICES` environment variable for the specified service or nil if service cannot be found. The `spec` parameter should be the name of the service or a regular expression to look up the service. The `replacements` parameter is a JSON object with the properties (e.g. `user`, `password`, `port`, etc.) found in Foundation's [NSURLComponents](https://developer.apple.com/library/ios/documentation/Foundation/Reference/NSURLComponents_class/index.html) class. To generate the service URL, the `url` property in the service credentials is first used to create an instance of the NSURLComponents class. The initial set of properties in the NSURLComponents instance can then be overridden by properties specified in the optional `replacements` JSON parameter. If there is not a `url` property in the service credentials, this method returns nil. Having said this, note that you have the capability to override the `url` property in the service credentials, with a `replacements` property of `url` and a value that specifies the name of the property in the service credentials that contains the base URL. For instance, you may find this useful in the case there is no `url` property in the service credentials.
-- `appEnv.getServiceCreds(spec: String)` - Returns a JSON object that contains the credentials for the specified service. The `spec` parameter should be the name of the service or a regular expression to look up the service. If there is no service that matches the `spec` parameter, this method returns nil. In the case there is no credentials property for the specified service, an empty JSON object is returned.
+
+- `appEnv.getServiceCreds(spec: String)`: Returns a JSON object that contains the credentials for the specified service. The `spec` parameter should be the name of the service or a regular expression to look up the service. If there is no service that matches the `spec` parameter, this method returns nil. In the case there is no credentials property for the specified service, an empty JSON object is returned.
+
+### App
+App is a structure that contains the following `VCAP_APPLICATION` environment variable properties:
+
+- `id`: A GUID string identifying the application.
+- `name`: A string that contains the name assigned to the application.
+- `uris`: A string array that contains the URIs assigned to the application.
+- `version`: A GUID string identifying a version of the application.
+- `instanceId`: A GUID string that identifies the application instance.
+- `instanceIndex`: An integer that represents the index number of the instance.
+- `limits`: A Limits object that contains memory, disk, and number of files for the application instance (see below).
+- `port`: An integer that contains the port number of the application instance.
+- `spaceId`: A GUID string identifying the application’s space.
+- `startedAtTs`: An NSTimeInterval instance that contains the Unix epoch timestamp for the time the application instance was started.
+- `startedAt`: An NSDate object that contains the time when the application instance was started.
+
+### App.Limits
+The App.Limits structure contains the memory, disk, and number of files for an application instance:
+
+- `memory`: An integer that represents memory for the application (this value is commonly specified in the manifest file).
+- `disk`: An integer that represents the disk space for the application (this value is commonly specified in the manifest file).
+- `fds`: An integer that represents the number of files.
+
+### Service
+Service is a structure that contains the following [properties](https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-SERVICES) for a Cloud Foundry service:
+
+- `name`: A string that contains the name assigned to the service instance.
+- `label`: A string that contains the name of the service offering.
+- `plan` : A string that states the service plan selected when the service instance was created.
+- `tags`: An array of strings that an app can use to identify a service instance.
+- `credentials`: An optional JSON object that contains the service credentials required to access the service instance. Note that the credential properties for accessing a service could be completely from one to another. For instance, the JSON credentials for a service may simply contain a `uri` property while the JSON credentials for another service may contain a `hostname`, `username`, and `password` properties.
 
 ## License
 This Swift package is licensed under Apache 2.0. Full license text is available in [LICENSE](LICENSE.txt).
