@@ -17,8 +17,14 @@ Swift applications that want to leverage the Swift-cfenv package should specify 
 
  let package = Package(
      name: "MyAwesomeSwiftProject",
+
+     ...
+
      dependencies: [
          .Package(url: "https://github.com/IBM-Swift/Swift-cfenv.git", majorVersion: 0)
+
+         ...
+
      ])
  ```
 
