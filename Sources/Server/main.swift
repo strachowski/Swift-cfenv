@@ -53,42 +53,26 @@ for (variable, value) in environmentVars {
 }
 responseBody += "</table><br /><br />"
 
-var appEnv: AppEnv? = nil
 do {
-  appEnv = try CFEnvironment.getAppEnv()
-  print("bind value: \(appEnv!.bind)")
-  // print("appEnv: \(appEnv)")
-  // let services = appEnv.getServices()
-  // print("services: \(services)")
-  // let service = appEnv.getService("serviceName")
-  // print("service: \(service)")
-  // let serviceCreds = appEnv.getServiceCreds("serviceName")
-  // print("serviceCreds: \(serviceCreds)")
-  // let serviceURL = appEnv.getServiceURL("serviceName", replacements: nil)
-  // print("serviceURL: \(serviceURL)")
-  // let app = appEnv.getApp()
-  // print("app: \(app)")
-} catch CFEnvironmentError.InvalidValue {
-  print("Oops, something went wrong...")
-}
+  let appEnv = try CFEnvironment.getAppEnv()
 
 // JSON object for App
 responseBody += "<table border=\"1\">" +
   "<tr><th>App Property (JSON)</th><th>Value</th></tr>"
 
-for (variable, value) in appEnv!.app {
+for (variable, value) in appEnv.app {
     responseBody += "<tr><td>\(variable)</td><td>\(value)</td></tr>\n"
 }
 responseBody += "</table>"
 
 // App object
-let app = appEnv!.getApp()
-let services = appEnv!.getServices()
+let app = appEnv.getApp()
+let services = appEnv.getServices()
 responseBody += "<br /><br />"
 responseBody += "<table border=\"1\">"
 
 responseBody += "<tr><th colspan=\"2\">Application Environment Object</th></tr>\n"
-responseBody += "<tr><td>AppEnv</td><td>isLocal: \(appEnv!.isLocal), port: \(appEnv!.port), name: \(appEnv!.name), bind: \(appEnv!.bind), urls: \(appEnv!.urls), app: \(appEnv!.app), services: \(appEnv!.services)</td></tr>\n"
+responseBody += "<tr><td>AppEnv</td><td>isLocal: \(appEnv.isLocal), port: \(appEnv.port), name: \(appEnv.name), bind: \(appEnv.bind), urls: \(appEnv.urls), app: \(appEnv.app), services: \(appEnv.services)</td></tr>\n"
 responseBody += "<tr><th colspan=\"2\">Application Object</th></tr>\n"
 responseBody += "<tr><td>App</td><td>\(app)</td></tr>\n"
 
@@ -126,8 +110,8 @@ let httpResponse = "HTTP/1.0 200 OK\n" +
 //let address = parseAddress()
 //http://www.binarytides.com/hostname-to-ip-address-c-sockets-linux/
 
-let address = Address(ip: appEnv!.bind, port: UInt16(appEnv!.port))
-//let address = Address(ip: appEnv!.bind, port: UInt16(8090))
+let address = Address(ip: appEnv.bind, port: UInt16(appEnv.port))
+//let address = Address(ip: appEnv.bind, port: UInt16(8090))
 //let address = parseAddress()
 let server_sockfd = createSocket(address)
 // Listen on socket with queue of 5
@@ -170,4 +154,8 @@ while true {
       }
     }
   }
+}
+
+} catch CFEnvironmentError.InvalidValue {
+  print("Oops, something went wrong... Server did not start!")
 }
