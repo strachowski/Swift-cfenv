@@ -90,7 +90,7 @@ The following are the instance methods for an `AppEnv` object:
 
 - `appEnv.getServiceCreds(spec: String)`: Returns a JSON object that contains the credentials for the specified service. The `spec` parameter should be the name of the service or a regular expression to look up the service. If there is no service that matches the `spec` parameter, this method returns nil. In the case there is no credentials property for the specified service, an empty JSON object is returned.
 
-### App(#app)
+### App
 App is a structure that contains the following [`VCAP_APPLICATION`](https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-APPLICATION) environment variable properties:
 
 - `id`: A GUID string identifying the application.
