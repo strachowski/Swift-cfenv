@@ -26,12 +26,12 @@ public struct Service {
   public let tags: [String]
   public let credentials: JSON?
 
-  public init(name: String, label: String, plan: String, tags: [String],
+  public init(name: String, label: String, plan: String?, tags: [String],
     credentials: JSON?) {
 
     self.name = name
     self.label = label
-    self.plan = plan
+    self.plan = (plan != nil) ? plan! : "N/A"
     self.tags = tags
     self.credentials = credentials
   }
