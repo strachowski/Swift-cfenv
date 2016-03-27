@@ -138,7 +138,7 @@ Service is a structure that contains the following properties for a Cloud Foundr
 
 - `name`: A string that contains the name assigned to the service instance.
 - `label`: A string that contains the name of the service offering.
-- `plan` : A string that states the service plan selected when the service instance was created. If the service has no plan, this field has a value of 'N/A'.
+- `plan` : A string that states the service plan selected when the service instance was created. If the service has no plan, the string 'N/A' is assigned to this field.
 - `tags`: An array of strings that contains values to identify a service instance.
 - `credentials`: An optional JSON object that contains the service credentials required to access the service instance. Note that the credential properties for accessing a service could be completely different from one to another. For instance, the JSON credentials for a service may simply contain a `uri` property while the JSON credentials for another service may contain a `hostname`, `username`, and `password` properties.
 
