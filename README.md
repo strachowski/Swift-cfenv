@@ -39,7 +39,7 @@ do {
   let appEnv = try CFEnvironment.getAppEnv()
   // Let's use the given port and binding host to create a socket for our server...
   let ip: String = appEnv.bind
-  let port:Int = appEnv.port
+  let port: Int = appEnv.port
 
   ...
 
