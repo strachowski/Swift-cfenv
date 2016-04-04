@@ -180,7 +180,7 @@ public class AppEnv {
       return nil;
     }
 
-    substitutions.dictionaryObject?.removeValueForKey("url")
+    substitutions.dictionaryObject?.removeValue(forKey: "url")
     if let parsedURL = NSURLComponents(string: url!) {
       for (key, substitution) in substitutions {
         switch key {

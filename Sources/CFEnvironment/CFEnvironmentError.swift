@@ -14,6 +14,6 @@
  * limitations under the License.
  **/
 
-public enum CFEnvironmentError: ErrorType {
+public enum CFEnvironmentError: ErrorProtocol {
   case InvalidValue(String)
 }
