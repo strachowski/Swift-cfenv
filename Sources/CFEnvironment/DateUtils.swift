@@ -35,7 +35,7 @@ public class DateUtils {
   public func convertStringToNSDate(dateString: String?) -> NSDate? {
     let nsDate: NSDate?
     if dateString != nil {
-      nsDate = dateFormatter.dateFromString(dateString!)
+      nsDate = dateFormatter.date(from: dateString!)
     } else {
       nsDate = nil
     }
@@ -49,7 +49,7 @@ public class DateUtils {
   public func convertNSDateToString(nsDate: NSDate?) -> String? {
     let dateString: String?
     if nsDate != nil {
-      dateString = dateFormatter.stringFromDate(nsDate!)
+      dateString = dateFormatter.string(from: nsDate!)
     } else {
       dateString = nil
     }
