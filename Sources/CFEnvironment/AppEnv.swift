@@ -115,6 +115,7 @@ public class AppEnv {
   public func getServices() -> [String:Service] {
     var results: [String:Service] = [:]
     for (_, servs) in services {
+        // There seems to be a problem here... but why?!
       for service in servs.arrayValue { // as! [[String:AnyObject]] {
         if let name: String = service["name"].string {
           let tags = JSONUtils.convertJSONArrayToStringArray(service, fieldName: "tags")
@@ -140,9 +141,17 @@ public class AppEnv {
     }
 
     do {
+      #if os(Linux)
+      let regex = try NSRegularExpression(pattern: spec, options: NSRegularExpressionOptions.CaseInsensitive)
+      #else
       let regex = try NSRegularExpression(pattern: spec, options: NSRegularExpressionOptions.caseInsensitive)
+      #endif
       for (name, serv) in services {
-        let numberOfMatches = regex.numberOfMatches(in: name, options: [], range: NSMakeRange(0, name.characters.count))
+        #if os(Linux)
+           let numberOfMatches = regex.numberOfMatchesInString(name, options: [], range: NSMakeRange(0, name.characters.count))
+        #else
+           let numberOfMatches = regex.numberOfMatches(in: name, options: [], range: NSMakeRange(0, name.characters.count))
+        #endif
         if numberOfMatches > 0 {
           return serv
         }

@@ -26,8 +26,13 @@ public class JSONUtils {
   * Converts the speficied string to a JSON object.
   */
   public class func convertStringToJSON(text: String?) -> JSON? {
-    if let data = text?.data(usingEncoding: NSUTF8StringEncoding) {
-      let json = JSON(data: data)
+    #if os(Linux)
+    let data = text?.dataUsingEncoding(NSUTF8StringEncoding)
+    #else
+    let data = text?.data(usingEncoding: NSUTF8StringEncoding)
+    #endif
+    if data != nil {
+      let json = JSON(data: data!)
       return json
     }
     print("Could not generate JSON object from string: \(text)")

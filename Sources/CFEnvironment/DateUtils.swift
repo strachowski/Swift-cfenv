@@ -35,7 +35,11 @@ public class DateUtils {
   public func convertStringToNSDate(dateString: String?) -> NSDate? {
     let nsDate: NSDate?
     if dateString != nil {
-      nsDate = dateFormatter.date(from: dateString!)
+      #if os(Linux)
+        nsDate = dateFormatter.dateFromString(dateString!)
+      #else
+        nsDate = dateFormatter.date(from: dateString!)
+      #endif
     } else {
       nsDate = nil
     }
@@ -49,7 +53,11 @@ public class DateUtils {
   public func convertNSDateToString(nsDate: NSDate?) -> String? {
     let dateString: String?
     if nsDate != nil {
-      dateString = dateFormatter.string(from: nsDate!)
+      #if os(Linux)
+        dateString = dateFormatter.stringFromDate(nsDate!)
+      #else
+        dateString = dateFormatter.string(from: nsDate!)
+      #endif
     } else {
       dateString = nil
     }
