@@ -33,14 +33,14 @@ import SwiftyJSON
 */
 class MainTests : XCTestCase {
 
-  var allTests : [(String, () throws -> Void)] {
+  static var allTests : [(String, MainTests -> () throws -> Void)] {
     return [
-        ("testGetApp", testGetApp),
-        ("testGetServices", testGetServices),
-        ("testGetService", testGetService),
-        ("testGetAppEnv", testGetAppEnv),
-        ("testGetServiceURL", testGetServiceURL),
-        ("testGetServiceCreds", testGetServiceCreds)
+      ("testGetApp", testGetApp),
+      ("testGetServices", testGetServices),
+      ("testGetService", testGetService),
+      ("testGetAppEnv", testGetAppEnv),
+      ("testGetServiceURL", testGetServiceURL),
+      ("testGetServiceCreds", testGetServiceCreds)
     ]
   }
 

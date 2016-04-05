@@ -33,10 +33,10 @@ import SwiftyJSON
 */
 class UtilsTests : XCTestCase {
 
-  var allTests : [(String, () throws -> Void)] {
+  static var allTests : [(String, UtilsTests -> () throws -> Void)] {
     return [
-        ("testConvertStringToJSON", testConvertStringToJSON),
-        ("testConvertJSONArrayToStringArray", testConvertJSONArrayToStringArray)
+      ("testConvertStringToJSON", testConvertStringToJSON),
+      ("testConvertJSONArrayToStringArray", testConvertJSONArrayToStringArray)
     ]
   }
 
