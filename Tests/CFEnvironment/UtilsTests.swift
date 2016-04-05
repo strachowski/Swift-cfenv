@@ -71,7 +71,7 @@ class UtilsTests : XCTestCase {
   }
 
   private class func verifyElementInArrayExists(strArray: [String], element: String) {
-    let index: Int? = strArray.indexOf(element)
+    let index: Int? = strArray.index(of: element)
     XCTAssertNotNil(index, "Array should contain element: \(element)")
   }
 
