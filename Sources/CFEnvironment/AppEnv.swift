@@ -257,7 +257,11 @@ public class AppEnv {
     variableName: String, varibleType: String, options: JSON) throws
     -> JSON {
     if isLocal {
-      return options["vcap"][varibleType]
+      let envVariable = options["vcap"][varibleType]
+      if envVariable.null != nil {
+        return [:]
+      }
+      return envVariable
     } else {
       if let json = JSONUtils.convertStringToJSON(environmentVars[variableName]) {
         return json
