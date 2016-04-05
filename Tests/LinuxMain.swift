@@ -16,7 +16,7 @@
 
 import XCTest
 
-@testable import CFEnvironmenttest
+@testable import CFEnvironmentTestSuite
 
 XCTMain([
     MainTests(),
