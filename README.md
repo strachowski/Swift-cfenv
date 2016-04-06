@@ -156,9 +156,9 @@ The Cloud Foundry command line will then prompt you for the following (please en
     password> password00
     database> CloudantDB
 
-Once the dummy service is created, you can clone Bluemix's [swift-helloworld](https://github.com/IBM-Bluemix/swift-helloworld) application using the following command:
+Once the dummy service is created, you can clone Bluemix's [swift-helloworld](https://github.com/IBM-Bluemix/swift-helloworld/tree/develop) application (**develop branch**) using the following command:
 
-`git clone -b master https://github.com/IBM-Bluemix/swift-helloworld.git`
+`git clone -b develop https://github.com/IBM-Bluemix/swift-helloworld.git`
 
 Then push the swift-helloworld application using the following command:
 
