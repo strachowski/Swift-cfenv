@@ -73,20 +73,11 @@ public class AppEnv {
       return nil
     }
 
-    // Get startedAt time
-    let dateUtils = DateUtils()
-    guard let startedAt: NSDate =
-      dateUtils.convertStringToNSDate(app["started_at"].string)
-      else {
-        return nil
-    }
-
-    let startedAtTs = startedAt.timeIntervalSince1970
-
     // Get uris
     let uris = JSONUtils.convertJSONArrayToStringArray(app, fieldName: "uris")
+    // Create DateUtils instance
+    let dateUtils = DateUtils()
 
-    // Create App object
     guard
       let name = app["application_name"].string,
       let id = app["application_id"].string,
@@ -94,9 +85,12 @@ public class AppEnv {
       let instanceId = app["instance_id"].string,
       let instanceIndex = app["instance_index"].int,
       let port = app["port"].int,
+      let startedAt: NSDate = dateUtils.convertStringToNSDate(app["started_at"].string),
       let spaceId = app["space_id"].string else {
         return nil
       }
+
+    let startedAtTs = startedAt.timeIntervalSince1970
 
     // App instance should only be created if all required variables exist
     let appObj = App(id: id, name: name, uris: uris, version: version,
