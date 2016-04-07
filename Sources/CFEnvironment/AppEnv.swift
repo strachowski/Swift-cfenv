@@ -65,14 +65,12 @@ public class AppEnv {
   public func getApp() -> App? {
     // Get limits
     let limits: App.Limits?
-    let memory = app["limits"]["mem"].int
-    let disk = app["limits"]["disk"].int
-    let fds = app["limits"]["fds"].int
-    if memory != nil && disk != nil && fds != nil {
-      limits = App.Limits(memory: memory!,
-        disk: disk!, fds: fds!)
+    if let memory = app["limits"]["mem"].int,
+       let disk = app["limits"]["disk"].int,
+       let fds = app["limits"]["fds"].int {
+         limits = App.Limits(memory: memory, disk: disk, fds: fds)
     } else {
-      limits = nil
+         limits = nil
     }
 
     // Get startedAt time
