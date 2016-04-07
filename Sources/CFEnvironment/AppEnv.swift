@@ -17,7 +17,7 @@
 import Foundation
 import SwiftyJSON
 
-public class AppEnv {
+public struct AppEnv {
 
   public let isLocal: Bool
   public let port: Int
@@ -240,7 +240,7 @@ public class AppEnv {
   /**
   * Static method for parsing VCAP_APPLICATION and VCAP_SERVICES.
   */
-  private class func parseEnvVariable(isLocal: Bool, environmentVars: [String:String],
+  private static func parseEnvVariable(isLocal: Bool, environmentVars: [String:String],
     variableName: String, varibleType: String, options: JSON) throws
     -> JSON {
     if isLocal {
@@ -260,7 +260,7 @@ public class AppEnv {
   /**
   * Static method for parsing the port number.
   */
-  private class func parsePort(environmentVars: [String:String], app: JSON) throws -> Int {
+  private static func parsePort(environmentVars: [String:String], app: JSON) throws -> Int {
     let portString: String = environmentVars["PORT"] ?? environmentVars["CF_INSTANCE_PORT"] ??
       environmentVars["VCAP_APP_PORT"] ?? "8090"
 
@@ -285,7 +285,7 @@ public class AppEnv {
   /**
   * Static method for parsing the name for the application.
   */
-  private class func parseName(app: JSON, options: JSON) -> String? {
+  private static func parseName(app: JSON, options: JSON) -> String? {
     let name: String? = options["name"].string ?? app["name"].string
     // TODO: Add logic for parsing manifest.yml to get name
     // https://github.com/behrang/YamlSwift
@@ -296,7 +296,7 @@ public class AppEnv {
   /**
   * Static method for parsing the URLs for the application.
   */
-  private class func parseURLs(isLocal: Bool, app: JSON, port: Int,
+  private static func parseURLs(isLocal: Bool, app: JSON, port: Int,
     options: JSON) -> [String] {
     var uris: [String] = JSONUtils.convertJSONArrayToStringArray(app, fieldName: "uris")
     if isLocal {
