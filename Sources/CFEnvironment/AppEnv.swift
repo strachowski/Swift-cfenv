@@ -181,41 +181,47 @@ public struct AppEnv {
       return nil
     }
 
-    for (key, substitution) in substitutions {
-      switch key {
-        case "user":
-          parsedURL.user = substitution.string
-        case "password":
-          parsedURL.password = substitution.string
-        case "port":
-          parsedURL.port = substitution.numberValue
-        case "host":
-          parsedURL.host = substitution.string
-        case "scheme":
-          parsedURL.scheme = substitution.string
-        case "query":
-          parsedURL.query = substitution.string
-        case "queryItems":
-          let queryItems = substitution.arrayValue
-          var urlQueryItems: [NSURLQueryItem] = []
-          for queryItem in queryItems {
-            if let name = queryItem["name"].string {
-              let urlQueryItem = NSURLQueryItem(name: name, value: queryItem["value"].string)
-              urlQueryItems.append(urlQueryItem)
-            }
-          }
-          if urlQueryItems.count > 0 {
-            parsedURL.queryItems = urlQueryItems
-          }
-        // These are being ignored
-        //case "fragment":
-        // parsedURL.fragment = substitution.string
-        //case "path":
-        // parsedURL.path = substitution.string
-        default:
-          print("The replacements '\(key)' value was ignored.")
+    // Set replacements in a predefined order
+    // Before, we were just iterating over the keys in the JSON object,
+    // but unfortunately the order of the keys returned were different on
+    // OS X and Linux, which resulted in different outcomes.
+    if let user = substitutions["user"].string {
+       parsedURL.user = user
+    }
+    if let password = substitutions["password"].string {
+      parsedURL.password = password
+    }
+    if let port = substitutions["port"].number {
+      parsedURL.port = port
+    }
+    if let host = substitutions["host"].string {
+      parsedURL.host = host
+    }
+    if let scheme = substitutions["scheme"].string {
+      parsedURL.scheme = scheme
+    }
+    if let query = substitutions["query"].string {
+      parsedURL.query = query
+    }
+    if let queryItems = substitutions["queryItems"].array {
+      var urlQueryItems: [NSURLQueryItem] = []
+      for queryItem in queryItems {
+        if let name = queryItem["name"].string {
+          let urlQueryItem = NSURLQueryItem(name: name, value: queryItem["value"].string)
+          urlQueryItems.append(urlQueryItem)
+        }
+      }
+      if urlQueryItems.count > 0 {
+        parsedURL.queryItems = urlQueryItems
       }
     }
+    // These are being ignored at the moment
+    // if let fragment = substitutions["fragment"].string {
+    //   parsedURL.fragment = fragment
+    // }
+    // if let path = substitutions["path"].string {
+    //   parsedURL.path = path
+    // }
     return parsedURL.string
   }
 

@@ -201,7 +201,7 @@ class MainTests : XCTestCase {
 
       // Case #5
       replacements = "{ \"user\": \"username01\", \"password\": \"passw0rd\", \"port\": 9080, \"host\": \"bluemix.ibm.com\", \"scheme\": \"https\", \"query\": \"name0=value0&name1=value1\", \"queryItems\": [ { \"name\": \"name2\", \"value\": \"value2\" }, { \"name\": \"name3\", \"value\": \"value3\" } ] }"
-      try verifyServiceURLWithOptions(name, replacements: replacements, expectedServiceURL: "https://username01:passw0rd@bluemix.ibm.com:9080?name0=value0&name1=value1")
+      try verifyServiceURLWithOptions(name, replacements: replacements, expectedServiceURL: "https://username01:passw0rd@bluemix.ibm.com:9080?name2=value2&name3=value3")
     } catch let error as NSError {
       print("Error domain: \(error.domain)")
       print("Error code: \(error.code)")
