@@ -179,7 +179,7 @@ public class AppEnv {
     guard let parsedURL = NSURLComponents(string: url) else {
       return nil
     }
-    
+
     for (key, substitution) in substitutions {
       switch key {
         case "user":
@@ -226,14 +226,13 @@ public class AppEnv {
   * property for the specified service, an empty JSON is returned.
   */
   public func getServiceCreds(spec: String) -> JSON? {
-    if let service = getService(spec) {
-      if let credentials = service.credentials {
-        return credentials
-      } else {
-        return [:]
-      }
-    } else {
+    guard let service = getService(spec) else {
       return nil
+    }
+    if let credentials = service.credentials {
+      return credentials
+    } else {
+      return [:]
     }
   }
 
