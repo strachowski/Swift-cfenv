@@ -261,20 +261,21 @@ public class AppEnv {
   * Static method for parsing the port number.
   */
   private class func parsePort(environmentVars: [String:String], app: JSON) throws -> Int {
-    var portString: String? = environmentVars["PORT"] ?? environmentVars["CF_INSTANCE_PORT"] ??
-      environmentVars["VCAP_APP_PORT"] ?? nil
+    let portString: String = environmentVars["PORT"] ?? environmentVars["CF_INSTANCE_PORT"] ??
+      environmentVars["VCAP_APP_PORT"] ?? "8090"
 
-    if portString == nil {
-      if app["name"].string == nil {
-        portString = "8090"
-      }
-      //TODO: Are there any benefits in implementing logic similar to ports.getPort() (npm module)...?
-      //portString = "" + (ports.getPort(appEnv.name));
-      portString = "8090"
-    }
-
+    //TODO: Are there any benefits in implementing logic similar to ports.getPort() (npm module)...?
+    // if portString == nil {
+    //   if app["name"].string == nil {
+    //     portString = "8090"
+    //   }
+    //   //TODO: Are there any benefits in implementing logic similar to ports.getPort() (npm module)...?
+    //   //portString = "" + (ports.getPort(appEnv.name));
+    //   portString = "8090"
+    // }
     //let number: Int? = (portString != nil) ? Int(portString!) : nil
-    if let number = Int(portString!) {
+
+    if let number = Int(portString) {
       return number
     } else {
       throw CFEnvironmentError.InvalidValue("Invalid PORT value: \(portString)")
