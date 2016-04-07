@@ -264,12 +264,11 @@ public struct AppEnv {
     let portString: String = environmentVars["PORT"] ?? environmentVars["CF_INSTANCE_PORT"] ??
       environmentVars["VCAP_APP_PORT"] ?? "8090"
 
-    //TODO: Are there any benefits in implementing logic similar to ports.getPort() (npm module)...?
+    // TODO: Are there any benefits in implementing logic similar to ports.getPort() (npm module)...?
     // if portString == nil {
     //   if app["name"].string == nil {
     //     portString = "8090"
     //   }
-    //   //TODO: Are there any benefits in implementing logic similar to ports.getPort() (npm module)...?
     //   //portString = "" + (ports.getPort(appEnv.name));
     //   portString = "8090"
     // }
