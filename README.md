@@ -1,6 +1,6 @@
 # Swift-cfenv
 
-The Swift-cfenv package provides classes and methods to parse Cloud Foundry-provided environment variables, such as the port number, IP address, and URL of the application. It also provides default values when running the application locally.
+The Swift-cfenv package provides structures and methods to parse Cloud Foundry-provided environment variables, such as the port number, IP address, and URL of the application. It also provides default values when running the application locally.
 
 This library determines if you are running your application "locally" or on the cloud (i.e. Cloud Foundry app), based on whether the `VCAP_APPLICATION` environment variable is set. If not set, it is assumed you are running in "local" mode instead of "cloud mode".
 
@@ -68,12 +68,12 @@ If the `VCAP_APPLICATION` isn't set, it is then assumed that your application is
 
 ## API
 ### `CFEnvironment`
-To get an instance of the [`AppEnv`](#appenv) class, you can use one of the following `CFEnvironment` class methods:
+To get an instance of the [`AppEnv`](#appenv) structure, you can use one of the following methods of `CFEnvironment` structure:
 
 - `getAppEnv(options: JSON)`
 - `getAppEnv()`
 
-An instance of `AppEnv` class gives you access to the Cloud Foundry configuration data as an object.
+An instance of the `AppEnv` structure gives you access to the Cloud Foundry configuration data as an object.
 
 The `options` JSON parameter can contain the following properties:
 
@@ -82,7 +82,7 @@ The `options` JSON parameter can contain the following properties:
   - `vcap` - JSON object that provides values when running locally for the `VCAP_APPLICATION` and `VCAP_SERVICES` environment variables. This JSON object can have application and/or services properties, whose values are the same as the values serialized in the `VCAP_APPLICATION` and `VCAP_SERVICES` variables. Please, note that, when running locally, the `url` and `urls` properties of the `AppEnv` instance are not based on the `vcap` application object. Also, note that the `vcap` property is ignored if not running locally.
 
 ### `AppEnv`
-An instance of the `AppEnv` class has the following properties:
+An instance of the `AppEnv` structure has the following properties:
 
 - `isLocal`: Bool property is set to true if the VCAP_APPLICATION environment variable was set.
 - `app`: A JSON object version of the VCAP_APPLICATION environment variable.
