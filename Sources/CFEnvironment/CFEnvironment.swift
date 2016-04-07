@@ -16,7 +16,9 @@
 
 import SwiftyJSON
 
-//https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-APPLICATION
+/**
+* Functions as a factory to create instances of the AppEnv structure.
+*/
 public struct CFEnvironment {
   public static func getAppEnv(options: JSON) throws -> AppEnv {
     return try AppEnv(options: options)
@@ -26,4 +28,5 @@ public struct CFEnvironment {
    let options:JSON = [:]
    return try getAppEnv(options)
  }
+ 
 }
