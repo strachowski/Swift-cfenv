@@ -64,45 +64,46 @@ public class AppEnv {
   */
   public func getApp() -> App? {
     // Get limits
-    let limits: App.Limits?
+    let limits: App.Limits
     if let memory = app["limits"]["mem"].int,
        let disk = app["limits"]["disk"].int,
        let fds = app["limits"]["fds"].int {
          limits = App.Limits(memory: memory, disk: disk, fds: fds)
     } else {
-         limits = nil
+      return nil
     }
 
     // Get startedAt time
     let dateUtils = DateUtils()
-    let startedAt: NSDate? = dateUtils.convertStringToNSDate(app["started_at"].string)
-    let startedAtTs = startedAt?.timeIntervalSince1970
+    guard let startedAt: NSDate =
+      dateUtils.convertStringToNSDate(app["started_at"].string)
+      else {
+        return nil
+    }
+
+    let startedAtTs = startedAt.timeIntervalSince1970
 
     // Get uris
     let uris = JSONUtils.convertJSONArrayToStringArray(app, fieldName: "uris")
 
     // Create App object
-    let name = app["application_name"].string
-    let id = app["application_id"].string
-    let version = app["version"].string
-    let instanceId = app["instance_id"].string
-    let instanceIndex = app["instance_index"].int
-    let port = app["port"].int
-    let spaceId = app["space_id"].string
+    guard
+      let name = app["application_name"].string,
+      let id = app["application_id"].string,
+      let version = app["version"].string,
+      let instanceId = app["instance_id"].string,
+      let instanceIndex = app["instance_index"].int,
+      let port = app["port"].int,
+      let spaceId = app["space_id"].string else {
+        return nil
+      }
 
     // App instance should only be created if all required variables exist
-    if limits != nil && startedAt != nil && startedAtTs != nil &&
-      id != nil && name != nil && version != nil &&
-      instanceId != nil && instanceIndex != nil && port != nil &&
-      spaceId != nil {
-        let appObj = App(id: id!, name: name!, uris: uris, version: version!,
-          instanceId: instanceId!, instanceIndex: instanceIndex!,
-          limits: limits!, port: port!, spaceId: spaceId!,
-          startedAtTs: startedAtTs!, startedAt: startedAt!)
-        return appObj
-    }
-
-    return nil
+    let appObj = App(id: id, name: name, uris: uris, version: version,
+      instanceId: instanceId, instanceIndex: instanceIndex,
+      limits: limits, port: port, spaceId: spaceId,
+      startedAtTs: startedAtTs, startedAt: startedAt)
+    return appObj
   }
 
   /**
