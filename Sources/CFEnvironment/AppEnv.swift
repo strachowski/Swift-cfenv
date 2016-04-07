@@ -108,7 +108,6 @@ public class AppEnv {
   public func getServices() -> [String:Service] {
     var results: [String:Service] = [:]
     for (_, servs) in services {
-        // There seems to be a problem here... but why?!
       for service in servs.arrayValue { // as! [[String:AnyObject]] {
         if let name: String = service["name"].string {
           let tags = JSONUtils.convertJSONArrayToStringArray(service, fieldName: "tags")
@@ -166,24 +165,18 @@ public class AppEnv {
   public func getServiceURL(spec: String, replacements: JSON?) -> String? {
     var substitutions: JSON = replacements ?? [:]
     let service = getService(spec)
-    let credentials = service?.credentials
-    if (credentials == nil) {
-        return nil;
+    guard let credentials = service?.credentials else {
+      return nil
     }
 
-    let url: String?
-    if substitutions["url"] != nil {
-      url = credentials![substitutions["url"].string!].string
-    } else {
-      url = credentials!["url"].string ?? credentials!["uri"].string
-    }
-
-    if (url == nil) {
-      return nil;
+    guard let url: String =
+      credentials[substitutions["url"].string ?? "url"].string ?? credentials["uri"].string
+      else {
+      return nil
     }
 
     substitutions.dictionaryObject?.removeValue(forKey: "url")
-    if let parsedURL = NSURLComponents(string: url!) {
+    if let parsedURL = NSURLComponents(string: url) {
       for (key, substitution) in substitutions {
         switch key {
           case "user":
