@@ -20,16 +20,16 @@ import SwiftyJSON
 /**
 * JSON utilities.
 */
-public class JSONUtils {
+public struct JSONUtils {
 
   /**
   * Converts the speficied string to a JSON object.
   */
-  public class func convertStringToJSON(text: String?) -> JSON? {
+  public static func convertStringToJSON(text: String?) -> JSON? {
     #if os(Linux)
-    let data = text?.dataUsingEncoding(NSUTF8StringEncoding)
+      let data = text?.dataUsingEncoding(NSUTF8StringEncoding)
     #else
-    let data = text?.data(usingEncoding: NSUTF8StringEncoding)
+      let data = text?.data(usingEncoding: NSUTF8StringEncoding)
     #endif
     if data != nil {
       let json = JSON(data: data!)
@@ -40,9 +40,11 @@ public class JSONUtils {
   }
 
   /**
-  * Converts a JSON array to an array of Strings.
+  * Converts a JSON array element contained in a JSON object to an array of Strings.
+  * The fieldName argument should state the name of the JSON property that contains
+  * the JSON array.
   */
-  public class func convertJSONArrayToStringArray(json: JSON, fieldName: String) -> [String] {
+  public static func convertJSONArrayToStringArray(json: JSON, fieldName: String) -> [String] {
     return json[fieldName].arrayValue.map { $0.stringValue }
   }
 }

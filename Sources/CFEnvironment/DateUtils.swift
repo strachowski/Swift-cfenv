@@ -16,7 +16,7 @@
 
 import Foundation
 
-public class DateUtils {
+public struct DateUtils {
 
   let dateFormatter: NSDateFormatter
 
@@ -33,16 +33,17 @@ public class DateUtils {
   * format yyyy-MM-dd HH:mm:ss ZZZ.
   */
   public func convertStringToNSDate(dateString: String?) -> NSDate? {
-    let nsDate: NSDate?
-    if dateString != nil {
-      #if os(Linux)
-        nsDate = dateFormatter.dateFromString(dateString!)
-      #else
-        nsDate = dateFormatter.date(from: dateString!)
-      #endif
-    } else {
-      nsDate = nil
+    guard let dateStr = dateString else {
+      return nil
     }
+
+    let nsDate: NSDate?
+    #if os(Linux)
+      nsDate = dateFormatter.dateFromString(dateStr)
+    #else
+      nsDate = dateFormatter.date(from: dateStr)
+    #endif
+
     return nsDate
   }
 
@@ -51,16 +52,17 @@ public class DateUtils {
   * yyyy-MM-dd HH:mm:ss ZZZ.
   */
   public func convertNSDateToString(nsDate: NSDate?) -> String? {
-    let dateString: String?
-    if nsDate != nil {
-      #if os(Linux)
-        dateString = dateFormatter.stringFromDate(nsDate!)
-      #else
-        dateString = dateFormatter.string(from: nsDate!)
-      #endif
-    } else {
-      dateString = nil
+    guard let nsDateObj = nsDate else {
+      return nil
     }
+
+    let dateString: String?
+    #if os(Linux)
+      dateString = dateFormatter.stringFromDate(nsDateObj)
+    #else
+      dateString = dateFormatter.string(from: nsDateObj)
+    #endif
+
     return dateString
   }
 
