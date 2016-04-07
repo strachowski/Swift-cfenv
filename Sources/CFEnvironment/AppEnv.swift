@@ -109,11 +109,12 @@ public class AppEnv {
     var results: [String:Service] = [:]
     for (_, servs) in services {
       for service in servs.arrayValue { // as! [[String:AnyObject]] {
-        if let name: String = service["name"].string {
+        // A service must have a name and a label
+        if let name: String = service["name"].string,
+           let label: String = service["label"].string {
           let tags = JSONUtils.convertJSONArrayToStringArray(service, fieldName: "tags")
-          results[name] = Service(name: name, label: service["label"].string!,
-          plan: service["plan"].string, tags: tags,
-          credentials: service["credentials"])
+          results[name] =
+            Service(name: name, label: label, plan: service["plan"].string, tags: tags, credentials: service["credentials"])
         }
       }
     }
