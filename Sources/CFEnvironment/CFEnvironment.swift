@@ -26,7 +26,7 @@ public struct CFEnvironment {
 
   public static func getAppEnv() throws -> AppEnv  {
    let options:JSON = [:]
-   return try getAppEnv(options)
+   return try getAppEnv(options: options)
  }
- 
+
 }

@@ -29,7 +29,7 @@ public struct JSONUtils {
     #if os(Linux)
       let data = text?.dataUsingEncoding(NSUTF8StringEncoding)
     #else
-      let data = text?.data(usingEncoding: NSUTF8StringEncoding)
+      let data = text?.data(using: NSUTF8StringEncoding)
     #endif
     if data != nil {
       let json = JSON(data: data!)

@@ -38,24 +38,24 @@ public struct AppEnv {
     isLocal = (vcapApplication == nil)
 
     // Get app
-    app = try AppEnv.parseEnvVariable(isLocal, environmentVars: environmentVars,
+    app = try AppEnv.parseEnvVariable(isLocal: isLocal, environmentVars: environmentVars,
       variableName: "VCAP_APPLICATION", varibleType: "application", options: options)
 
     // Get services
-    services = try AppEnv.parseEnvVariable(isLocal, environmentVars: environmentVars,
+    services = try AppEnv.parseEnvVariable(isLocal: isLocal, environmentVars: environmentVars,
       variableName: "VCAP_SERVICES", varibleType: "services", options: options)
 
     // Get port
-    port = try AppEnv.parsePort(environmentVars, app: app)
+    port = try AppEnv.parsePort(environmentVars: environmentVars, app: app)
 
     // Get name
-    name = AppEnv.parseName(app, options: options)
+    name = AppEnv.parseName(app: app, options: options)
 
     // Get bind (IP address of the application instance)
     bind = app["host"].string ?? "0.0.0.0"
 
     // Get urls
-    urls = AppEnv.parseURLs(isLocal, app: app, port: port, options: options)
+    urls = AppEnv.parseURLs(isLocal: isLocal, app: app, port: port, options: options)
     url = urls[0]
   }
 
@@ -74,7 +74,7 @@ public struct AppEnv {
     }
 
     // Get uris
-    let uris = JSONUtils.convertJSONArrayToStringArray(app, fieldName: "uris")
+    let uris = JSONUtils.convertJSONArrayToStringArray(json: app, fieldName: "uris")
     // Create DateUtils instance
     let dateUtils = DateUtils()
 
@@ -85,7 +85,7 @@ public struct AppEnv {
       let instanceId = app["instance_id"].string,
       let instanceIndex = app["instance_index"].int,
       let port = app["port"].int,
-      let startedAt: NSDate = dateUtils.convertStringToNSDate(app["started_at"].string),
+      let startedAt: NSDate = dateUtils.convertStringToNSDate(dateString: app["started_at"].string),
       let spaceId = app["space_id"].string else {
         return nil
       }
@@ -112,7 +112,7 @@ public struct AppEnv {
         // A service must have a name and a label
         if let name: String = service["name"].string,
            let label: String = service["label"].string {
-          let tags = JSONUtils.convertJSONArrayToStringArray(service, fieldName: "tags")
+          let tags = JSONUtils.convertJSONArrayToStringArray(json: service, fieldName: "tags")
           results[name] =
             Service(name: name, label: label, plan: service["plan"].string, tags: tags, credentials: service["credentials"])
         }
@@ -165,7 +165,7 @@ public struct AppEnv {
   */
   public func getServiceURL(spec: String, replacements: JSON?) -> String? {
     var substitutions: JSON = replacements ?? [:]
-    let service = getService(spec)
+    let service = getService(spec: spec)
     guard let credentials = service?.credentials else {
       return nil
     }
@@ -233,7 +233,7 @@ public struct AppEnv {
   * property for the specified service, an empty JSON is returned.
   */
   public func getServiceCreds(spec: String) -> JSON? {
-    guard let service = getService(spec) else {
+    guard let service = getService(spec: spec) else {
       return nil
     }
     if let credentials = service.credentials {
@@ -256,7 +256,7 @@ public struct AppEnv {
       }
       return envVariable
     } else {
-      if let json = JSONUtils.convertStringToJSON(environmentVars[variableName]) {
+      if let json = JSONUtils.convertStringToJSON(text: environmentVars[variableName]) {
         return json
       }
       throw CFEnvironmentError.InvalidValue("Environment variable \(variableName) is not a valid JSON string!")
@@ -303,7 +303,7 @@ public struct AppEnv {
   */
   private static func parseURLs(isLocal: Bool, app: JSON, port: Int,
     options: JSON) -> [String] {
-    var uris: [String] = JSONUtils.convertJSONArrayToStringArray(app, fieldName: "uris")
+    var uris: [String] = JSONUtils.convertJSONArrayToStringArray(json: app, fieldName: "uris")
     if isLocal {
       uris = ["localhost:\(port)"]
     } else {
