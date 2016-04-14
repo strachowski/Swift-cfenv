@@ -28,23 +28,29 @@
         };
         ___RootGroup_ = {
             isa = PBXGroup;
-            children = ('__PBXFileRef_Package.swift', _____Sources_, _______Tests_, ____Products_);
+            children = ('__PBXFileRef_Package.swift', _____Sources_, Dependencies_, _______Tests_, ____Products_);
             sourceTree = '<group>';
         };
         _______Group_SwiftyJSON = {
             isa = PBXGroup;
             name = SwiftyJSON;
-            path = 'Packages/SwiftyJSON-5.0.0/Source';
+            path = 'Packages/SwiftyJSON-6.0.0/Source';
             sourceTree = '<group>';
-            children = ('__PBXFileRef_Packages/SwiftyJSON-5.0.0/Source/LclJSONSerialization.swift', '__PBXFileRef_Packages/SwiftyJSON-5.0.0/Source/SwiftyJSON.swift');
+            children = ('__PBXFileRef_Packages/SwiftyJSON-6.0.0/Source/LclJSONSerialization.swift', '__PBXFileRef_Packages/SwiftyJSON-6.0.0/Source/NSExtension.swift', '__PBXFileRef_Packages/SwiftyJSON-6.0.0/Source/SwiftyJSON.swift');
         };
-        '__PBXFileRef_Packages/SwiftyJSON-5.0.0/Source/LclJSONSerialization.swift' = {
+        '__PBXFileRef_Packages/SwiftyJSON-6.0.0/Source/LclJSONSerialization.swift' = {
             isa = PBXFileReference;
             lastKnownFileType = sourcecode.swift;
             name = 'LclJSONSerialization.swift';
             sourceTree = '<group>';
         };
-        '__PBXFileRef_Packages/SwiftyJSON-5.0.0/Source/SwiftyJSON.swift' = {
+        '__PBXFileRef_Packages/SwiftyJSON-6.0.0/Source/NSExtension.swift' = {
+            isa = PBXFileReference;
+            lastKnownFileType = sourcecode.swift;
+            name = 'NSExtension.swift';
+            sourceTree = '<group>';
+        };
+        '__PBXFileRef_Packages/SwiftyJSON-6.0.0/Source/SwiftyJSON.swift' = {
             isa = PBXFileReference;
             lastKnownFileType = sourcecode.swift;
             name = 'SwiftyJSON.swift';
@@ -69,7 +75,7 @@
         };
         CompilePhase_SwiftyJSON = {
             isa = PBXSourcesBuildPhase;
-            files = ('__src_cc_ref_Packages/SwiftyJSON-5.0.0/Source/LclJSONSerialization.swift', '__src_cc_ref_Packages/SwiftyJSON-5.0.0/Source/SwiftyJSON.swift');
+            files = ('__src_cc_ref_Packages/SwiftyJSON-6.0.0/Source/LclJSONSerialization.swift', '__src_cc_ref_Packages/SwiftyJSON-6.0.0/Source/NSExtension.swift', '__src_cc_ref_Packages/SwiftyJSON-6.0.0/Source/SwiftyJSON.swift');
             runOnlyForDeploymentPostprocessing = 0;
         };
         ___LinkPhase_SwiftyJSON = {
@@ -77,13 +83,17 @@
             files = ();
             runOnlyForDeploymentPostprocessing = 0;
         };
-        '__src_cc_ref_Packages/SwiftyJSON-5.0.0/Source/LclJSONSerialization.swift' = {
+        '__src_cc_ref_Packages/SwiftyJSON-6.0.0/Source/LclJSONSerialization.swift' = {
             isa = PBXBuildFile;
-            fileRef = '__PBXFileRef_Packages/SwiftyJSON-5.0.0/Source/LclJSONSerialization.swift';
+            fileRef = '__PBXFileRef_Packages/SwiftyJSON-6.0.0/Source/LclJSONSerialization.swift';
         };
-        '__src_cc_ref_Packages/SwiftyJSON-5.0.0/Source/SwiftyJSON.swift' = {
+        '__src_cc_ref_Packages/SwiftyJSON-6.0.0/Source/NSExtension.swift' = {
             isa = PBXBuildFile;
-            fileRef = '__PBXFileRef_Packages/SwiftyJSON-5.0.0/Source/SwiftyJSON.swift';
+            fileRef = '__PBXFileRef_Packages/SwiftyJSON-6.0.0/Source/NSExtension.swift';
+        };
+        '__src_cc_ref_Packages/SwiftyJSON-6.0.0/Source/SwiftyJSON.swift' = {
+            isa = PBXBuildFile;
+            fileRef = '__PBXFileRef_Packages/SwiftyJSON-6.0.0/Source/SwiftyJSON.swift';
         };
         _LinkFileRef_SwiftyJSON = {
             isa = PBXBuildFile;
@@ -97,12 +107,12 @@
         };
         ___DebugConf_SwiftyJSON = {
             isa = XCBuildConfiguration;
-            buildSettings = { DYLIB_INSTALL_NAME_BASE = '$(CONFIGURATION_BUILD_DIR)'; LD_RUNPATH_SEARCH_PATHS = '$(TOOLCHAIN_DIR)/usr/lib/swift/macosx'; PRODUCT_MODULE_NAME = SwiftyJSON; ENABLE_TESTABILITY = YES; OTHER_SWIFT_FLAGS = -DXcode; COMBINE_HIDPI_IMAGES = YES; MACOSX_DEPLOYMENT_TARGET = '10.10'; SWIFT_OPTIMIZATION_LEVEL = -Onone; PRODUCT_NAME = 'lib$(TARGET_NAME)'; };
+            buildSettings = { DYLIB_INSTALL_NAME_BASE = '$(CONFIGURATION_BUILD_DIR)'; LD_RUNPATH_SEARCH_PATHS = '$(TOOLCHAIN_DIR)/usr/lib/swift/macosx'; PRODUCT_MODULE_NAME = SwiftyJSON; ENABLE_TESTABILITY = YES; MACOSX_DEPLOYMENT_TARGET = '10.10'; OTHER_SWIFT_FLAGS = ( "-DXcode" ); OTHER_CFLAGS = (  ); COMBINE_HIDPI_IMAGES = YES; SWIFT_OPTIMIZATION_LEVEL = -Onone; OTHER_LDFLAGS = (  ); PRODUCT_NAME = 'lib$(TARGET_NAME)'; };
             name = Debug;
         };
         _ReleaseConf_SwiftyJSON = {
             isa = XCBuildConfiguration;
-            buildSettings = { DYLIB_INSTALL_NAME_BASE = '$(CONFIGURATION_BUILD_DIR)'; LD_RUNPATH_SEARCH_PATHS = '$(TOOLCHAIN_DIR)/usr/lib/swift/macosx'; PRODUCT_MODULE_NAME = SwiftyJSON; ENABLE_TESTABILITY = YES; OTHER_SWIFT_FLAGS = -DXcode; COMBINE_HIDPI_IMAGES = YES; MACOSX_DEPLOYMENT_TARGET = '10.10'; PRODUCT_NAME = 'lib$(TARGET_NAME)'; };
+            buildSettings = { DYLIB_INSTALL_NAME_BASE = '$(CONFIGURATION_BUILD_DIR)'; LD_RUNPATH_SEARCH_PATHS = '$(TOOLCHAIN_DIR)/usr/lib/swift/macosx'; PRODUCT_MODULE_NAME = SwiftyJSON; ENABLE_TESTABILITY = YES; MACOSX_DEPLOYMENT_TARGET = '10.10'; OTHER_SWIFT_FLAGS = ( "-DXcode" ); OTHER_CFLAGS = (  ); COMBINE_HIDPI_IMAGES = YES; OTHER_LDFLAGS = (  ); PRODUCT_NAME = 'lib$(TARGET_NAME)'; };
             name = Release;
         };
         __Dependency_SwiftyJSON = {
@@ -225,12 +235,12 @@
         };
         ___DebugConf_CFEnvironment = {
             isa = XCBuildConfiguration;
-            buildSettings = { DYLIB_INSTALL_NAME_BASE = '$(CONFIGURATION_BUILD_DIR)'; LD_RUNPATH_SEARCH_PATHS = '$(TOOLCHAIN_DIR)/usr/lib/swift/macosx'; PRODUCT_MODULE_NAME = CFEnvironment; ENABLE_TESTABILITY = YES; OTHER_SWIFT_FLAGS = -DXcode; COMBINE_HIDPI_IMAGES = YES; MACOSX_DEPLOYMENT_TARGET = '10.10'; SWIFT_OPTIMIZATION_LEVEL = -Onone; PRODUCT_NAME = 'lib$(TARGET_NAME)'; };
+            buildSettings = { DYLIB_INSTALL_NAME_BASE = '$(CONFIGURATION_BUILD_DIR)'; LD_RUNPATH_SEARCH_PATHS = '$(TOOLCHAIN_DIR)/usr/lib/swift/macosx'; PRODUCT_MODULE_NAME = CFEnvironment; ENABLE_TESTABILITY = YES; MACOSX_DEPLOYMENT_TARGET = '10.10'; OTHER_SWIFT_FLAGS = ( "-DXcode" ); OTHER_CFLAGS = (  ); COMBINE_HIDPI_IMAGES = YES; SWIFT_OPTIMIZATION_LEVEL = -Onone; OTHER_LDFLAGS = (  ); PRODUCT_NAME = 'lib$(TARGET_NAME)'; };
             name = Debug;
         };
         _ReleaseConf_CFEnvironment = {
             isa = XCBuildConfiguration;
-            buildSettings = { DYLIB_INSTALL_NAME_BASE = '$(CONFIGURATION_BUILD_DIR)'; LD_RUNPATH_SEARCH_PATHS = '$(TOOLCHAIN_DIR)/usr/lib/swift/macosx'; PRODUCT_MODULE_NAME = CFEnvironment; ENABLE_TESTABILITY = YES; OTHER_SWIFT_FLAGS = -DXcode; COMBINE_HIDPI_IMAGES = YES; MACOSX_DEPLOYMENT_TARGET = '10.10'; PRODUCT_NAME = 'lib$(TARGET_NAME)'; };
+            buildSettings = { DYLIB_INSTALL_NAME_BASE = '$(CONFIGURATION_BUILD_DIR)'; LD_RUNPATH_SEARCH_PATHS = '$(TOOLCHAIN_DIR)/usr/lib/swift/macosx'; PRODUCT_MODULE_NAME = CFEnvironment; ENABLE_TESTABILITY = YES; MACOSX_DEPLOYMENT_TARGET = '10.10'; OTHER_SWIFT_FLAGS = ( "-DXcode" ); OTHER_CFLAGS = (  ); COMBINE_HIDPI_IMAGES = YES; OTHER_LDFLAGS = (  ); PRODUCT_NAME = 'lib$(TARGET_NAME)'; };
             name = Release;
         };
         __Dependency_CFEnvironment = {
@@ -303,12 +313,12 @@
         };
         ___DebugConf_CFEnvironmentTestSuite = {
             isa = XCBuildConfiguration;
-            buildSettings = { LD_RUNPATH_SEARCH_PATHS = '@loader_path/../Frameworks'; PRODUCT_MODULE_NAME = CFEnvironmentTestSuite; OTHER_SWIFT_FLAGS = -DXcode; COMBINE_HIDPI_IMAGES = YES; MACOSX_DEPLOYMENT_TARGET = '10.10'; SWIFT_OPTIMIZATION_LEVEL = -Onone; EMBEDDED_CONTENT_CONTAINS_SWIFT = YES; PRODUCT_NAME = '$(TARGET_NAME)'; };
+            buildSettings = { LD_RUNPATH_SEARCH_PATHS = '@loader_path/../Frameworks'; PRODUCT_MODULE_NAME = CFEnvironmentTestSuite; MACOSX_DEPLOYMENT_TARGET = '10.10'; OTHER_SWIFT_FLAGS = ( "-DXcode" ); OTHER_CFLAGS = (  ); COMBINE_HIDPI_IMAGES = YES; SWIFT_OPTIMIZATION_LEVEL = -Onone; EMBEDDED_CONTENT_CONTAINS_SWIFT = YES; OTHER_LDFLAGS = (  ); PRODUCT_NAME = '$(TARGET_NAME)'; };
             name = Debug;
         };
         _ReleaseConf_CFEnvironmentTestSuite = {
             isa = XCBuildConfiguration;
-            buildSettings = { LD_RUNPATH_SEARCH_PATHS = '@loader_path/../Frameworks'; PRODUCT_MODULE_NAME = CFEnvironmentTestSuite; OTHER_SWIFT_FLAGS = -DXcode; COMBINE_HIDPI_IMAGES = YES; MACOSX_DEPLOYMENT_TARGET = '10.10'; EMBEDDED_CONTENT_CONTAINS_SWIFT = YES; PRODUCT_NAME = '$(TARGET_NAME)'; };
+            buildSettings = { LD_RUNPATH_SEARCH_PATHS = '@loader_path/../Frameworks'; PRODUCT_MODULE_NAME = CFEnvironmentTestSuite; MACOSX_DEPLOYMENT_TARGET = '10.10'; OTHER_SWIFT_FLAGS = ( "-DXcode" ); OTHER_CFLAGS = (  ); COMBINE_HIDPI_IMAGES = YES; EMBEDDED_CONTENT_CONTAINS_SWIFT = YES; OTHER_LDFLAGS = (  ); PRODUCT_NAME = '$(TARGET_NAME)'; };
             name = Release;
         };
         __Dependency_CFEnvironmentTestSuite = {
@@ -321,10 +331,10 @@
             name = Sources;
             sourceTree = '<group>';
         };
-        _______Tests_ = {
+        Dependencies_ = {
             isa = PBXGroup;
-            children = (_______Group_CFEnvironmentTestSuite);
-            name = Tests;
+            children = (_______Group_SwiftyJSON);
+            name = Dependencies;
             sourceTree = '<group>';
         };
         _______Tests_ = {
