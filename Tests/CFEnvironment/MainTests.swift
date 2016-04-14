@@ -50,7 +50,7 @@ class MainTests : XCTestCase {
 
   override func setUp() {
     super.setUp()
-    jsonOptions = JSONUtils.convertStringToJSON(options) as JSON!
+    jsonOptions = JSONUtils.convertStringToJSON(text: options) as JSON!
   }
 
   override func tearDown() {
@@ -60,10 +60,8 @@ class MainTests : XCTestCase {
 
   func testGetApp() {
     do {
-      let appEnv = try CFEnvironment.getAppEnv(jsonOptions)
-      //print(appEnv.app)
+      let appEnv = try CFEnvironment.getAppEnv(options: jsonOptions)
       if let app = appEnv.getApp() {
-        //print("app: \(app)")
         XCTAssertNotNil(app)
         XCTAssertEqual(app.port, 61263, "Application port number should match.")
         XCTAssertEqual(app.id, "e582416a-9771-453f-8df1-7b467f6d78e4", "Application ID value should match.")
@@ -86,7 +84,7 @@ class MainTests : XCTestCase {
         let startedAt: NSDate? = app.startedAt
         XCTAssertNotNil(startedAt)
         let dateUtils = DateUtils()
-        let startedAtStr = dateUtils.convertNSDateToString(startedAt)
+        let startedAtStr = dateUtils.convertNSDateToString(nsDate: startedAt)
         XCTAssertEqual(startedAtStr, "2016-03-04 02:43:07 +0000", "Application startedAt date should match.")
         XCTAssertNotNil(app.startedAtTs, "Application startedAt ts should not be nil.")
         XCTAssertEqual(app.startedAtTs, 1457059387, "Application startedAt ts should match.")
@@ -103,7 +101,7 @@ class MainTests : XCTestCase {
   func testGetServices() {
     do {
       //print("json \(json)")
-      let appEnv = try CFEnvironment.getAppEnv(jsonOptions)
+      let appEnv = try CFEnvironment.getAppEnv(options: jsonOptions)
       //let servs = appEnv.services
       //print("servs \(servs)")
       let services = appEnv.getServices()
@@ -112,7 +110,7 @@ class MainTests : XCTestCase {
       let name = "Cloudant NoSQL DB-kd"
       if let service = services[name] {
         XCTAssertEqual(service.name, name, "Key in dictionary and service name should match.")
-        verifyService(service)
+        verifyService(service: service)
       } else {
         XCTFail("A service object should have been found for '\(name)'.")
       }
@@ -125,10 +123,10 @@ class MainTests : XCTestCase {
 
   func testGetService() {
     do {
-      let appEnv = try CFEnvironment.getAppEnv(jsonOptions)
+      let appEnv = try CFEnvironment.getAppEnv(options: jsonOptions)
       let checkService = { (name: String) in
-        if let service = appEnv.getService(name) {
-          self.verifyService(service)
+        if let service = appEnv.getService(spec: name) {
+          self.verifyService(service: service)
         } else {
           XCTFail("A service object should have been found for '\(name)'.")
         }
@@ -162,7 +160,7 @@ class MainTests : XCTestCase {
       XCTAssertEqual(appEnv.services.count, 0, "AppEnv's services array should contain 0 elements.")
 
       // Case #2 - Running locally with options
-      appEnv = try CFEnvironment.getAppEnv(jsonOptions)
+      appEnv = try CFEnvironment.getAppEnv(options: jsonOptions)
       XCTAssertEqual(appEnv.isLocal, true, "AppEnv's isLocal should be true.")
       XCTAssertEqual(appEnv.port, 8090, "AppEnv's port should be 8090.")
       XCTAssertEqual(appEnv.name, "swift-test")
@@ -185,23 +183,23 @@ class MainTests : XCTestCase {
 
       // Case #1 - Running locally, no options
       let appEnv = try CFEnvironment.getAppEnv()
-      let serviceURL = appEnv.getServiceURL(name, replacements: nil)
+      let serviceURL = appEnv.getServiceURL(spec: name, replacements: nil)
       XCTAssertNil(serviceURL, "The serviceURL should be nil.")
 
       // Case #2 - Running locally with options and no replacements
-      try verifyServiceURLWithOptions(name, replacements: nil, expectedServiceURL: "https://09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix:06c19ae06b1915d8a6649df5901eca85e885182421ffa9ef89e14bbc1b76efd4@09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix.cloudant.com")
+      try verifyServiceURLWithOptions(name: name, replacements: nil, expectedServiceURL: "https://09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix:06c19ae06b1915d8a6649df5901eca85e885182421ffa9ef89e14bbc1b76efd4@09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix.cloudant.com")
 
       // Case #3 - Running locally with options and replacements
       var replacements = "{ \"user\": \"username01\", \"password\": \"passw0rd\", \"port\": 9080, \"host\": \"bluemix.ibm.com\", \"scheme\": \"https\", \"queryItems\": [ { \"name\": \"name2\", \"value\": \"value2\" }, { \"name\": \"name3\", \"value\": \"value3\" } ] }"
-      try verifyServiceURLWithOptions(name, replacements: replacements, expectedServiceURL: "https://username01:passw0rd@bluemix.ibm.com:9080?name2=value2&name3=value3")
+      try verifyServiceURLWithOptions(name: name, replacements: replacements, expectedServiceURL: "https://username01:passw0rd@bluemix.ibm.com:9080?name2=value2&name3=value3")
 
       // Case #4
       replacements = "{ \"user\": \"username01\", \"password\": \"passw0rd\", \"port\": 9080, \"host\": \"bluemix.ibm.com\", \"scheme\": \"https\", \"query\": \"name0=value0&name1=value1\" }"
-      try verifyServiceURLWithOptions(name, replacements: replacements, expectedServiceURL: "https://username01:passw0rd@bluemix.ibm.com:9080?name0=value0&name1=value1")
+      try verifyServiceURLWithOptions(name: name, replacements: replacements, expectedServiceURL: "https://username01:passw0rd@bluemix.ibm.com:9080?name0=value0&name1=value1")
 
       // Case #5
       replacements = "{ \"user\": \"username01\", \"password\": \"passw0rd\", \"port\": 9080, \"host\": \"bluemix.ibm.com\", \"scheme\": \"https\", \"query\": \"name0=value0&name1=value1\", \"queryItems\": [ { \"name\": \"name2\", \"value\": \"value2\" }, { \"name\": \"name3\", \"value\": \"value3\" } ] }"
-      try verifyServiceURLWithOptions(name, replacements: replacements, expectedServiceURL: "https://username01:passw0rd@bluemix.ibm.com:9080?name2=value2&name3=value3")
+      try verifyServiceURLWithOptions(name: name, replacements: replacements, expectedServiceURL: "https://username01:passw0rd@bluemix.ibm.com:9080?name2=value2&name3=value3")
     } catch let error as NSError {
       print("Error domain: \(error.domain)")
       print("Error code: \(error.code)")
@@ -211,10 +209,10 @@ class MainTests : XCTestCase {
 
   func testGetServiceCreds() {
     do {
-      let appEnv = try CFEnvironment.getAppEnv(jsonOptions)
+      let appEnv = try CFEnvironment.getAppEnv(options: jsonOptions)
       let checkServiceCreds = { (name: String) in
-        if let serviceCreds = appEnv.getServiceCreds(name) {
-          self.verifyServiceCreds(serviceCreds)
+        if let serviceCreds = appEnv.getServiceCreds(spec: name) {
+          self.verifyServiceCreds(serviceCreds: serviceCreds)
         } else {
           XCTFail("Service credentials should have been found for '\(name)'.")
         }
@@ -230,7 +228,7 @@ class MainTests : XCTestCase {
 
       // Case #3
       let badName = "Unknown Service"
-      if appEnv.getServiceCreds(badName) != nil {
+      if appEnv.getServiceCreds(spec: badName) != nil {
         XCTFail("Service credentials should not have been found for '\(badName)'.")
       }
     } catch let error as NSError {
@@ -241,9 +239,9 @@ class MainTests : XCTestCase {
   }
 
   private func verifyServiceURLWithOptions(name: String, replacements: String?, expectedServiceURL: String) throws {
-    let appEnv = try CFEnvironment.getAppEnv(jsonOptions)
-    let substitutions = JSONUtils.convertStringToJSON(replacements)
-    if let serviceURL = appEnv.getServiceURL(name, replacements: substitutions) {
+    let appEnv = try CFEnvironment.getAppEnv(options: jsonOptions)
+    let substitutions = JSONUtils.convertStringToJSON(text: replacements)
+    if let serviceURL = appEnv.getServiceURL(spec: name, replacements: substitutions) {
         XCTAssertEqual(serviceURL, expectedServiceURL, "ServiceURL should match '\(expectedServiceURL)'.")
     } else {
       XCTFail("A serviceURL should have been returned!")
@@ -261,7 +259,7 @@ class MainTests : XCTestCase {
     XCTAssertEqual(tags[2], "ibm_dedicated_public", "Serivce tag #2 should match.")
     let credentials: JSON? = service.credentials
     XCTAssertNotNil(credentials)
-    verifyServiceCreds(credentials!)
+    verifyServiceCreds(serviceCreds: credentials!)
   }
 
   private func verifyServiceCreds(serviceCreds: JSON) {

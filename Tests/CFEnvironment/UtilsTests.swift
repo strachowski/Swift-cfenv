@@ -42,7 +42,7 @@ class UtilsTests : XCTestCase {
 
   func testConvertStringToJSON() {
     let VCAP_APPLICATION = "{ \"users\": null,  \"instance_id\": \"7d4f24cfba06462ba23d68aaf1d7354a\",  \"instance_index\": 0,  \"host\": \"0.0.0.0\",  \"port\": 61263,  \"started_at\": \"2016-03-04 02:43:07 +0000\",  \"started_at_timestamp\": 1457059387 }"
-    if let json = JSONUtils.convertStringToJSON(VCAP_APPLICATION) {
+    if let json = JSONUtils.convertStringToJSON(text: VCAP_APPLICATION) {
       //print("JSON object is: \(json)")
       //print("Type is \(json["users"].dynamicType)")
       XCTAssertNil(json["users"] as? AnyObject)
@@ -59,12 +59,12 @@ class UtilsTests : XCTestCase {
 
   func testConvertJSONArrayToStringArray() {
     let jsonStr = "{ \"tags\": [ \"data_management\", \"ibm_created\", \"ibm_dedicated_public\" ] }"
-    if let json = JSONUtils.convertStringToJSON(jsonStr) {
-      let strArray: [String] = JSONUtils.convertJSONArrayToStringArray(json, fieldName: "tags")
+    if let json = JSONUtils.convertStringToJSON(text: jsonStr) {
+      let strArray: [String] = JSONUtils.convertJSONArrayToStringArray(json: json, fieldName: "tags")
         XCTAssertEqual(strArray.count, 3, "There should be 3 elements in the string array.")
-        UtilsTests.verifyElementInArrayExists(strArray, element: "data_management")
-        UtilsTests.verifyElementInArrayExists(strArray, element: "ibm_created")
-        UtilsTests.verifyElementInArrayExists(strArray, element: "ibm_dedicated_public")
+        UtilsTests.verifyElementInArrayExists(strArray: strArray, element: "data_management")
+        UtilsTests.verifyElementInArrayExists(strArray: strArray, element: "ibm_created")
+        UtilsTests.verifyElementInArrayExists(strArray: strArray, element: "ibm_dedicated_public")
     } else {
       XCTFail("Could not generate JSON object!")
     }
