@@ -31,12 +31,12 @@ public struct JSONUtils {
     #else
       let data = text?.data(using: NSUTF8StringEncoding)
     #endif
-    if data != nil {
-      let json = JSON(data: data!)
-      return json
+    guard let nsData = data else {
+      print("Could not generate JSON object from string: \(text)")
+      return nil
     }
-    print("Could not generate JSON object from string: \(text)")
-    return nil
+    let json = JSON(data: nsData)
+    return json
   }
 
   /**
