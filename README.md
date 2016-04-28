@@ -162,7 +162,7 @@ Once the dummy service is created, you can clone Bluemix's [swift-helloworld](ht
 
 Then push the swift-helloworld application using the following command:
 
-`cf push -b https://github.com/cloudfoundry-community/swift-buildpack.git`
+`cf push -b https://github.com/IBM-Swift/swift-buildpack.git`
 
 Once the application is successfully pushed, you need to bind the service you created previously to the new application and then restage the application:
 
