@@ -134,17 +134,9 @@ public struct AppEnv {
     }
 
     do {
-      #if os(Linux)
-      let regex = try NSRegularExpression(pattern: spec, options: NSRegularExpressionOptions.CaseInsensitive)
-      #else
       let regex = try NSRegularExpression(pattern: spec, options: NSRegularExpressionOptions.caseInsensitive)
-      #endif
       for (name, serv) in services {
-        #if os(Linux)
-           let numberOfMatches = regex.numberOfMatchesInString(name, options: [], range: NSMakeRange(0, name.characters.count))
-        #else
-           let numberOfMatches = regex.numberOfMatches(in: name, options: [], range: NSMakeRange(0, name.characters.count))
-        #endif
+        let numberOfMatches = regex.numberOfMatches(in: name, options: [], range: NSMakeRange(0, name.characters.count))
         if numberOfMatches > 0 {
           return serv
         }

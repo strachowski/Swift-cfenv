@@ -55,14 +55,7 @@ public struct DateUtils {
     guard let nsDateObj = nsDate else {
       return nil
     }
-
-    let dateString: String?
-    #if os(Linux)
-      dateString = dateFormatter.stringFromDate(nsDateObj)
-    #else
-      dateString = dateFormatter.string(from: nsDateObj)
-    #endif
-
+    let dateString: String? = dateFormatter.string(from: nsDateObj)
     return dateString
   }
 
