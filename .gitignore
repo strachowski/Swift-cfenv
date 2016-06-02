@@ -1,4 +1,4 @@
 .build/*
 Packages/*
-CFEnvironment.xcodeproj/xcuserdata/*
-CFEnvironment.xcodeproj/project.xcworkspace/xcuserdata/*
+CloudEnvironment.xcodeproj/xcuserdata/*
+CloudEnvironment.xcodeproj/project.xcworkspace/xcuserdata/*

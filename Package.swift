@@ -17,16 +17,16 @@
 import PackageDescription
 
 let package = Package(
-    name: "CFEnvironment",
+    name: "CloudEnvironment",
     targets: [
       Target(
-        name: "CFEnvironment",
+        name: "CloudEnvironment",
         dependencies: []
       ),
     ],
     dependencies: [
       //.Package(url: "https://github.com/behrang/YamlSwift.git", majorVersion: 1),
-      .Package(url: "https://github.com/IBM-Swift/SwiftyJSON.git", majorVersion: 7)
+      .Package(url: "https://github.com/IBM-Swift/SwiftyJSON.git", majorVersion: 8)
     ],
     testDependencies: []
 )

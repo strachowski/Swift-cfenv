@@ -16,7 +16,7 @@
 
 import XCTest
 
-@testable import CFEnvironmentTestSuite
+@testable import CloudEnvironmentTestSuite
 
 XCTMain([
     testCase(MainTests.allTests),

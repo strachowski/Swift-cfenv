@@ -251,7 +251,7 @@ public struct AppEnv {
       if let json = JSONUtils.convertStringToJSON(text: environmentVars[variableName]) {
         return json
       }
-      throw CFEnvironmentError.InvalidValue("Environment variable \(variableName) is not a valid JSON string!")
+      throw CloudEnvironmentError.InvalidValue("Environment variable \(variableName) is not a valid JSON string!")
     }
   }
 
@@ -275,7 +275,7 @@ public struct AppEnv {
     if let number = Int(portString) {
       return number
     } else {
-      throw CFEnvironmentError.InvalidValue("Invalid PORT value: \(portString)")
+      throw CloudEnvironmentError.InvalidValue("Invalid PORT value: \(portString)")
     }
   }
 

@@ -24,7 +24,7 @@ import XCTest
 import Foundation
 import SwiftyJSON
 
-@testable import CFEnvironment
+@testable import CloudEnvironment
 
 /**
 * Online tool for escaping JSON: http://www.freeformatter.com/javascript-escape.html

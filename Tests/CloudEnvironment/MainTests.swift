@@ -24,7 +24,7 @@ import XCTest
 import Foundation
 import SwiftyJSON
 
-@testable import CFEnvironment
+@testable import CloudEnvironment
 
 /**
 * Online tool for escaping JSON: http://www.freeformatter.com/javascript-escape.html
@@ -59,7 +59,7 @@ class MainTests : XCTestCase {
 
   func testGetApp() {
     do {
-      let appEnv = try CFEnvironment.getAppEnv(options: jsonOptions)
+      let appEnv = try CloudEnvironment.getAppEnv(options: jsonOptions)
       if let app = appEnv.getApp() {
         XCTAssertNotNil(app)
         XCTAssertEqual(app.port, 61263, "Application port number should match.")
@@ -100,7 +100,7 @@ class MainTests : XCTestCase {
   func testGetServices() {
     do {
       //print("json \(json)")
-      let appEnv = try CFEnvironment.getAppEnv(options: jsonOptions)
+      let appEnv = try CloudEnvironment.getAppEnv(options: jsonOptions)
       //let servs = appEnv.services
       //print("servs \(servs)")
       let services = appEnv.getServices()
@@ -122,7 +122,7 @@ class MainTests : XCTestCase {
 
   func testGetService() {
     do {
-      let appEnv = try CFEnvironment.getAppEnv(options: jsonOptions)
+      let appEnv = try CloudEnvironment.getAppEnv(options: jsonOptions)
       let checkService = { (name: String) in
         if let service = appEnv.getService(spec: name) {
           self.verifyService(service: service)
@@ -148,7 +148,7 @@ class MainTests : XCTestCase {
   func testGetAppEnv() {
     do {
       // Case #1 - Running locally, no options
-      var appEnv = try CFEnvironment.getAppEnv()
+      var appEnv = try CloudEnvironment.getAppEnv()
       XCTAssertEqual(appEnv.isLocal, true, "AppEnv's isLocal should be true.")
       XCTAssertEqual(appEnv.port, 8090, "AppEnv's port should be 8090.")
       XCTAssertNil(appEnv.name, "AppEnv's name should be nil.")
@@ -159,7 +159,7 @@ class MainTests : XCTestCase {
       XCTAssertEqual(appEnv.services.count, 0, "AppEnv's services array should contain 0 elements.")
 
       // Case #2 - Running locally with options
-      appEnv = try CFEnvironment.getAppEnv(options: jsonOptions)
+      appEnv = try CloudEnvironment.getAppEnv(options: jsonOptions)
       XCTAssertEqual(appEnv.isLocal, true, "AppEnv's isLocal should be true.")
       XCTAssertEqual(appEnv.port, 8090, "AppEnv's port should be 8090.")
       XCTAssertEqual(appEnv.name, "swift-test")
@@ -181,7 +181,7 @@ class MainTests : XCTestCase {
       let name = "Cloudant NoSQL DB-kd"
 
       // Case #1 - Running locally, no options
-      let appEnv = try CFEnvironment.getAppEnv()
+      let appEnv = try CloudEnvironment.getAppEnv()
       let serviceURL = appEnv.getServiceURL(spec: name, replacements: nil)
       XCTAssertNil(serviceURL, "The serviceURL should be nil.")
 
@@ -208,7 +208,7 @@ class MainTests : XCTestCase {
 
   func testGetServiceCreds() {
     do {
-      let appEnv = try CFEnvironment.getAppEnv(options: jsonOptions)
+      let appEnv = try CloudEnvironment.getAppEnv(options: jsonOptions)
       let checkServiceCreds = { (name: String) in
         if let serviceCreds = appEnv.getServiceCreds(spec: name) {
           self.verifyServiceCreds(serviceCreds: serviceCreds)
@@ -238,7 +238,7 @@ class MainTests : XCTestCase {
   }
 
   private func verifyServiceURLWithOptions(name: String, replacements: String?, expectedServiceURL: String) throws {
-    let appEnv = try CFEnvironment.getAppEnv(options: jsonOptions)
+    let appEnv = try CloudEnvironment.getAppEnv(options: jsonOptions)
     let substitutions = JSONUtils.convertStringToJSON(text: replacements)
     if let serviceURL = appEnv.getServiceURL(spec: name, replacements: substitutions) {
         XCTAssertEqual(serviceURL, expectedServiceURL, "ServiceURL should match '\(expectedServiceURL)'.")
