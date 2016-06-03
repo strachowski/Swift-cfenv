@@ -68,7 +68,7 @@ If the `VCAP_APPLICATION` isn't set, it is then assumed that your application is
 
 ## API
 ### `CloudEnvironment`
-To get an instance of the [`AppEnv`](#appenv) structure, you can use one of the following methods of `CloudEnvironment` structure:
+To get an instance of the [`AppEnv`](#appenv) structure, you can use one of the following methods of the `CloudEnvironment` structure:
 
 - `getAppEnv(options: JSON)`
 - `getAppEnv()`
