@@ -17,16 +17,12 @@
 import SwiftyJSON
 
 /**
-* Functions as a factory to create instances of the AppEnv structure.
-*/
+ * Functions as a factory to create instances of the AppEnv structure.
+ */
 public struct CloudEnvironment {
-  public static func getAppEnv(options: JSON) throws -> AppEnv {
-    return try AppEnv(options: options)
-}
 
-  public static func getAppEnv() throws -> AppEnv  {
-   let options:JSON = [:]
-   return try getAppEnv(options: options)
- }
+  public static func getAppEnv(options: JSON = [:]) throws -> AppEnv {
+    return try AppEnv(options: options)
+  }
 
 }
