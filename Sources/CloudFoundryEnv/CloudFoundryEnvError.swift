@@ -14,6 +14,6 @@
  * limitations under the License.
  **/
 
-public enum CloudEnvironmentError: ErrorProtocol {
+public enum CloudFoundryEnvError: ErrorProtocol {
   case InvalidValue(String)
 }

@@ -28,15 +28,15 @@ To leverage the Swift-cfenv package in your Swift application, you should specif
      ])
  ```
 
- Once the Package.swift file of your application has been updated accordingly, you can import the `CloudEnvironment` module in your code:
+ Once the Package.swift file of your application has been updated accordingly, you can import the `CloudFoundryEnv` module in your code:
 
 ```swift
-import CloudEnvironment
+import CloudFoundryEnv
 
 ...
 
 do {
-  let appEnv = try CloudEnvironment.getAppEnv()
+  let appEnv = try CloudFoundryEnv.getAppEnv()
   // Use the given port and binding host values to create a socket for our server...
   let ip: String = appEnv.bind
   let port: Int = appEnv.port
@@ -48,7 +48,7 @@ do {
 
   ...
 
-} catch CloudEnvironmentError.InvalidValue {
+} catch CloudFoundryEnvError.InvalidValue {
   print("Oops, something went wrong... Server did not start!")
 }
 ```
@@ -67,8 +67,8 @@ The following environment variables, which are set when your application is runn
 If the `VCAP_APPLICATION` isn't set, it is then assumed that your application is running locally. For such cases, the [`AppEnv`](#appenv) instance returns values that are still useful for starting your application. Therefore, this Swift package can be used when running in Cloud Foundry and when running locally.
 
 ## API
-### `CloudEnvironment`
-To get an instance of the [`AppEnv`](#appenv) structure, you can use one of the following methods of the `CloudEnvironment` structure:
+### `CloudFoundryEnv`
+To get an instance of the [`AppEnv`](#appenv) structure, you can use one of the following methods of the `CloudFoundryEnv` structure:
 
 - `getAppEnv(options: JSON)`
 - `getAppEnv()`

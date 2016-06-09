@@ -17,10 +17,10 @@
 import PackageDescription
 
 let package = Package(
-    name: "CloudEnvironment",
+    name: "CloudFoundryEnv",
     targets: [
       Target(
-        name: "CloudEnvironment",
+        name: "CloudFoundryEnv",
         dependencies: []
       ),
     ],
