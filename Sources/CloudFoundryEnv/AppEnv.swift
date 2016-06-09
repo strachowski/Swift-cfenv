@@ -168,7 +168,7 @@ public struct AppEnv {
       return nil
     }
 
-    substitutions.dictionaryObject?.removeValue(forKey: "url")
+    substitutions.dictionaryObject?["url"] = nil
     guard let parsedURL = NSURLComponents(string: url) else {
       return nil
     }
