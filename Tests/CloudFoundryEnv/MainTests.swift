@@ -33,7 +33,7 @@ import SwiftyJSON
 */
 class MainTests : XCTestCase {
 
-  static var allTests : [(String, MainTests -> () throws -> Void)] {
+  static var allTests : [(String, (MainTests) -> () throws -> Void)] {
     return [
       ("testGetApp", testGetApp),
       ("testGetServices", testGetServices),
