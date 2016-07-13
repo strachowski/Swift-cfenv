@@ -1,3 +1,7 @@
+[![Build Status - Master](https://travis-ci.org/IBM-Swift/Swift-cfenv.svg?branch=setup_travis)](https://travis-ci.org/IBM-Swift/Swift-cfenv)
+![macOS](https://img.shields.io/badge/os-macOS-green.svg?style=flat)
+![Linux](https://img.shields.io/badge/os-linux-green.svg?style=flat)
+
 # Swift-cfenv
 
 The Swift-cfenv package provides structures and methods to parse Cloud Foundry-provided environment variables, such as the port number, IP address, and URL of the application. It also provides default values when running the application locally.
