@@ -42,7 +42,7 @@ public struct App {
   public let limits: Limits
   public let port: Int
   public let spaceId: String
-  public let startedAtTs: NSTimeInterval
+  public let startedAtTs: TimeInterval
   public let startedAt: NSDate
 
   /**
@@ -50,7 +50,7 @@ public struct App {
   */
   public init(id: String, name: String, uris: [String], version: String,
     instanceId: String, instanceIndex: Int, limits: Limits, port: Int,
-    spaceId: String, startedAtTs: NSTimeInterval, startedAt: NSDate) {
+    spaceId: String, startedAtTs: TimeInterval, startedAt: NSDate) {
 
     self.id = id
     self.name = name

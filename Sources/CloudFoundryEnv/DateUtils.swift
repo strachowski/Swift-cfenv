@@ -18,13 +18,13 @@ import Foundation
 
 public struct DateUtils {
 
-  let dateFormatter: NSDateFormatter
+  let dateFormatter: DateFormatter
 
   public init() {
-    dateFormatter = NSDateFormatter()
+    dateFormatter = DateFormatter()
     // Example: 2016-03-04 02:43:07 +0000
     dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZ"
-    let timeZone = NSTimeZone(name: "UTC")
+    let timeZone = TimeZone(name: "UTC")
     dateFormatter.timeZone = timeZone
   }
 
@@ -37,7 +37,7 @@ public struct DateUtils {
       return nil
     }
 
-    let nsDate: NSDate?
+    let nsDate: Date?
     #if os(Linux)
       nsDate = dateFormatter.dateFromString(dateStr)
     #else
@@ -51,7 +51,7 @@ public struct DateUtils {
   * Converts a NSDate object to a string that follows the following format:
   * yyyy-MM-dd HH:mm:ss ZZZ.
   */
-  public func convertNSDateToString(nsDate: NSDate?) -> String? {
+  public func convertNSDateToString(nsDate: Date?) -> String? {
     guard let nsDateObj = nsDate else {
       return nil
     }
