@@ -33,7 +33,7 @@ public struct AppEnv {
   */
   public init(options: JSON) throws {
     // NSProcessInfo.processInfo().environment returns [String : String]
-    let environmentVars = NSProcessInfo.processInfo().environment
+    let environmentVars = ProcessInfo.processInfo().environment
     let vcapApplication = environmentVars["VCAP_APPLICATION"]
     isLocal = (vcapApplication == nil)
 
@@ -134,7 +134,7 @@ public struct AppEnv {
     }
 
     do {
-      let regex = try NSRegularExpression(pattern: spec, options: NSRegularExpressionOptions.caseInsensitive)
+      let regex = try RegularExpression(pattern: spec, options: RegularExpression.Options.caseInsensitive)
       for (name, serv) in services {
         let numberOfMatches = regex.numberOfMatches(in: name, options: [], range: NSMakeRange(0, name.characters.count))
         if numberOfMatches > 0 {
@@ -196,10 +196,10 @@ public struct AppEnv {
       parsedURL.query = query
     }
     if let queryItems = substitutions["queryItems"].array {
-      var urlQueryItems: [NSURLQueryItem] = []
+      var urlQueryItems: [URLQueryItem] = []
       for queryItem in queryItems {
         if let name = queryItem["name"].string {
-          let urlQueryItem = NSURLQueryItem(name: name, value: queryItem["value"].string)
+          let urlQueryItem = URLQueryItem(name: name, value: queryItem["value"].string)
           urlQueryItems.append(urlQueryItem)
         }
       }
