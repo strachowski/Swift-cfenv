@@ -1,0 +1,8 @@
+# docker-compose up
+app:
+  image: ibmcom/kitura-ubuntu-06-20
+  ports:
+    - "8090:8090"
+  volumes:
+    - .:/root/Swift-cfenv
+  command: bash -c "cd /root/Swift-cfenv && rm -rf Packages && swift build --clean && swift build"
