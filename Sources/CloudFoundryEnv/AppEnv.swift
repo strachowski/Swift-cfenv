@@ -17,6 +17,12 @@
 import Foundation
 import SwiftyJSON
 
+#if os(Linux)
+  public typealias ProcessInfo = NSProcessInfo
+  public typealias TimeInterval = NSTimeInterval
+  public typealias URLQueryItem = NSURLQueryItem
+#endif
+
 public struct AppEnv {
 
   public let isLocal: Bool
@@ -134,7 +140,11 @@ public struct AppEnv {
     }
 
     do {
-      let regex = try RegularExpression(pattern: spec, options: RegularExpression.Options.caseInsensitive)
+      #if os(Linux)
+        let regex = try NSRegularExpression(pattern: spec, options: NSRegularExpressionOptions.caseInsensitive)
+      #else
+        let regex = try RegularExpression(pattern: spec, options: RegularExpression.Options.caseInsensitive)
+      #endif
       for (name, serv) in services {
         let numberOfMatches = regex.numberOfMatches(in: name, options: [], range: NSMakeRange(0, name.characters.count))
         if numberOfMatches > 0 {
@@ -199,7 +209,11 @@ public struct AppEnv {
       var urlQueryItems: [URLQueryItem] = []
       for queryItem in queryItems {
         if let name = queryItem["name"].string {
-          let urlQueryItem = URLQueryItem(name: name, value: queryItem["value"].string)
+          #if os(Linux)
+            let urlQueryItem = NSURLQueryItem(name: name, value: queryItem["value"].string)
+          #else
+            let urlQueryItem = URLQueryItem(name: name, value: queryItem["value"].string)
+          #endif
           urlQueryItems.append(urlQueryItem)
         }
       }
