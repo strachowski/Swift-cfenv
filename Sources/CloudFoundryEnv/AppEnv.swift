@@ -96,7 +96,7 @@ public struct AppEnv {
         return nil
       }
 
-    let startedAtTs: TimeInterval = startedAt.timeIntervalSince1970
+    let startedAtTs = startedAt.timeIntervalSince1970
 
     // App instance should only be created if all required variables exist
     let appObj = App(id: id, name: name, uris: uris, version: version,
