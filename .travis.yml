@@ -10,8 +10,6 @@ branches:
   only:
     - master
     - develop
-    - linux_migration
-    - travis_script
 
 notifications:
   slack:
