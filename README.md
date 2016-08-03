@@ -177,4 +177,4 @@ Once the application is successfully pushed, you need to bind the service you cr
 After the application is restaged, you can visit the route (i.e. URL) assigned to the app and you should see the output of various Swift-cfenv invocations.
 
 ## License
-This Swift package is licensed under Apache 2.0. Full license text is available in [LICENSE](LICENSE.txt).
+This Swift package is licensed under Apache 2.0. Full license text is available in [LICENSE](LICENSE).
