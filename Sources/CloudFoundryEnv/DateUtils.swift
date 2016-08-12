@@ -16,27 +16,18 @@
 
 import Foundation
 
-#if os(Linux)
-  public typealias DateFormatter = NSDateFormatter
-  public typealias Date = NSDate
-#endif
-
 public struct DateUtils {
 
   let dateFormatter: DateFormatter
 
   public init() {
-    #if os(Linux)  
-      dateFormatter = NSDateFormatter()
-    #else
-      dateFormatter = DateFormatter()
-    #endif
+    dateFormatter = DateFormatter()
     // Example: 2016-03-04 02:43:07 +0000
     dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZ"
     #if os(Linux)
-      let timeZone = NSTimeZone(name: "UTC")
-    #else  
-      let timeZone = TimeZone(name: "UTC")
+        let timeZone = TimeZone(name: "UTC")
+    #else
+        let timeZone = TimeZone(identifier: "UTC")
     #endif
     dateFormatter.timeZone = timeZone
   }
@@ -45,17 +36,13 @@ public struct DateUtils {
   * Converts to a NSDate object a string that comforms to the following
   * format yyyy-MM-dd HH:mm:ss ZZZ.
   */
-  public func convertStringToNSDate(dateString: String?) -> NSDate? {
+  public func convertStringToNSDate(dateString: String?) -> Date? {
     guard let dateStr = dateString else {
       return nil
     }
 
     let nsDate: Date?
-    #if os(Linux)
-      nsDate = dateFormatter.dateFromString(dateStr)
-    #else
-      nsDate = dateFormatter.date(from: dateStr)
-    #endif
+    nsDate = dateFormatter.date(from: dateStr)
 
     return nsDate
   }
@@ -64,15 +51,11 @@ public struct DateUtils {
   * Converts a NSDate object to a string that follows the following format:
   * yyyy-MM-dd HH:mm:ss ZZZ.
   */
-  public func convertNSDateToString(nsDate: NSDate?) -> String? {
+  public func convertNSDateToString(nsDate: Date?) -> String? {
     guard let nsDateObj = nsDate else {
       return nil
     }
-    #if os(Linux)
-      let dateString: String? = dateFormatter.string(from: nsDateObj as NSDate)
-    #else
-      let dateString: String? = dateFormatter.string(from: nsDateObj as Date)
-    #endif
+    let dateString: String? = dateFormatter.string(from: nsDateObj as Date)
     return dateString
   }
 

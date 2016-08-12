@@ -17,12 +17,6 @@
 import Foundation
 import SwiftyJSON
 
-#if os(Linux)
-  public typealias ProcessInfo = NSProcessInfo
-  public typealias TimeInterval = NSTimeInterval
-  public typealias URLQueryItem = NSURLQueryItem
-#endif
-
 public struct AppEnv {
 
   public let isLocal: Bool
@@ -39,7 +33,11 @@ public struct AppEnv {
   */
   public init(options: JSON) throws {
     // NSProcessInfo.processInfo().environment returns [String : String]
-    let environmentVars = ProcessInfo.processInfo().environment
+    #if os(Linux)
+        let environmentVars = ProcessInfo.processInfo().environment
+    #else
+        let environmentVars = ProcessInfo.processInfo.environment
+    #endif
     let vcapApplication = environmentVars["VCAP_APPLICATION"]
     isLocal = (vcapApplication == nil)
 
@@ -91,7 +89,7 @@ public struct AppEnv {
       let instanceId = app["instance_id"].string,
       let instanceIndex = app["instance_index"].int,
       let port = app["port"].int,
-      let startedAt: NSDate = dateUtils.convertStringToNSDate(dateString: app["started_at"].string),
+      let startedAt: Date = dateUtils.convertStringToNSDate(dateString: app["started_at"].string),
       let spaceId = app["space_id"].string else {
         return nil
       }
@@ -141,10 +139,11 @@ public struct AppEnv {
 
     do {
       #if os(Linux)
-        let regex = try NSRegularExpression(pattern: spec, options: NSRegularExpressionOptions.caseInsensitive)
-      #else
         let regex = try RegularExpression(pattern: spec, options: RegularExpression.Options.caseInsensitive)
+      #else
+        let regex = try NSRegularExpression(pattern: spec, options: NSRegularExpression.Options.caseInsensitive)
       #endif
+        
       for (name, serv) in services {
         let numberOfMatches = regex.numberOfMatches(in: name, options: [], range: NSMakeRange(0, name.characters.count))
         if numberOfMatches > 0 {
@@ -209,11 +208,7 @@ public struct AppEnv {
       var urlQueryItems: [URLQueryItem] = []
       for queryItem in queryItems {
         if let name = queryItem["name"].string {
-          #if os(Linux)
-            let urlQueryItem = NSURLQueryItem(name: name, value: queryItem["value"].string)
-          #else
-            let urlQueryItem = URLQueryItem(name: name, value: queryItem["value"].string)
-          #endif
+          let urlQueryItem = URLQueryItem(name: name, value: queryItem["value"].string)
           urlQueryItems.append(urlQueryItem)
         }
       }
