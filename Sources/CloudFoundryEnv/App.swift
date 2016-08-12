@@ -43,14 +43,14 @@ public struct App {
   public let port: Int
   public let spaceId: String
   public let startedAtTs: TimeInterval
-  public let startedAt: NSDate
+  public let startedAt: Date
 
   /**
   * Constructor.
   */
   public init(id: String, name: String, uris: [String], version: String,
     instanceId: String, instanceIndex: Int, limits: Limits, port: Int,
-    spaceId: String, startedAtTs: TimeInterval, startedAt: NSDate) {
+    spaceId: String, startedAtTs: TimeInterval, startedAt: Date) {
 
     self.id = id
     self.name = name
