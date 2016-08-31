@@ -25,7 +25,7 @@ public struct DateUtils {
     // Example: 2016-03-04 02:43:07 +0000
     dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZ"
     #if os(Linux)
-        let timeZone = TimeZone(name: "UTC")
+        let timeZone = TimeZone(abbreviation: "UTC")
     #else
         let timeZone = TimeZone(identifier: "UTC")
     #endif
