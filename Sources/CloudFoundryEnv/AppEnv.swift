@@ -34,7 +34,7 @@ public struct AppEnv {
   public init(options: JSON) throws {
     // NSProcessInfo.processInfo().environment returns [String : String]
     #if os(Linux)
-        let environmentVars = ProcessInfo.processInfo().environment
+        let environmentVars = ProcessInfo.processInfo.environment
     #else
         let environmentVars = ProcessInfo.processInfo.environment
     #endif
