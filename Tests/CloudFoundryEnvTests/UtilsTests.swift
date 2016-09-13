@@ -45,7 +45,8 @@ class UtilsTests : XCTestCase {
     if let json = JSONUtils.convertStringToJSON(text: VCAP_APPLICATION) {
       //print("JSON object is: \(json)")
       //print("Type is \(json["users"].dynamicType)")
-      XCTAssertNil(json["users"] as? AnyObject)
+      //XCTAssertNil(json["users"] as? AnyObject)
+      XCTAssertEqual(json["users"], nil)
       XCTAssertEqual(json["instance_id"], "7d4f24cfba06462ba23d68aaf1d7354a", "instance_id should match.")
       XCTAssertEqual(json["instance_index"], 0, "instance_index should match.")
       XCTAssertEqual(json["host"], "0.0.0.0", "host should match.")
