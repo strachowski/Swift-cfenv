@@ -48,9 +48,11 @@ public struct App {
   /**
   * Constructor.
   */
+// swiftlint:disable function_parameter_count
   public init(id: String, name: String, uris: [String], version: String,
     instanceId: String, instanceIndex: Int, limits: Limits, port: Int,
     spaceId: String, startedAtTs: TimeInterval, startedAt: Date) {
+// swiftlint:enable function_parameter_count
 
     self.id = id
     self.name = name
