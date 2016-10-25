@@ -143,7 +143,7 @@ public struct AppEnv {
       #else
         let regex = try NSRegularExpression(pattern: spec, options: NSRegularExpression.Options.caseInsensitive)
       #endif
-        
+
       for (name, serv) in services {
         let numberOfMatches = regex.numberOfMatches(in: name, options: [], range: NSMakeRange(0, name.characters.count))
         if numberOfMatches > 0 {
@@ -250,18 +250,19 @@ public struct AppEnv {
   private static func parseEnvVariable(isLocal: Bool, environmentVars: [String:String],
     variableName: String, varibleType: String, options: JSON) throws
     -> JSON {
-    if isLocal {
+      // If environment variable is found, then let's use it
+      if let _ = environmentVars[variableName] {
+        if let json = JSONUtils.convertStringToJSON(text: environmentVars[variableName]) {
+          return json
+        }
+        throw CloudFoundryEnvError.InvalidValue("Environment variable \(variableName) is not a valid JSON string!")
+      }
+      // If environment variable was not found, let's query options
       let envVariable = options["vcap"][varibleType]
       if envVariable.null != nil {
         return [:]
       }
       return envVariable
-    } else {
-      if let json = JSONUtils.convertStringToJSON(text: environmentVars[variableName]) {
-        return json
-      }
-      throw CloudFoundryEnvError.InvalidValue("Environment variable \(variableName) is not a valid JSON string!")
-    }
   }
 
   /**
