@@ -33,11 +33,7 @@ public struct AppEnv {
   */
   public init(options: JSON) throws {
     // NSProcessInfo.processInfo().environment returns [String : String]
-    #if os(Linux)
-        let environmentVars = ProcessInfo.processInfo.environment
-    #else
-        let environmentVars = ProcessInfo.processInfo.environment
-    #endif
+    let environmentVars = ProcessInfo.processInfo.environment
     let vcapApplication = environmentVars["VCAP_APPLICATION"]
     isLocal = (vcapApplication == nil)
 
@@ -162,7 +158,7 @@ public struct AppEnv {
   * service or a regex to look up the service.
   *
   * The replacements parameter is a JSON object with the properties found in
-  * Foundation's NSURLComponents class.
+  * Foundation's URLComponents class.
   */
   public func getServiceURL(spec: String, replacements: JSON?) -> String? {
     var substitutions: JSON = replacements ?? [:]
@@ -178,7 +174,7 @@ public struct AppEnv {
     }
 
     substitutions.dictionaryObject?["url"] = nil
-    guard let parsedURL = NSURLComponents(string: url) else {
+    guard var parsedURL = URLComponents(string: url) else {
       return nil
     }
 
@@ -192,7 +188,7 @@ public struct AppEnv {
     if let password = substitutions["password"].string {
       parsedURL.password = password
     }
-    if let port = substitutions["port"].number {
+    if let port = substitutions["port"].int {
       parsedURL.port = port
     }
     if let host = substitutions["host"].string {
