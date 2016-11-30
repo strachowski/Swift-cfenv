@@ -14,14 +14,14 @@
  * limitations under the License.
  **/
 
-import SwiftyJSON
+//import SwiftyJSON
 
 /**
  * Functions as a factory to create instances of the AppEnv structure.
  */
 public struct CloudFoundryEnv {
 
-  public static func getAppEnv(options: JSON = [:]) throws -> AppEnv {
+    public static func getAppEnv(options: [String: Any] = [:]) throws -> AppEnv {
     return try AppEnv(options: options)
   }
 

@@ -22,7 +22,7 @@
 
 import XCTest
 import Foundation
-import SwiftyJSON
+//import SwiftyJSON
 
 @testable import CloudFoundryEnv
 

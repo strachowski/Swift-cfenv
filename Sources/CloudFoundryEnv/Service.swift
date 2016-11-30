@@ -14,7 +14,7 @@
  * limitations under the License.
  **/
 
-import SwiftyJSON
+//import SwiftyJSON
 
 /**
 * See https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-SERVICES.
@@ -24,10 +24,10 @@ public struct Service {
   public let label: String
   public let plan : String
   public let tags: [String]
-  public let credentials: JSON?
+  public let credentials: [String: Any]?
 
   public init(name: String, label: String, plan: String?, tags: [String],
-    credentials: JSON?) {
+    credentials: [String: Any]?) {
 
     self.name = name
     self.label = label
