@@ -169,7 +169,7 @@ public struct AppEnv {
     }
 
     guard let url: String =
-      credentials[substitutions["url"] ?? "url"] ?? credentials["uri"]
+      credentials[substitutions["url"] as? String ?? "url"] as? String ?? credentials["uri"] as? String
       else {
       return nil
     }
@@ -259,12 +259,12 @@ public struct AppEnv {
         let serviceVariable : [String: Any] = JSONUtils.convertStringToJSON(text: options["vcap"] as! String?)!
         if let _ = serviceVariable[variableName] {
             let envVariable : [String: Any] = serviceVariable[variableName] as! [String: Any]
-            
+
             return envVariable
         }
         return [:]
       }
-        
+
       return [:]
   }
 
