@@ -81,7 +81,7 @@ public struct AppEnv {
     }
 
     // Get uris
-    let uris = app["uris"] as! [String]
+    let uris = app["uris"] as? [String]
     // Create DateUtils instance
     let dateUtils = DateUtils()
 
@@ -92,7 +92,7 @@ public struct AppEnv {
       let instanceId = (app["instance_id"] as? String) ,
       let instanceIndex = (app["instance_index"] as? Int),
       let port = (app["port"] as? Int),
-      let startedAt: Date = dateUtils.convertStringToNSDate(dateString: app["started_at"] as! String?),
+      let startedAt: Date = dateUtils.convertStringToNSDate(dateString: app["started_at"] as? String),
       let spaceId = (app["space_id"] as? String) else {
         return nil
       }
@@ -100,7 +100,7 @@ public struct AppEnv {
     let startedAtTs = startedAt.timeIntervalSince1970
 
     // App instance should only be created if all required variables exist
-    let appObj = App(id: id, name: name, uris: uris, version: version,
+    let appObj = App(id: id, name: name, uris: uris!, version: version,
       instanceId: instanceId, instanceIndex: instanceIndex,
       limits: limits, port: port, spaceId: spaceId,
       startedAtTs: startedAtTs, startedAt: startedAt)
@@ -193,31 +193,31 @@ public struct AppEnv {
     // Before, we were just iterating over the keys in the JSON object,
     // but unfortunately the order of the keys returned were different on
     // OS X and Linux, which resulted in different outcomes.
-    if let user = substitutions["user"] {
-       parsedURL.user = (user as? String)
+    if let user = substitutions["user"] as? String {
+       parsedURL.user = user
     }
-    if let password = substitutions["password"] {
-      parsedURL.password = (password as? String)
+    if let password = substitutions["password"] as? String {
+      parsedURL.password = password
     }
-    if let port = substitutions["port"] {
-      parsedURL.port = (port as? Int)
+    if let port = substitutions["port"] as? Int {
+      parsedURL.port = port
     }
-    if let host = substitutions["host"] {
-      parsedURL.host = (host as? String)
+    if let host = substitutions["host"] as? String {
+      parsedURL.host = host
     }
-    if let scheme = substitutions["scheme"] {
-      parsedURL.scheme = (scheme as? String)
+    if let scheme = substitutions["scheme"] as? String {
+      parsedURL.scheme = scheme
     }
-    if let query = substitutions["query"] {
-      parsedURL.query = (query as? String)
+    if let query = substitutions["query"] as? String {
+      parsedURL.query = query
     }
-    if let queryItems = (substitutions["queryItems"] as! [String: Any]?) {
+    if let queryItems = substitutions["queryItems"] as? Array<[String: Any]> {
       var urlQueryItems: [URLQueryItem] = []
-      for (_, QI) in queryItems {
-        var queryItem : [String: Any] = (QI as! [String: Any])
-        let name = (queryItem["name"] as! String)
-        let urlQueryItem = URLQueryItem(name: name, value: (queryItem["value"] as! String))
-        urlQueryItems.append(urlQueryItem)
+      for queryItem in queryItems {
+        if let name = queryItem["name"] as? String {
+            let urlQueryItem = URLQueryItem(name: name, value: queryItem["value"] as? String)
+            urlQueryItems.append(urlQueryItem)
+        }
       }
       if urlQueryItems.count > 0 {
         parsedURL.queryItems = urlQueryItems
@@ -323,7 +323,7 @@ public struct AppEnv {
 
     var uris: [String] = []
     if let _ = app["uris"] as? [String] {
-        uris = app["uris"] as! [String]
+        uris = (app["uris"] as? [String])!
     }
     if isLocal {
         uris = ["localhost:\(port)"]
@@ -333,11 +333,12 @@ public struct AppEnv {
         }
     }
 
-    let scheme: String = options["protocol"] as! String? ?? (isLocal ? "http" : "https")
     var urls: [String] = []
+    let scheme: String = (options["protocol"] as? String ?? (isLocal ? "http" : "https"))!
     for uri in uris {
-       urls.append("\(scheme)://\(uri)");
+        urls.append("\(scheme)://\(uri)");
     }
+    
     return urls
   }
 }
