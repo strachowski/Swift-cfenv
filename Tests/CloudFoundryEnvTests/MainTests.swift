@@ -240,7 +240,7 @@ class MainTests : XCTestCase {
   private func verifyServiceURLWithOptions(name: String, replacements: String?, expectedServiceURL: String) throws {
     let appEnv = try CloudFoundryEnv.getAppEnv(options: jsonOptions)
     let substitutions = JSONUtils.convertStringToJSON(text: replacements)
-    if let serviceURL = appEnv.getServiceURL(spec: name, replacements: substitutions!) {
+    if let serviceURL = appEnv.getServiceURL(spec: name, replacements: substitutions) {
         XCTAssertEqual(serviceURL, expectedServiceURL, "ServiceURL should match '\(expectedServiceURL)'.")
     } else {
       XCTFail("A serviceURL should have been returned!")

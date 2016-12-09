@@ -171,8 +171,8 @@ public struct AppEnv {
   * The replacements parameter is a JSON object with the properties found in
   * Foundation's URLComponents class.
   */
-    public func getServiceURL(spec: String, replacements: [String: Any]) -> String? {
-    var substitutions: [String: Any] = replacements
+    public func getServiceURL(spec: String, replacements: [String: Any]?) -> String? {
+    var substitutions: [String: Any] = replacements ?? [:]
     let service = getService(spec: spec)
     guard let credentials = service?.credentials else {
       return nil
