@@ -31,8 +31,8 @@ public struct JSONUtils {
       print("Could not generate JSON object from string: \(text)")
       return nil
     }
-        let json = try? JSONSerialization.jsonObject(with: nsData, options: [])
-        return (json as! [String: Any])
+    let json = try? JSONSerialization.jsonObject(with: nsData, options: []) as? [String: Any]
+    return (json)!
   }
 
 }

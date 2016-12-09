@@ -118,13 +118,14 @@ public struct AppEnv {
       if let servsArray = servs as? Array<[String:Any]> {
         for service in servsArray {
           // A service must have a name and a label
-          let name: String = (service["name"] as! String)
-          let label: String = (service["label"] as! String)
-          let tags: [String] = (service["tags"] as! [String])
-          let plan: String = (service["plan"] as! String)
-          let credentials : [String: Any] = (service["credentials"] as! [String: Any])
-          results[name] =
-            Service(name: name, label: label, plan: plan, tags: tags, credentials: credentials)
+          if let name: String = service["name"] as? String,
+             let label: String = service["label"] as? String,
+             let tags: [String] = service["tags"] as? [String],
+             let plan: String = service["plan"] as? String,
+             let credentials : [String: Any] = service["credentials"] as? [String: Any] {
+              results[name] =
+                Service(name: name, label: label, plan: plan, tags: tags, credentials: credentials)
+            }
         }
       }
     }
@@ -193,22 +194,22 @@ public struct AppEnv {
     // but unfortunately the order of the keys returned were different on
     // OS X and Linux, which resulted in different outcomes.
     if let user = substitutions["user"] {
-       parsedURL.user = (user as! String)
+       parsedURL.user = (user as? String)
     }
     if let password = substitutions["password"] {
-      parsedURL.password = (password as! String)
+      parsedURL.password = (password as? String)
     }
     if let port = substitutions["port"] {
-      parsedURL.port = (port as! Int)
+      parsedURL.port = (port as? Int)
     }
     if let host = substitutions["host"] {
-      parsedURL.host = (host as! String)
+      parsedURL.host = (host as? String)
     }
     if let scheme = substitutions["scheme"] {
-      parsedURL.scheme = (scheme as! String)
+      parsedURL.scheme = (scheme as? String)
     }
     if let query = substitutions["query"] {
-      parsedURL.query = (query as! String)
+      parsedURL.query = (query as? String)
     }
     if let queryItems = (substitutions["queryItems"] as! [String: Any]?) {
       var urlQueryItems: [URLQueryItem] = []
