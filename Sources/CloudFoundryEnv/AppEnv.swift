@@ -39,23 +39,29 @@ public struct AppEnv {
 
     // Get app
     app = try AppEnv.parseEnvVariable(isLocal: isLocal, environmentVars: environmentVars,
-      variableName: "VCAP_APPLICATION", varibleType: "application", options: options)
+      variableName: "VCAP_APPLICATION", variableType: "application", options: options)
 
     // Get services
     services = try AppEnv.parseEnvVariable(isLocal: isLocal, environmentVars: environmentVars,
-      variableName: "VCAP_SERVICES", varibleType: "services", options: options)
+      variableName: "VCAP_SERVICES", variableType: "services", options: options)
 
     // Get port
     port = try AppEnv.parsePort(environmentVars: environmentVars, app: app)
 
     // Get name
-    name = AppEnv.parseName(app: app, options: options)
+        var applicationJSON: [String: Any]? = [:]
+    if let _ = options["vcap"] as? [String: Any]
+    {
+        let vcapJSON = options["vcap"] as? [String: Any]
+        applicationJSON = (vcapJSON?["application"] as? [String: Any])!
+    }
+    name = AppEnv.parseName(app: app, options: applicationJSON!)
 
     // Get bind (IP address of the application instance)
     bind = app["host"] as? String ?? "0.0.0.0"
 
     // Get urls
-    urls = AppEnv.parseURLs(isLocal: isLocal, app: app, port: port, options: options)
+    urls = AppEnv.parseURLs(isLocal: isLocal, app: app, port: port, options: applicationJSON!)
     url = urls[0]
   }
 
@@ -109,7 +115,7 @@ public struct AppEnv {
   public func getServices() -> [String:Service] {
     var results: [String:Service] = [:]
     for (_, servs) in services {
-        var service : [String: Any] = (servs as! [String: Any])
+        let service : [String: Any] = servs as! [String: Any]
         // A service must have a name and a label
         let name: String = (service["name"] as! String)
         let label: String = (service["label"] as! String)
@@ -245,7 +251,7 @@ public struct AppEnv {
   * Static method for parsing VCAP_APPLICATION and VCAP_SERVICES.
   */
   private static func parseEnvVariable(isLocal: Bool, environmentVars: [String:String],
-    variableName: String, varibleType: String, options: [String: Any]) throws
+                                       variableName: String, variableType: String, options: [String: Any]) throws
     -> [String: Any] {
       // If environment variable is found, then let's use it
       if let _ = environmentVars[variableName] {
@@ -255,13 +261,13 @@ public struct AppEnv {
         throw CloudFoundryEnvError.InvalidValue("Environment variable \(variableName) is not a valid JSON string!")
       }
       // If environment variable was not found, let's query options
-      if let _ = JSONUtils.convertStringToJSON(text: options["vcap"] as! String?) {
-        let serviceVariable : [String: Any] = JSONUtils.convertStringToJSON(text: options["vcap"] as! String?)!
-        if let _ = serviceVariable[variableName] {
-            let envVariable : [String: Any] = serviceVariable[variableName] as! [String: Any]
-
-            return envVariable
+      if let _ = options["vcap"] as? [String: Any] {
+        let typesJSON = (options["vcap"] as? [String: Any])!
+        if let _ = typesJSON[variableType] as? [String: Any]
+        {
+            return (typesJSON[variableType] as? [String: Any])!
         }
+        
         return [:]
       }
 
@@ -296,7 +302,9 @@ public struct AppEnv {
   * Static method for parsing the name for the application.
   */
   private static func parseName(app: [String: Any], options: [String: Any]) -> String? {
-    let name: String = options["name"] as! String? ?? app["name"] as! String
+    guard let name: String = (options["name"] as? String ?? app["name"] as? String) else {
+        return nil
+    }
     // TODO: Add logic for parsing manifest.yml to get name
     // https://github.com/behrang/YamlSwift
     // http://stackoverflow.com/questions/24097826/read-and-write-data-from-text-file
@@ -308,13 +316,17 @@ public struct AppEnv {
   */
   private static func parseURLs(isLocal: Bool, app: [String: Any], port: Int,
     options: [String: Any]) -> [String] {
-    var uris: [String] = app["uris"] as! [String]
+    
+    var uris: [String] = []
+    if let _ = app["uris"] as? [String] {
+        uris = app["uris"] as! [String]
+    }
     if isLocal {
-      uris = ["localhost:\(port)"]
+        uris = ["localhost:\(port)"]
     } else {
-      if (uris.count == 0) {
-        uris = ["localhost"]
-      }
+        if (uris.count == 0) {
+            uris = ["localhost"]
+        }
     }
 
     let scheme: String = options["protocol"] as! String? ?? (isLocal ? "http" : "https")

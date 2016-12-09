@@ -46,13 +46,13 @@ class UtilsTests : XCTestCase {
       //print("JSON object is: \(json)")
       //print("Type is \(json["users"].dynamicType)")
       //XCTAssertNil(json["users"] as? AnyObject)
-      XCTAssertEqual(json["users"], nil)
-      XCTAssertEqual(json["instance_id"], "7d4f24cfba06462ba23d68aaf1d7354a", "instance_id should match.")
-      XCTAssertEqual(json["instance_index"], 0, "instance_index should match.")
-      XCTAssertEqual(json["host"], "0.0.0.0", "host should match.")
-      XCTAssertEqual(json["port"], 61263, "port should match.")
-      XCTAssertEqual(json["started_at"], "2016-03-04 02:43:07 +0000", "started_at should match.")
-      XCTAssertEqual(json["started_at_timestamp"], 1457059387, "started_at_timestamp should match.")
+      XCTAssertEqual(json["users"] as? String, nil)
+      XCTAssertEqual(json["instance_id"] as? String, "7d4f24cfba06462ba23d68aaf1d7354a", "instance_id should match.")
+      XCTAssertEqual(json["instance_index"] as? Int, 0, "instance_index should match.")
+      XCTAssertEqual(json["host"] as? String, "0.0.0.0", "host should match.")
+      XCTAssertEqual(json["port"] as? Int, 61263, "port should match.")
+      XCTAssertEqual(json["started_at"] as? String, "2016-03-04 02:43:07 +0000", "started_at should match.")
+      XCTAssertEqual(json["started_at_timestamp"] as? Int, 1457059387, "started_at_timestamp should match.")
     } else {
       XCTFail("Could not generate JSON object!")
     }
@@ -61,7 +61,7 @@ class UtilsTests : XCTestCase {
   func testConvertJSONArrayToStringArray() {
     let jsonStr = "{ \"tags\": [ \"data_management\", \"ibm_created\", \"ibm_dedicated_public\" ] }"
     if let json = JSONUtils.convertStringToJSON(text: jsonStr) {
-      let strArray: [String] = JSONUtils.convertJSONArrayToStringArray(json: json, fieldName: "tags")
+      let strArray: [String] = (json["tags"] as? [String])!
         XCTAssertEqual(strArray.count, 3, "There should be 3 elements in the string array.")
         UtilsTests.verifyElementInArrayExists(strArray: strArray, element: "data_management")
         UtilsTests.verifyElementInArrayExists(strArray: strArray, element: "ibm_created")
