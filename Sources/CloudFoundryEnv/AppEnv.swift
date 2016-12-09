@@ -49,7 +49,7 @@ public struct AppEnv {
     port = try AppEnv.parsePort(environmentVars: environmentVars, app: app)
 
     // Get name
-        var applicationJSON: [String: Any]? = [:]
+    var applicationJSON: [String: Any]? = [:]
     if let _ = options["vcap"] as? [String: Any]
     {
         let vcapJSON = options["vcap"] as? [String: Any]
@@ -90,8 +90,8 @@ public struct AppEnv {
       let id = (app["application_id"] as? String),
       let version = (app["version"] as? String),
       let instanceId = (app["instance_id"] as? String) ,
-      let instanceIndex = app["instance_index"],
-      let port = app["port"],
+      let instanceIndex = (app["instance_index"] as? Int),
+      let port = (app["port"] as? Int),
       let startedAt: Date = dateUtils.convertStringToNSDate(dateString: app["started_at"] as! String?),
       let spaceId = (app["space_id"] as? String) else {
         return nil
@@ -101,8 +101,8 @@ public struct AppEnv {
 
     // App instance should only be created if all required variables exist
     let appObj = App(id: id, name: name, uris: uris, version: version,
-      instanceId: instanceId, instanceIndex: instanceIndex as! Int,
-      limits: limits, port: port as! Int, spaceId: spaceId,
+      instanceId: instanceId, instanceIndex: instanceIndex,
+      limits: limits, port: port, spaceId: spaceId,
       startedAtTs: startedAtTs, startedAt: startedAt)
     return appObj
   }
