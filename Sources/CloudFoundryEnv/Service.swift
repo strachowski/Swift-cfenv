@@ -14,8 +14,6 @@
  * limitations under the License.
  **/
 
-//import SwiftyJSON
-
 /**
 * See https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-SERVICES.
 */

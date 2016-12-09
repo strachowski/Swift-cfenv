@@ -14,8 +14,6 @@
  * limitations under the License.
  **/
 
-//import SwiftyJSON
-
 /**
  * Functions as a factory to create instances of the AppEnv structure.
  */
