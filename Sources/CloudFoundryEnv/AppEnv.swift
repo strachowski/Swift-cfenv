@@ -115,15 +115,18 @@ public struct AppEnv {
   public func getServices() -> [String:Service] {
     var results: [String:Service] = [:]
     for (_, servs) in services {
-        let service : [String: Any] = servs as! [String: Any]
-        // A service must have a name and a label
-        let name: String = (service["name"] as! String)
-        let label: String = (service["label"] as! String)
-        let tags : [String] = (service["tags"] as! [String])
-        let plan : String = (service["plan"] as! String)
-        let credentials : [String: Any] = (service["credentials"] as! [String: Any])
-        results[name] =
+      if let servsArray = servs as? Array<[String:Any]> {
+        for service in servsArray {
+          // A service must have a name and a label
+          let name: String = (service["name"] as! String)
+          let label: String = (service["label"] as! String)
+          let tags: [String] = (service["tags"] as! [String])
+          let plan: String = (service["plan"] as! String)
+          let credentials : [String: Any] = (service["credentials"] as! [String: Any])
+          results[name] =
             Service(name: name, label: label, plan: plan, tags: tags, credentials: credentials)
+        }
+      }
     }
     return results
   }
@@ -267,7 +270,7 @@ public struct AppEnv {
         {
             return (typesJSON[variableType] as? [String: Any])!
         }
-        
+
         return [:]
       }
 
@@ -316,7 +319,7 @@ public struct AppEnv {
   */
   private static func parseURLs(isLocal: Bool, app: [String: Any], port: Int,
     options: [String: Any]) -> [String] {
-    
+
     var uris: [String] = []
     if let _ = app["uris"] as? [String] {
         uris = app["uris"] as! [String]
