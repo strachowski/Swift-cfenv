@@ -311,24 +311,20 @@ public struct AppEnv {
   */
   private static func parseURLs(isLocal: Bool, app: [String : Any], port: Int,
     options: [String:Any]) -> [String] {
-    var uris: [String] = []
-              if let _ = app["uris"] as? [String] {
-                uris = (app["uris"] as? [String])!
-              }
-              if isLocal {
-                uris = ["localhost:\(port)"]
-              } else {
-                if (uris.count == 0) {
-                  uris = ["localhost"]
-                }
-              }
-
-              var urls: [String] = []
-              let scheme: String = (options["protocol"] as? String ?? (isLocal ? "http" : "https"))!
-              for uri in uris {
-                urls.append("\(scheme)://\(uri)");
-              }
-
-        return urls
+    var uris: [String] = JSONUtils.convertJSONArrayToStringArray(json: app, fieldName: "uris")
+    if isLocal {
+      uris = ["localhost:\(port)"]
+    } else {
+      if (uris.count == 0) {
+        uris = ["localhost"]
+      }
     }
+
+    let scheme: String = options["protocol"] as? String ?? (isLocal ? "http" : "https")
+    var urls: [String] = []
+    for uri in uris {
+      urls.append("\(scheme)://\(uri)");
+    }
+    return urls
   }
+}
