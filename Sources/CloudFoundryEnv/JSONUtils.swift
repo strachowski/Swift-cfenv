@@ -36,4 +36,16 @@ public struct JSONUtils {
     return nil
   }
 
+  /**
+  * Converts an array element contained in a JSON object to an array of Strings.
+  * The fieldName argument should state the name of the JSON property that contains
+  * the array.
+  */
+  public static func convertJSONArrayToStringArray(json: [String:Any], fieldName: String) -> [String] {
+    if let array = json[fieldName] as? Array<[Any]> {
+      return (array.map { String(describing: $0) })
+    }
+    return []
+  }
+
 }
