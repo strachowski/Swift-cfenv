@@ -42,7 +42,7 @@ public struct JSONUtils {
   * the array.
   */
   public static func convertJSONArrayToStringArray(json: [String:Any], fieldName: String) -> [String] {
-    if let array = json[fieldName] as? Array<[Any]> {
+    if let array = json[fieldName] as? [Any] {
       return (array.map { String(describing: $0) })
     }
     return []

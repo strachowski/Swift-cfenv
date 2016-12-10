@@ -60,7 +60,8 @@ class UtilsTests : XCTestCase {
   func testConvertJSONArrayToStringArray() {
     let jsonStr = "{ \"tags\": [ \"data_management\", \"ibm_created\", \"ibm_dedicated_public\" ] }"
     if let json = JSONUtils.convertStringToJSON(text: jsonStr) {
-      let strArray: [String] = (json["tags"] as? [String])!
+    //  let strArray: [String] = (json["tags"] as? [String])!
+      let strArray: [String] = JSONUtils.convertJSONArrayToStringArray(json: json, fieldName: "tags")
         XCTAssertEqual(strArray.count, 3, "There should be 3 elements in the string array.")
         UtilsTests.verifyElementInArrayExists(strArray: strArray, element: "data_management")
         UtilsTests.verifyElementInArrayExists(strArray: strArray, element: "ibm_created")
