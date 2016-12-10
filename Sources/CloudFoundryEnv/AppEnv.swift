@@ -107,7 +107,7 @@ public struct AppEnv {
   public func getServices() -> [String:Service] {
     var results: [String:Service] = [:]
     for (_, servs) in services {
-      if let servsArray = servs as? Array<[String:Any]> {
+      if let servsArray = servs as? [[String:Any]] {
         for service in servsArray {
           // A service must have a name and a label
           if let name: String = service["name"] as? String,
@@ -203,7 +203,7 @@ public struct AppEnv {
     if let query = substitutions["query"] as? String {
       parsedURL.query = query
     }
-    if let queryItems = substitutions["queryItems"] as? Array<[String:Any]> {
+    if let queryItems = substitutions["queryItems"] as? [[String:Any]] {
       var urlQueryItems: [URLQueryItem] = []
       for queryItem in queryItems {
         if let name = queryItem["name"] as? String {
