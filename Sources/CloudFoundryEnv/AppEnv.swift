@@ -78,14 +78,14 @@ public struct AppEnv {
     let dateUtils = DateUtils()
 
     guard
-      let name = (app["application_name"] as? String),
-      let id = (app["application_id"] as? String),
-      let version = (app["version"] as? String),
-      let instanceId = (app["instance_id"] as? String) ,
-      let instanceIndex = (app["instance_index"] as? Int),
-      let port = (app["port"] as? Int),
+      let name = app["application_name"] as? String,
+      let id = app["application_id"] as? String,
+      let version = app["version"] as? String,
+      let instanceId = app["instance_id"] as? String,
+      let instanceIndex = app["instance_index"] as? Int,
+      let port = app["port"] as? Int,
       let startedAt: Date = dateUtils.convertStringToNSDate(dateString: app["started_at"] as? String),
-      let spaceId = (app["space_id"] as? String) else {
+      let spaceId = app["space_id"] as? String else {
         return nil
       }
 
@@ -99,14 +99,14 @@ public struct AppEnv {
     return appObj
   }
 
-        /**
-        * Returns all services bound to the application in a dictionary. The key in
-        * the dictionary is the name of the service, while the value is a Service
-        * object that contains all the properties for the service.
-        */
-        public func getServices() -> [String:Service] {
-          var results: [String:Service] = [:]
-          for (_, servs) in services {
+  /**
+  * Returns all services bound to the application in a dictionary. The key in
+  * the dictionary is the name of the service, while the value is a Service
+  * object that contains all the properties for the service.
+  */
+  public func getServices() -> [String:Service] {
+    var results: [String:Service] = [:]
+    for (_, servs) in services {
             if let servsArray = servs as? Array<[String:Any]> {
               for service in servsArray {
                 // A service must have a name and a label
