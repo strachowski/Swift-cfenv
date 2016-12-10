@@ -248,7 +248,7 @@ public struct AppEnv {
   */
   private static func parseEnvVariable(isLocal: Bool, environmentVars: [String:String],
     variableName: String, variableType: String, options: [String:Any]) throws
-    -> [String: Any] {
+    -> [String:Any] {
 
     // If environment variable is found, then let's use it
     if let _ = environmentVars[variableName] {
@@ -258,53 +258,47 @@ public struct AppEnv {
       throw CloudFoundryEnvError.InvalidValue("Environment variable \(variableName) is not a valid JSON string!")
     }
     // If environment variable was not found, let's query options
-    if let _ = options["vcap"] as? [String: Any] {
-              let typesJSON = (options["vcap"] as? [String: Any])!
-              if let _ = typesJSON[variableType] as? [String: Any]
-              {
-                return (typesJSON[variableType] as? [String: Any])!
-              }
+    if let vcap = options["vcap"] as? [String:Any],
+      let envVariable = vcap[variableType] as? [String:Any] {
+        return envVariable
+    }
+    return [:]
+  }
 
-              return [:]
-            }
+  /**
+  * Static method for parsing the port number.
+  */
+  private static func parsePort(environmentVars: [String:String], app: [String : Any]) throws -> Int {
+    let portString: String = environmentVars["PORT"] ?? environmentVars["CF_INSTANCE_PORT"] ??
+      environmentVars["VCAP_APP_PORT"] ?? "8090"
 
-            return [:]
-          }
+    // TODO: Are there any benefits in implementing logic similar to ports.getPort() (npm module)...?
+    // if portString == nil {
+    //   if app["name"].string == nil {
+    //     portString = "8090"
+    //   }
+    //   //portString = "" + (ports.getPort(appEnv.name));
+    //   portString = "8090"
+    // }
+    //let number: Int? = (portString != nil) ? Int(portString!) : nil
 
-          /**
-          * Static method for parsing the port number.
-          */
-          private static func parsePort(environmentVars: [String:String], app: [String : Any]) throws -> Int {
-            let portString: String = environmentVars["PORT"] ?? environmentVars["CF_INSTANCE_PORT"] ??
-            environmentVars["VCAP_APP_PORT"] ?? "8090"
+    if let number = Int(portString) {
+      return number
+    } else {
+      throw CloudFoundryEnvError.InvalidValue("Invalid PORT value: \(portString)")
+    }
+  }
 
-            // TODO: Are there any benefits in implementing logic similar to ports.getPort() (npm module)...?
-            // if portString == nil {
-            //   if app["name"].string == nil {
-            //     portString = "8090"
-            //   }
-            //   //portString = "" + (ports.getPort(appEnv.name));
-            //   portString = "8090"
-            // }
-            //let number: Int? = (portString != nil) ? Int(portString!) : nil
-
-            if let number = Int(portString) {
-              return number
-            } else {
-              throw CloudFoundryEnvError.InvalidValue("Invalid PORT value: \(portString)")
-            }
-          }
-
-          /**
-          * Static method for parsing the name for the application.
-          */
-          private static func parseName(app: [String : Any], options: [String : Any]) -> String? {
-            let name: String? = options["name"] as? String ?? app["name"] as? String
-            // TODO: Add logic for parsing manifest.yml to get name
-            // https://github.com/behrang/YamlSwift
-            // http://stackoverflow.com/questions/24097826/read-and-write-data-from-text-file
-            return name
-          }
+  /**
+  * Static method for parsing the name for the application.
+  */
+  private static func parseName(app: [String:Any], options: [String:Any]) -> String? {
+    let name: String? = options["name"] as? String ?? app["name"] as? String
+    // TODO: Add logic for parsing manifest.yml to get name
+    // https://github.com/behrang/YamlSwift
+    // http://stackoverflow.com/questions/24097826/read-and-write-data-from-text-file
+    return name
+  }
 
   /**
   * Static method for parsing the URLs for the application.

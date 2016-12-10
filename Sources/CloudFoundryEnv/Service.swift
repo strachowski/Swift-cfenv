@@ -22,10 +22,10 @@ public struct Service {
   public let label: String
   public let plan : String
   public let tags: [String]
-  public let credentials: [String: Any]?
+  public let credentials: [String:Any]?
 
   public init(name: String, label: String, plan: String?, tags: [String],
-    credentials: [String: Any]?) {
+    credentials: [String:Any]?) {
 
     self.name = name
     self.label = label
