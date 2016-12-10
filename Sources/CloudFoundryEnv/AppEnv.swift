@@ -225,39 +225,40 @@ public struct AppEnv {
     return parsedURL.string
   }
 
-        /**
-        * Returns a JSON object that contains the credentials for the specified
-        * Cloud Foundry service. The spec parameter should be the name of the service
-        * or a regex to look up the service. If there is no service that matches the
-        * spec parameter, this method returns nil. In the case there is no credentials
-        * property for the specified service, an empty JSON is returned.
-        */
-        public func getServiceCreds(spec: String) -> [String: Any]? {
-          guard let service = getService(spec: spec) else {
-            return nil
-          }
-          if let credentials = service.credentials {
-            return credentials
-          } else {
-            return [:]
-          }
-        }
+  /**
+  * Returns a JSON object that contains the credentials for the specified
+  * Cloud Foundry service. The spec parameter should be the name of the service
+  * or a regex to look up the service. If there is no service that matches the
+  * spec parameter, this method returns nil. In the case there is no credentials
+  * property for the specified service, an empty JSON is returned.
+  */
+  public func getServiceCreds(spec: String) -> [String:Any]? {
+    guard let service = getService(spec: spec) else {
+      return nil
+    }
+    if let credentials = service.credentials {
+      return credentials
+    } else {
+      return [:]
+    }
+  }
 
-        /**
-        * Static method for parsing VCAP_APPLICATION and VCAP_SERVICES.
-        */
-        private static func parseEnvVariable(isLocal: Bool, environmentVars: [String:String],
-          variableName: String, variableType: String, options: [String : Any]) throws
-          -> [String: Any] {
-            // If environment variable is found, then let's use it
-            if let _ = environmentVars[variableName] {
-              if let json = JSONUtils.convertStringToJSON(text: environmentVars[variableName]) {
-                return json
-              }
-              throw CloudFoundryEnvError.InvalidValue("Environment variable \(variableName) is not a valid JSON string!")
-            }
-            // If environment variable was not found, let's query options
-            if let _ = options["vcap"] as? [String: Any] {
+  /**
+  * Static method for parsing VCAP_APPLICATION and VCAP_SERVICES.
+  */
+  private static func parseEnvVariable(isLocal: Bool, environmentVars: [String:String],
+    variableName: String, variableType: String, options: [String:Any]) throws
+    -> [String: Any] {
+
+    // If environment variable is found, then let's use it
+    if let _ = environmentVars[variableName] {
+      if let json = JSONUtils.convertStringToJSON(text: environmentVars[variableName]) {
+        return json
+      }
+      throw CloudFoundryEnvError.InvalidValue("Environment variable \(variableName) is not a valid JSON string!")
+    }
+    // If environment variable was not found, let's query options
+    if let _ = options["vcap"] as? [String: Any] {
               let typesJSON = (options["vcap"] as? [String: Any])!
               if let _ = typesJSON[variableType] as? [String: Any]
               {
@@ -305,13 +306,12 @@ public struct AppEnv {
             return name
           }
 
-          /**
-          * Static method for parsing the URLs for the application.
-          */
-          private static func parseURLs(isLocal: Bool, app: [String : Any], port: Int,
-            options: [String: Any]) -> [String] {
-
-              var uris: [String] = []
+  /**
+  * Static method for parsing the URLs for the application.
+  */
+  private static func parseURLs(isLocal: Bool, app: [String : Any], port: Int,
+    options: [String:Any]) -> [String] {
+    var uris: [String] = []
               if let _ = app["uris"] as? [String] {
                 uris = (app["uris"] as? [String])!
               }
@@ -329,6 +329,6 @@ public struct AppEnv {
                 urls.append("\(scheme)://\(uri)");
               }
 
-              return urls
-            }
-          }
+        return urls
+    }
+  }
