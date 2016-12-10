@@ -305,9 +305,7 @@ public struct AppEnv {
           * Static method for parsing the name for the application.
           */
           private static func parseName(app: [String: Any], options: [String: Any]) -> String? {
-            guard let name: String = (options["name"] as? String ?? app["name"] as? String) else {
-              return nil
-            }
+            let name: String? = options["name"] as? String ?? app["name"] as? String
             // TODO: Add logic for parsing manifest.yml to get name
             // https://github.com/behrang/YamlSwift
             // http://stackoverflow.com/questions/24097826/read-and-write-data-from-text-file
