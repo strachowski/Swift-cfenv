@@ -23,13 +23,13 @@ public struct AppEnv {
   public let bind: String
   public let urls: [String]
   public let url: String
-  public let app: [String: Any]
-  public let services: [String: Any]
+  public let app: [String : Any]
+  public let services: [String : Any]
 
   /**
   * The vcap option property is ignored if not running locally.
   */
-  public init(options: [String: Any]) throws {
+  public init(options: [String : Any]) throws {
     // NSProcessInfo.processInfo().environment returns [String : String]
     let environmentVars = ProcessInfo.processInfo.environment
     let vcapApplication = environmentVars["VCAP_APPLICATION"]
@@ -63,10 +63,10 @@ public struct AppEnv {
   public func getApp() -> App? {
     // Get limits
     let limits: App.Limits
-    let json_limits = app["limits"] as? [String: Int]
-    if let memory = json_limits?["mem"],
-      let disk = json_limits?["disk"],
-      let fds = json_limits?["fds"] {
+    if let limitsMap = app["limits"] as? [String : Int],
+      let memory = limitsMap["mem"],
+      let disk = limitsMap["disk"],
+      let fds = limitsMap["fds"] {
         limits = App.Limits(memory: memory, disk: disk, fds: fds)
     } else {
       return nil
@@ -163,7 +163,7 @@ public struct AppEnv {
         * The replacements parameter is a JSON object with the properties found in
         * Foundation's URLComponents class.
         */
-        public func getServiceURL(spec: String, replacements: [String: Any]?) -> String? {
+        public func getServiceURL(spec: String, replacements: [String : Any]?) -> String? {
           var substitutions: [String: Any] = replacements ?? [:]
           let service = getService(spec: spec)
           guard let credentials = service?.credentials else {
@@ -247,7 +247,7 @@ public struct AppEnv {
         * Static method for parsing VCAP_APPLICATION and VCAP_SERVICES.
         */
         private static func parseEnvVariable(isLocal: Bool, environmentVars: [String:String],
-          variableName: String, variableType: String, options: [String: Any]) throws
+          variableName: String, variableType: String, options: [String : Any]) throws
           -> [String: Any] {
             // If environment variable is found, then let's use it
             if let _ = environmentVars[variableName] {
@@ -273,7 +273,7 @@ public struct AppEnv {
           /**
           * Static method for parsing the port number.
           */
-          private static func parsePort(environmentVars: [String:String], app: [String: Any]) throws -> Int {
+          private static func parsePort(environmentVars: [String:String], app: [String : Any]) throws -> Int {
             let portString: String = environmentVars["PORT"] ?? environmentVars["CF_INSTANCE_PORT"] ??
             environmentVars["VCAP_APP_PORT"] ?? "8090"
 
@@ -297,7 +297,7 @@ public struct AppEnv {
           /**
           * Static method for parsing the name for the application.
           */
-          private static func parseName(app: [String: Any], options: [String: Any]) -> String? {
+          private static func parseName(app: [String : Any], options: [String : Any]) -> String? {
             let name: String? = options["name"] as? String ?? app["name"] as? String
             // TODO: Add logic for parsing manifest.yml to get name
             // https://github.com/behrang/YamlSwift
@@ -308,7 +308,7 @@ public struct AppEnv {
           /**
           * Static method for parsing the URLs for the application.
           */
-          private static func parseURLs(isLocal: Bool, app: [String: Any], port: Int,
+          private static func parseURLs(isLocal: Bool, app: [String : Any], port: Int,
             options: [String: Any]) -> [String] {
 
               var uris: [String] = []
