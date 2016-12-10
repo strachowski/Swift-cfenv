@@ -107,123 +107,123 @@ public struct AppEnv {
   public func getServices() -> [String:Service] {
     var results: [String:Service] = [:]
     for (_, servs) in services {
-            if let servsArray = servs as? Array<[String:Any]> {
-              for service in servsArray {
-                // A service must have a name and a label
-                if let name: String = service["name"] as? String,
-                let label: String = service["label"] as? String,
-                let tags: [String] = service["tags"] as? [String],
-                let plan: String = service["plan"] as? String,
-                let credentials : [String: Any] = service["credentials"] as? [String: Any] {
-                  results[name] =
-                  Service(name: name, label: label, plan: plan, tags: tags, credentials: credentials)
-                }
-              }
+      if let servsArray = servs as? Array<[String:Any]> {
+        for service in servsArray {
+          // A service must have a name and a label
+          if let name: String = service["name"] as? String,
+            let label: String = service["label"] as? String,
+            let tags: [String] = service["tags"] as? [String],
+            let plan: String = service["plan"] as? String,
+            let credentials : [String:Any] = service["credentials"] as? [String:Any] {
+              results[name] =
+                Service(name: name, label: label, plan: plan, tags: tags, credentials: credentials)
             }
-          }
-          return results
         }
+      }
+    }
+    return results
+  }
 
-        /**
-        * Returns a Service object with the properties for the specified Cloud Foundry
-        * service. The spec parameter should be the name of the service
-        * or a regex to look up the service. If there is no service that matches the
-        * spec parameter, this method returns nil.
-        */
-        public func getService(spec: String) -> Service? {
-          let services = getServices()
-          if let service = services[spec] {
-            return service
-          }
+  /**
+  * Returns a Service object with the properties for the specified Cloud Foundry
+  * service. The spec parameter should be the name of the service
+  * or a regex to look up the service. If there is no service that matches the
+  * spec parameter, this method returns nil.
+  */
+  public func getService(spec: String) -> Service? {
+    let services = getServices()
+    if let service = services[spec] {
+      return service
+    }
 
-          do {
-            #if os(Linux)
-            let regex = try RegularExpression(pattern: spec, options: RegularExpression.Options.caseInsensitive)
-            #else
-            let regex = try NSRegularExpression(pattern: spec, options: NSRegularExpression.Options.caseInsensitive)
-            #endif
+    do {
+      #if os(Linux)
+        let regex = try RegularExpression(pattern: spec, options: RegularExpression.Options.caseInsensitive)
+      #else
+        let regex = try NSRegularExpression(pattern: spec, options: NSRegularExpression.Options.caseInsensitive)
+      #endif
 
-            for (name, serv) in services {
-              let numberOfMatches = regex.numberOfMatches(in: name, options: [], range: NSMakeRange(0, name.characters.count))
-              if numberOfMatches > 0 {
-                return serv
-              }
-            }
-          } catch let error as NSError {
-            print("Error code: \(error.code)")
-          }
-          return nil
+      for (name, serv) in services {
+        let numberOfMatches = regex.numberOfMatches(in: name, options: [], range: NSMakeRange(0, name.characters.count))
+        if numberOfMatches > 0 {
+          return serv
         }
+      }
+    } catch let error as NSError {
+      print("Error code: \(error.code)")
+    }
+    return nil
+  }
 
-        /**
-        * Returns a URL generated from VCAP_SERVICES for the specified service or nil
-        * if service is not found. The spec parameter should be the name of the
-        * service or a regex to look up the service.
-        *
-        * The replacements parameter is a JSON object with the properties found in
-        * Foundation's URLComponents class.
-        */
-        public func getServiceURL(spec: String, replacements: [String : Any]?) -> String? {
-          var substitutions: [String: Any] = replacements ?? [:]
-          let service = getService(spec: spec)
-          guard let credentials = service?.credentials else {
-            return nil
-          }
+  /**
+  * Returns a URL generated from VCAP_SERVICES for the specified service or nil
+  * if service is not found. The spec parameter should be the name of the
+  * service or a regex to look up the service.
+  *
+  * The replacements parameter is a JSON object with the properties found in
+  * Foundation's URLComponents class.
+  */
+  public func getServiceURL(spec: String, replacements: [String:Any]?) -> String? {
+    var substitutions: [String:Any] = replacements ?? [:]
+    let service = getService(spec: spec)
+    guard let credentials = service?.credentials else {
+      return nil
+    }
 
-          guard let url: String =
-          credentials[substitutions["url"] as? String ?? "url"] as? String ?? credentials["uri"] as? String
-          else {
-            return nil
-          }
+    guard let url: String =
+      credentials[substitutions["url"] as? String ?? "url"] as? String ?? credentials["uri"] as? String
+    else {
+      return nil
+    }
 
-          substitutions["url"] = nil
-          guard var parsedURL = URLComponents(string: url) else {
-            return nil
-          }
+    substitutions["url"] = nil
+    guard var parsedURL = URLComponents(string: url) else {
+      return nil
+    }
 
-          // Set replacements in a predefined order
-          // Before, we were just iterating over the keys in the JSON object,
-          // but unfortunately the order of the keys returned were different on
-          // OS X and Linux, which resulted in different outcomes.
-          if let user = substitutions["user"] as? String {
-            parsedURL.user = user
-          }
-          if let password = substitutions["password"] as? String {
-            parsedURL.password = password
-          }
-          if let port = substitutions["port"] as? Int {
-            parsedURL.port = port
-          }
-          if let host = substitutions["host"] as? String {
-            parsedURL.host = host
-          }
-          if let scheme = substitutions["scheme"] as? String {
-            parsedURL.scheme = scheme
-          }
-          if let query = substitutions["query"] as? String {
-            parsedURL.query = query
-          }
-          if let queryItems = substitutions["queryItems"] as? Array<[String: Any]> {
-            var urlQueryItems: [URLQueryItem] = []
-            for queryItem in queryItems {
-              if let name = queryItem["name"] as? String {
-                let urlQueryItem = URLQueryItem(name: name, value: queryItem["value"] as? String)
-                urlQueryItems.append(urlQueryItem)
-              }
-            }
-            if urlQueryItems.count > 0 {
-              parsedURL.queryItems = urlQueryItems
-            }
-          }
-          // These are being ignored at the moment
-          // if let fragment = substitutions["fragment"].string {
-          //   parsedURL.fragment = fragment
-          // }
-          // if let path = substitutions["path"].string {
-          //   parsedURL.path = path
-          // }
-          return parsedURL.string
+    // Set replacements in a predefined order
+    // Before, we were just iterating over the keys in the JSON object,
+    // but unfortunately the order of the keys returned were different on
+    // OS X and Linux, which resulted in different outcomes.
+    if let user = substitutions["user"] as? String {
+      parsedURL.user = user
+    }
+    if let password = substitutions["password"] as? String {
+      parsedURL.password = password
+    }
+    if let port = substitutions["port"] as? Int {
+      parsedURL.port = port
+    }
+    if let host = substitutions["host"] as? String {
+      parsedURL.host = host
+    }
+    if let scheme = substitutions["scheme"] as? String {
+        parsedURL.scheme = scheme
+    }
+    if let query = substitutions["query"] as? String {
+      parsedURL.query = query
+    }
+    if let queryItems = substitutions["queryItems"] as? Array<[String:Any]> {
+      var urlQueryItems: [URLQueryItem] = []
+      for queryItem in queryItems {
+        if let name = queryItem["name"] as? String {
+          let urlQueryItem = URLQueryItem(name: name, value: queryItem["value"] as? String)
+          urlQueryItems.append(urlQueryItem)
         }
+      }
+      if urlQueryItems.count > 0 {
+        parsedURL.queryItems = urlQueryItems
+      }
+    }
+    // These are being ignored at the moment
+    // if let fragment = substitutions["fragment"].string {
+    //   parsedURL.fragment = fragment
+    // }
+    // if let path = substitutions["path"].string {
+    //   parsedURL.path = path
+    // }
+    return parsedURL.string
+  }
 
         /**
         * Returns a JSON object that contains the credentials for the specified
