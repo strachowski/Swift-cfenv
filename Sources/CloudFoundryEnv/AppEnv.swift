@@ -17,7 +17,6 @@
 import Foundation
 
 public struct AppEnv {
-
   public let isLocal: Bool
   public let port: Int
   public let name: String?
@@ -40,71 +39,65 @@ public struct AppEnv {
     app = try AppEnv.parseEnvVariable(isLocal: isLocal, environmentVars: environmentVars,
       variableName: "VCAP_APPLICATION", variableType: "application", options: options)
 
-      // Get services
-      services = try AppEnv.parseEnvVariable(isLocal: isLocal, environmentVars: environmentVars,
-        variableName: "VCAP_SERVICES", variableType: "services", options: options)
+    // Get services
+    services = try AppEnv.parseEnvVariable(isLocal: isLocal, environmentVars: environmentVars,
+      variableName: "VCAP_SERVICES", variableType: "services", options: options)
 
-        // Get port
-        port = try AppEnv.parsePort(environmentVars: environmentVars, app: app)
+    // Get port
+    port = try AppEnv.parsePort(environmentVars: environmentVars, app: app)
 
-        // Get name
-        var applicationJSON: [String: Any]? = [:]
-        if let _ = options["vcap"] as? [String: Any]
-        {
-          let vcapJSON = options["vcap"] as? [String: Any]
-          applicationJSON = (vcapJSON?["application"] as? [String: Any])!
-        }
-        name = AppEnv.parseName(app: app, options: applicationJSON!)
+    // Get name
+    name = AppEnv.parseName(app: app, options: options)
 
-        // Get bind (IP address of the application instance)
-        bind = app["host"] as? String ?? "0.0.0.0"
+    // Get bind (IP address of the application instance)
+    bind = app["host"] as? String ?? "0.0.0.0"
 
-        // Get urls
-        urls = AppEnv.parseURLs(isLocal: isLocal, app: app, port: port, options: applicationJSON!)
-        url = urls[0]
+    // Get urls
+    urls = AppEnv.parseURLs(isLocal: isLocal, app: app, port: port, options: options)
+    url = urls[0]
+  }
+
+  /**
+  * Returns an App object.
+  */
+  public func getApp() -> App? {
+    // Get limits
+    let limits: App.Limits
+    let json_limits = app["limits"] as? [String: Int]
+    if let memory = json_limits?["mem"],
+      let disk = json_limits?["disk"],
+      let fds = json_limits?["fds"] {
+        limits = App.Limits(memory: memory, disk: disk, fds: fds)
+    } else {
+      return nil
+    }
+
+    // Get uris
+    let uris = app["uris"] as? [String]
+    // Create DateUtils instance
+    let dateUtils = DateUtils()
+
+    guard
+      let name = (app["application_name"] as? String),
+      let id = (app["application_id"] as? String),
+      let version = (app["version"] as? String),
+      let instanceId = (app["instance_id"] as? String) ,
+      let instanceIndex = (app["instance_index"] as? Int),
+      let port = (app["port"] as? Int),
+      let startedAt: Date = dateUtils.convertStringToNSDate(dateString: app["started_at"] as? String),
+      let spaceId = (app["space_id"] as? String) else {
+        return nil
       }
 
-      /**
-      * Returns an App object.
-      */
-      public func getApp() -> App? {
-        // Get limits
-        let limits: App.Limits
-        let json_limits = app["limits"] as? [String: Int]
-        if let memory = json_limits?["mem"],
-        let disk = json_limits?["disk"],
-        let fds = json_limits?["fds"] {
-          limits = App.Limits(memory: memory, disk: disk, fds: fds)
-        } else {
-          return nil
-        }
+    let startedAtTs = startedAt.timeIntervalSince1970
 
-        // Get uris
-        let uris = app["uris"] as? [String]
-        // Create DateUtils instance
-        let dateUtils = DateUtils()
-
-        guard
-        let name = (app["application_name"] as? String),
-        let id = (app["application_id"] as? String),
-        let version = (app["version"] as? String),
-        let instanceId = (app["instance_id"] as? String) ,
-        let instanceIndex = (app["instance_index"] as? Int),
-        let port = (app["port"] as? Int),
-        let startedAt: Date = dateUtils.convertStringToNSDate(dateString: app["started_at"] as? String),
-        let spaceId = (app["space_id"] as? String) else {
-          return nil
-        }
-
-        let startedAtTs = startedAt.timeIntervalSince1970
-
-        // App instance should only be created if all required variables exist
-        let appObj = App(id: id, name: name, uris: uris!, version: version,
-          instanceId: instanceId, instanceIndex: instanceIndex,
-          limits: limits, port: port, spaceId: spaceId,
-          startedAtTs: startedAtTs, startedAt: startedAt)
-          return appObj
-        }
+    // App instance should only be created if all required variables exist
+    let appObj = App(id: id, name: name, uris: uris!, version: version,
+      instanceId: instanceId, instanceIndex: instanceIndex,
+      limits: limits, port: port, spaceId: spaceId,
+      startedAtTs: startedAtTs, startedAt: startedAt)
+    return appObj
+  }
 
         /**
         * Returns all services bound to the application in a dictionary. The key in
