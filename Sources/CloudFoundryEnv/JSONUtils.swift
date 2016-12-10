@@ -24,14 +24,16 @@ public struct JSONUtils {
   /**
   * Converts the speficied string to a JSON object.
   */
-    public static func convertStringToJSON(text: String?) -> [String: Any]? {
+  public static func convertStringToJSON(text: String?) -> [String:Any]? {
     let data = text?.data(using: String.Encoding.utf8)
     guard let nsData = data else {
       print("Could not generate JSON object from string: \(text)")
       return nil
     }
-    let json = try? JSONSerialization.jsonObject(with: nsData, options: []) as? [String: Any]
-    return (json)!
+    if let json = try? JSONSerialization.jsonObject(with: nsData) {
+      return (json as? [String:Any])
+    }
+    return nil
   }
 
 }
