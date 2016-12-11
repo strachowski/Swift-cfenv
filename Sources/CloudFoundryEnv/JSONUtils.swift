@@ -15,7 +15,6 @@
  **/
 
 import Foundation
-import SwiftyJSON
 
 /**
 * JSON utilities.
@@ -25,22 +24,28 @@ public struct JSONUtils {
   /**
   * Converts the speficied string to a JSON object.
   */
-  public static func convertStringToJSON(text: String?) -> JSON? {
+  public static func convertStringToJSON(text: String?) -> [String:Any]? {
     let data = text?.data(using: String.Encoding.utf8)
     guard let nsData = data else {
       print("Could not generate JSON object from string: \(text)")
       return nil
     }
-    let json = JSON(data: nsData)
-    return json
+    if let json = try? JSONSerialization.jsonObject(with: nsData) {
+      return (json as? [String:Any])
+    }
+    return nil
   }
 
   /**
-  * Converts a JSON array element contained in a JSON object to an array of Strings.
+  * Converts an array element contained in a JSON object to an array of Strings.
   * The fieldName argument should state the name of the JSON property that contains
-  * the JSON array.
+  * the array.
   */
-  public static func convertJSONArrayToStringArray(json: JSON, fieldName: String) -> [String] {
-    return json[fieldName].arrayValue.map { $0.stringValue }
+  public static func convertJSONArrayToStringArray(json: [String:Any], fieldName: String) -> [String] {
+    if let array = json[fieldName] as? [Any] {
+      return (array.map { String(describing: $0) })
+    }
+    return []
   }
+
 }

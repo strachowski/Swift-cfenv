@@ -22,7 +22,6 @@
 
 import XCTest
 import Foundation
-import SwiftyJSON
 
 @testable import CloudFoundryEnv
 
@@ -45,11 +44,11 @@ class MainTests : XCTestCase {
   }
 
   let options = "{ \"vcap\": { \"application\": { \"limits\": { \"mem\": 128, \"disk\": 1024, \"fds\": 16384 }, \"application_id\": \"e582416a-9771-453f-8df1-7b467f6d78e4\", \"application_version\": \"e5e029d1-4a1a-4004-9f79-655d550183fb\", \"application_name\": \"swift-test\", \"application_uris\": [ \"swift-test.mybluemix.net\" ], \"version\": \"e5e029d1-4a1a-4004-9f79-655d550183fb\", \"name\": \"swift-test\", \"space_name\": \"dev\", \"space_id\": \"b15eb0bb-cbf3-43b6-bfbc-f76d495981e5\", \"uris\": [ \"swift-test.mybluemix.net\" ], \"users\": null, \"instance_id\": \"7d4f24cfba06462ba23d68aaf1d7354a\", \"instance_index\": 0, \"host\": \"0.0.0.0\", \"port\": 61263, \"started_at\": \"2016-03-04 02:43:07 +0000\", \"started_at_timestamp\": 1457059387, \"start\": \"2016-03-04 02:43:07 +0000\", \"state_timestamp\": 1457059387 }, \"services\": { \"cloudantNoSQLDB\": [ { \"name\": \"Cloudant NoSQL DB-kd\", \"label\": \"cloudantNoSQLDB\", \"tags\": [ \"data_management\", \"ibm_created\", \"ibm_dedicated_public\" ], \"plan\": \"Shared\", \"credentials\": { \"username\": \"09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix\", \"password\": \"06c19ae06b1915d8a6649df5901eca85e885182421ffa9ef89e14bbc1b76efd4\", \"host\": \"09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix.cloudant.com\", \"port\": 443, \"url\": \"https://09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix:06c19ae06b1915d8a6649df5901eca85e885182421ffa9ef89e14bbc1b76efd4@09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix.cloudant.com\" } } ] } } }"
-  var jsonOptions: JSON = [:]
+  var jsonOptions: [String:Any] = [:]
 
   override func setUp() {
     super.setUp()
-    jsonOptions = JSONUtils.convertStringToJSON(text: options) as JSON!
+    jsonOptions = JSONUtils.convertStringToJSON(text: options)!
   }
 
   override func tearDown() {
@@ -251,30 +250,29 @@ class MainTests : XCTestCase {
     XCTAssertEqual(service.name, "Cloudant NoSQL DB-kd", "Service name should match.")
     XCTAssertEqual(service.label, "cloudantNoSQLDB", "Service label should match.")
     XCTAssertEqual(service.plan, "Shared", "Service plan should match.")
-    let tags = service.tags
-    XCTAssertEqual(tags.count, 3, "There should be 3 tags in the tags array.")
-    XCTAssertEqual(tags[0], "data_management", "Service tag #0 should match.")
-    XCTAssertEqual(tags[1], "ibm_created", "Serivce tag #1 should match.")
-    XCTAssertEqual(tags[2], "ibm_dedicated_public", "Serivce tag #2 should match.")
-    let credentials: JSON? = service.credentials
+    XCTAssertEqual(service.tags.count, 3, "There should be 3 tags in the tags array.")
+    XCTAssertEqual(service.tags[0], "data_management", "Service tag #0 should match.")
+    XCTAssertEqual(service.tags[1], "ibm_created", "Serivce tag #1 should match.")
+    XCTAssertEqual(service.tags[2], "ibm_dedicated_public", "Serivce tag #2 should match.")
+    let credentials: [String:Any]? = service.credentials
     XCTAssertNotNil(credentials)
     verifyServiceCreds(serviceCreds: credentials!)
   }
 
-  private func verifyServiceCreds(serviceCreds: JSON) {
+  private func verifyServiceCreds(serviceCreds: [String:Any]) {
     XCTAssertEqual(serviceCreds.count, 5, "There should be 5 elements in the credentials object.")
     for (key, value) in serviceCreds {
       switch key {
         case "password":
-          XCTAssertEqual(value, "06c19ae06b1915d8a6649df5901eca85e885182421ffa9ef89e14bbc1b76efd4", "Password in credentials object should match.")
+          XCTAssertEqual((value as! String), "06c19ae06b1915d8a6649df5901eca85e885182421ffa9ef89e14bbc1b76efd4", "Password in credentials object should match.")
         case "url":
-          XCTAssertEqual(value, "https://09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix:06c19ae06b1915d8a6649df5901eca85e885182421ffa9ef89e14bbc1b76efd4@09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix.cloudant.com", "URL in credentials object should match.")
+          XCTAssertEqual((value as! String), "https://09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix:06c19ae06b1915d8a6649df5901eca85e885182421ffa9ef89e14bbc1b76efd4@09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix.cloudant.com", "URL in credentials object should match.")
         case "port" :
-          XCTAssertEqual(value, 443, "Port in credentials object should match.")
+          XCTAssertEqual((value as! Int), 443, "Port in credentials object should match.")
         case "host":
-          XCTAssertEqual(value, "09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix.cloudant.com", "Host in credentials object should match.")
+          XCTAssertEqual((value as! String), "09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix.cloudant.com", "Host in credentials object should match.")
         case "username":
-          XCTAssertEqual(value, "09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix", "Username in credentials object should match.")
+          XCTAssertEqual((value as! String), "09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix", "Username in credentials object should match.")
         default:
           XCTFail("Unexpected key in credentials: \(key)")
       }

@@ -21,6 +21,89 @@
  */
 public struct App {
 
+  public class Builder {
+    var id: String?
+    var name: String?
+    var uris: [String]?
+    var version: String?
+    var instanceId: String?
+    var instanceIndex: Int?
+    var limits: Limits?
+    var port: Int?
+    var spaceId: String?
+    var startedAt: Date?
+
+    init() {}
+
+    func setId(id: String?) -> Builder {
+      self.id = id
+      return self
+    }
+
+    func setName(name: String?) -> Builder {
+      self.name = name
+      return self
+    }
+
+    func setUris(uris: [String]) -> Builder {
+      self.uris = uris
+      return self
+    }
+
+    func setVersion(version: String?) -> Builder {
+      self.version = version
+      return self
+    }
+
+    func setInstanceId(instanceId: String?) -> Builder {
+      self.instanceId = instanceId
+      return self
+    }
+
+    func setInstanceIndex(instanceIndex: Int?) -> Builder {
+      self.instanceIndex = instanceIndex
+      return self
+    }
+
+    func setLimits(limits: Limits) -> Builder {
+      self.limits = limits
+      return self
+    }
+
+    func setPort(port: Int?) -> Builder {
+      self.port = port
+      return self
+    }
+
+    func setSpaceId(spaceId: String?) -> Builder {
+      self.spaceId = spaceId
+      return self
+    }
+
+    func setStartedAt(startedAt: Date?) -> Builder {
+      self.startedAt = startedAt
+      return self
+    }
+
+    func build() -> App? {
+      guard let id = id, let name = name,
+      let uris = uris, let version = version,
+      let instanceId = instanceId,
+      let instanceIndex = instanceIndex,
+      let limits = limits,
+      let port = port,
+      let spaceId = spaceId,
+      let startedAt = startedAt else {
+          return nil
+      }
+
+      let startedAtTs = startedAt.timeIntervalSince1970
+      return App(id: id, name: name, uris: uris, version: version, instanceId: instanceId,
+        instanceIndex: instanceIndex, limits: limits, port: port, spaceId: spaceId,
+        startedAtTs: startedAtTs, startedAt: startedAt)
+    }
+  }
+
   public struct Limits {
     let memory: Int
     let disk: Int
@@ -49,7 +132,7 @@ public struct App {
   * Constructor.
   */
 // swiftlint:disable function_parameter_count
-  public init(id: String, name: String, uris: [String], version: String,
+  private init(id: String, name: String, uris: [String], version: String,
     instanceId: String, instanceIndex: Int, limits: Limits, port: Int,
     spaceId: String, startedAtTs: TimeInterval, startedAt: Date) {
 // swiftlint:enable function_parameter_count
