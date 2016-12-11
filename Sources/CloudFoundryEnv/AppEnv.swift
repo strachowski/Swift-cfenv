@@ -73,29 +73,23 @@ public struct AppEnv {
     }
 
     // Get uris
-    let uris = app["uris"] as? [String]
+    let uris = JSONUtils.convertJSONArrayToStringArray(json: app, fieldName: "uris")
     // Create DateUtils instance
     let dateUtils = DateUtils()
 
-    guard
-      let name = app["application_name"] as? String,
-      let id = app["application_id"] as? String,
-      let version = app["version"] as? String,
-      let instanceId = app["instance_id"] as? String,
-      let instanceIndex = app["instance_index"] as? Int,
-      let port = app["port"] as? Int,
-      let startedAt: Date = dateUtils.convertStringToNSDate(dateString: app["started_at"] as? String),
-      let spaceId = app["space_id"] as? String else {
-        return nil
-      }
-
-    let startedAtTs = startedAt.timeIntervalSince1970
-
     // App instance should only be created if all required variables exist
-    let appObj = App(id: id, name: name, uris: uris!, version: version,
-      instanceId: instanceId, instanceIndex: instanceIndex,
-      limits: limits, port: port, spaceId: spaceId,
-      startedAtTs: startedAtTs, startedAt: startedAt)
+    let appObj = App.Builder()
+      .setId(id: app["application_id"] as? String)
+      .setName(name: app["application_name"] as? String)
+      .setUris(uris: uris)
+      .setVersion(version: app["version"] as? String)
+      .setInstanceId(instanceId: app["instance_id"] as? String)
+      .setInstanceIndex(instanceIndex:  app["instance_index"] as? Int)
+      .setLimits(limits: limits)
+      .setPort(port: app["port"] as? Int)
+      .setSpaceId(spaceId: app["space_id"] as? String)
+      .setStartedAt(startedAt: dateUtils.convertStringToNSDate(dateString: app["started_at"] as? String))
+      .build()
     return appObj
   }
 
