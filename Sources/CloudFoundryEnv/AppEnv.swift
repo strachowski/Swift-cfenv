@@ -105,16 +105,16 @@ public struct AppEnv {
         for service in servsArray {
           // A service must have a name and a label
           if let name: String = service["name"] as? String,
-            let label: String = service["label"] as? String,
-            let tags: [String] = service["tags"] as? [String],
-            let plan: String = service["plan"] as? String,
-            let credentials : [String:Any] = service["credentials"] as? [String:Any] {
+            let label: String = service["label"] as? String {
+              let tags = JSONUtils.convertJSONArrayToStringArray(json: service, fieldName: "tags")
+              let plan: String? = service["plan"] as? String
+              let credentials: [String:Any]? = service["credentials"] as? [String:Any]
               results[name] =
                 Service(name: name, label: label, plan: plan, tags: tags, credentials: credentials)
+              }
             }
+          }
         }
-      }
-    }
     return results
   }
 
