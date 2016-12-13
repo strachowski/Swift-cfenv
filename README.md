@@ -25,7 +25,7 @@ To leverage the Swift-cfenv package in your Swift application, you should specif
      ...
 
      dependencies: [
-         .Package(url: "https://github.com/IBM-Swift/Swift-cfenv.git", majorVersion: 1, minor: 8),
+         .Package(url: "https://github.com/IBM-Swift/Swift-cfenv.git", majorVersion: 1, minor: 9),
 
          ...
 
