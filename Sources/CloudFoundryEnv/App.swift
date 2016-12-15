@@ -31,7 +31,7 @@ public struct App {
     var limits: Limits?
     var port: Int?
     var spaceId: String?
-    var startedAt: Date?
+    var startedAt: Date? // Not provided on Diego
 
     init() {}
 
@@ -92,15 +92,13 @@ public struct App {
       let instanceIndex = instanceIndex,
       let limits = limits,
       let port = port,
-      let spaceId = spaceId,
-      let startedAt = startedAt else {
+      let spaceId = spaceId else {
           return nil
       }
 
-      let startedAtTs = startedAt.timeIntervalSince1970
       return App(id: id, name: name, uris: uris, version: version, instanceId: instanceId,
         instanceIndex: instanceIndex, limits: limits, port: port, spaceId: spaceId,
-        startedAtTs: startedAtTs, startedAt: startedAt)
+        startedAt: startedAt)
     }
   }
 
@@ -125,17 +123,17 @@ public struct App {
   public let limits: Limits
   public let port: Int
   public let spaceId: String
-  public let startedAtTs: TimeInterval
-  public let startedAt: Date
+  public let startedAtTs: TimeInterval?
+  public let startedAt: Date? // Not provided on Diego
 
   /**
   * Constructor.
   */
-// swiftlint:disable function_parameter_count
+  // swiftlint:disable function_parameter_count
   private init(id: String, name: String, uris: [String], version: String,
     instanceId: String, instanceIndex: Int, limits: Limits, port: Int,
-    spaceId: String, startedAtTs: TimeInterval, startedAt: Date) {
-// swiftlint:enable function_parameter_count
+    spaceId: String, startedAt: Date?) {
+  // swiftlint:enable function_parameter_count
 
     self.id = id
     self.name = name
@@ -146,7 +144,7 @@ public struct App {
     self.limits = limits
     self.port = port
     self.spaceId = spaceId
-    self.startedAtTs = startedAtTs
     self.startedAt = startedAt
+    self.startedAtTs = startedAt?.timeIntervalSince1970
   }
 }
