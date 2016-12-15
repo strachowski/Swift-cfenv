@@ -79,7 +79,7 @@ class MainTests : XCTestCase {
         XCTAssertEqual(uris.count, 1, "There should be only 1 uri in the uris array.")
         XCTAssertEqual(uris[0], "swift-test.mybluemix.net", "URI value should match.")
         XCTAssertEqual(app.name, "swift-test", "Application name should match.")
-        let startedAt: Date? = app.startedAt as Date
+        let startedAt: Date? = app.startedAt
         XCTAssertNotNil(startedAt)
         let dateUtils = DateUtils()
         let startedAtStr = dateUtils.convertNSDateToString(nsDate: startedAt)
