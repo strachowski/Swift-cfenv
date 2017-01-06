@@ -22,6 +22,7 @@
 
 import XCTest
 import Foundation
+import LoggerAPI
 
 @testable import CloudFoundryEnv
 
@@ -30,9 +31,9 @@ import Foundation
 * Online tool for removing new lines: http://www.textfixer.com/tools/remove-line-breaks.php
 * Online JSON editor: http://jsonviewer.stack.hu/
 */
-class MainTests : XCTestCase {
+class MainTests: XCTestCase {
 
-  static var allTests : [(String, (MainTests) -> () throws -> Void)] {
+  static var allTests: [(String, (MainTests) -> () throws -> Void)] {
     return [
       ("testGetApp", testGetApp),
       ("testGetServices", testGetServices),
@@ -90,8 +91,8 @@ class MainTests : XCTestCase {
         XCTFail("Could not get App object!")
       }
     } catch let error as NSError {
-      print("Error domain: \(error.domain)")
-      print("Error code: \(error.code)")
+      Log.error("Error domain: \(error.domain)")
+      Log.error("Error code: \(error.code)")
       XCTFail("Could not get AppEnv object!")
     }
   }
@@ -113,8 +114,8 @@ class MainTests : XCTestCase {
         XCTFail("A service object should have been found for '\(name)'.")
       }
     } catch let error as NSError {
-      print("Error domain: \(error.domain)")
-      print("Error code: \(error.code)")
+      Log.error("Error domain: \(error.domain)")
+      Log.error("Error code: \(error.code)")
       XCTFail("Could not get AppEnv object!")
     }
   }
@@ -138,8 +139,8 @@ class MainTests : XCTestCase {
       let regex = "Cloudant NoSQL*"
       checkService(regex)
     } catch let error as NSError {
-      print("Error domain: \(error.domain)")
-      print("Error code: \(error.code)")
+      Log.error("Error domain: \(error.domain)")
+      Log.error("Error code: \(error.code)")
       XCTFail("Could not get AppEnv object!")
     }
   }
@@ -168,8 +169,8 @@ class MainTests : XCTestCase {
       XCTAssertEqual(urls[0], "http://localhost:8090", "AppEnv's urls[0] should be 'http://localhost:8090'.")
       XCTAssertEqual(appEnv.services.count, 1, "AppEnv's services array should contain 1 element.")
     } catch let error as NSError {
-      print("Error domain: \(error.domain)")
-      print("Error code: \(error.code)")
+      Log.error("Error domain: \(error.domain)")
+      Log.error("Error code: \(error.code)")
       XCTFail("Could not get AppEnv object!")
     }
   }
@@ -199,8 +200,8 @@ class MainTests : XCTestCase {
       replacements = "{ \"user\": \"username01\", \"password\": \"passw0rd\", \"port\": 9080, \"host\": \"bluemix.ibm.com\", \"scheme\": \"https\", \"query\": \"name0=value0&name1=value1\", \"queryItems\": [ { \"name\": \"name2\", \"value\": \"value2\" }, { \"name\": \"name3\", \"value\": \"value3\" } ] }"
       try verifyServiceURLWithOptions(name: name, replacements: replacements, expectedServiceURL: "https://username01:passw0rd@bluemix.ibm.com:9080?name2=value2&name3=value3")
     } catch let error as NSError {
-      print("Error domain: \(error.domain)")
-      print("Error code: \(error.code)")
+      Log.error("Error domain: \(error.domain)")
+      Log.error("Error code: \(error.code)")
       XCTFail("Could not get AppEnv object!")
     }
   }
@@ -230,8 +231,8 @@ class MainTests : XCTestCase {
         XCTFail("Service credentials should not have been found for '\(badName)'.")
       }
     } catch let error as NSError {
-      print("Error domain: \(error.domain)")
-      print("Error code: \(error.code)")
+      Log.error("Error domain: \(error.domain)")
+      Log.error("Error code: \(error.code)")
       XCTFail("Could not get AppEnv object!")
     }
   }

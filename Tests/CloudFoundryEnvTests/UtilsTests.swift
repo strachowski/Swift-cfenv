@@ -30,9 +30,9 @@ import Foundation
 * Online tool for removing new lines: http://www.textfixer.com/tools/remove-line-breaks.php
 * Online JSON editor: http://jsonviewer.stack.hu/
 */
-class UtilsTests : XCTestCase {
+class UtilsTests: XCTestCase {
 
-  static var allTests : [(String, (UtilsTests) -> () throws -> Void)] {
+  static var allTests: [(String, (UtilsTests) -> () throws -> Void)] {
     return [
       ("testConvertStringToJSON", testConvertStringToJSON),
       ("testConvertJSONArrayToStringArray", testConvertJSONArrayToStringArray)

@@ -15,6 +15,7 @@
 **/
 
 import Foundation
+import LoggerAPI
 
 public struct AppEnv {
   public let isLocal: Bool
@@ -144,7 +145,7 @@ public struct AppEnv {
         }
       }
     } catch let error as NSError {
-      print("Error code: \(error.code)")
+      Log.error("Error code: \(error.code)")
     }
     return nil
   }
@@ -303,7 +304,7 @@ public struct AppEnv {
     if isLocal {
       uris = ["localhost:\(port)"]
     } else {
-      if (uris.count == 0) {
+      if uris.count == 0 {
         uris = ["localhost"]
       }
     }
@@ -311,7 +312,7 @@ public struct AppEnv {
     let scheme: String = options["protocol"] as? String ?? (isLocal ? "http" : "https")
     var urls: [String] = []
     for uri in uris {
-      urls.append("\(scheme)://\(uri)");
+      urls.append("\(scheme)://\(uri)")
     }
     return urls
   }
