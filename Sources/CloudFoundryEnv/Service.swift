@@ -20,7 +20,7 @@
 public struct Service {
   public let name: String
   public let label: String
-  public let plan : String
+  public let plan: String
   public let tags: [String]
   public let credentials: [String:Any]?
 
