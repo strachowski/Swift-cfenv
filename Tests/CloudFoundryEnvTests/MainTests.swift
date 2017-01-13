@@ -73,8 +73,10 @@ class MainTests: XCTestCase {
       try manager.loadFile(filePath.path)
       let servs = manager.getValue(for: "VCAP_SERVICES")
       print("servs: \(servs)")
-      let app = manager.getValue(for: "VCAP_APPLICATION")
+      let app = manager.getValue(for: "VCAP_APPLICATION") as? [String:Any]
       let name = manager.getValue(for: "VCAP_APPLICATION:name")
+      let namee = app!["name"]// as? String
+      print("name2: \(namee)")
       print("name: \(name)")
       print("app: \(app)")
       var vcap: [String:Any] = [:]
