@@ -1,5 +1,5 @@
 /**
-* Copyright IBM Corporation 2016
+* Copyright IBM Corporation 2016,2017
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -23,13 +23,15 @@
 import XCTest
 import Foundation
 import LoggerAPI
+import SwiftConfiguration
 
 @testable import CloudFoundryEnv
 
 /**
-* Online tool for escaping JSON: http://www.freeformatter.com/javascript-escape.html
-* Online tool for removing new lines: http://www.textfixer.com/tools/remove-line-breaks.php
-* Online JSON editor: http://jsonviewer.stack.hu/
+* Useful online resources/tools:
+* - Escape JSON: http://www.freeformatter.com/javascript-escape.html
+* - Remove new lines: http://www.textfixer.com/tools/remove-line-breaks.php
+* - JSON editor: http://jsonviewer.stack.hu/
 */
 class MainTests: XCTestCase {
 
@@ -44,12 +46,14 @@ class MainTests: XCTestCase {
     ]
   }
 
-  let options = "{ \"vcap\": { \"application\": { \"limits\": { \"mem\": 128, \"disk\": 1024, \"fds\": 16384 }, \"application_id\": \"e582416a-9771-453f-8df1-7b467f6d78e4\", \"application_version\": \"e5e029d1-4a1a-4004-9f79-655d550183fb\", \"application_name\": \"swift-test\", \"application_uris\": [ \"swift-test.mybluemix.net\" ], \"version\": \"e5e029d1-4a1a-4004-9f79-655d550183fb\", \"name\": \"swift-test\", \"space_name\": \"dev\", \"space_id\": \"b15eb0bb-cbf3-43b6-bfbc-f76d495981e5\", \"uris\": [ \"swift-test.mybluemix.net\" ], \"users\": null, \"instance_id\": \"7d4f24cfba06462ba23d68aaf1d7354a\", \"instance_index\": 0, \"host\": \"0.0.0.0\", \"port\": 61263, \"started_at\": \"2016-03-04 02:43:07 +0000\", \"started_at_timestamp\": 1457059387, \"start\": \"2016-03-04 02:43:07 +0000\", \"state_timestamp\": 1457059387 }, \"services\": { \"cloudantNoSQLDB\": [ { \"name\": \"Cloudant NoSQL DB-kd\", \"label\": \"cloudantNoSQLDB\", \"tags\": [ \"data_management\", \"ibm_created\", \"ibm_dedicated_public\" ], \"plan\": \"Shared\", \"credentials\": { \"username\": \"09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix\", \"password\": \"06c19ae06b1915d8a6649df5901eca85e885182421ffa9ef89e14bbc1b76efd4\", \"host\": \"09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix.cloudant.com\", \"port\": 443, \"url\": \"https://09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix:06c19ae06b1915d8a6649df5901eca85e885182421ffa9ef89e14bbc1b76efd4@09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix.cloudant.com\" } } ] } } }"
   var jsonOptions: [String:Any] = [:]
 
   override func setUp() {
     super.setUp()
-    jsonOptions = JSONUtils.convertStringToJSON(text: options)!
+    // Load default config JSON
+    let filePath = URL(fileURLWithPath: #file).appendingPathComponent("../resources/config-default.json").standardized
+    let configData = try! Data(contentsOf: filePath)
+    jsonOptions = try! JSONSerialization.jsonObject(with: configData, options: []) as! [String:Any]
   }
 
   override func tearDown() {
@@ -57,8 +61,71 @@ class MainTests: XCTestCase {
     jsonOptions = [:]
   }
 
+  func testGetApp2() {
+    let filePath = URL(fileURLWithPath: #file).appendingPathComponent("../resources/config-non-default.json").standardized
+    let configData = try! Data(contentsOf: filePath)
+    let json = try! JSONSerialization.jsonObject(with: configData, options: []) as! [String:Any]
+    print("json: \(json)")
+
+
+    let manager = ConfigurationManager()
+    do {
+      try manager.loadFile(filePath.path)
+      let servs = manager.getValue(for: "VCAP_SERVICES")
+      print("servs: \(servs)")
+      let app = manager.getValue(for: "VCAP_APPLICATION")
+      let name = manager.getValue(for: "VCAP_APPLICATION:name")
+      print("name: \(name)")
+      print("app: \(app)")
+      var vcap: [String:Any] = [:]
+      vcap["application"] = app
+      vcap["services"] = servs
+      var config: [String:Any] = [:]
+      config["vcap"] = vcap
+      print("config: \(config)")
+      let appEnv = try CloudFoundryEnv.getAppEnv(options: config)
+      if let app = appEnv.getApp() {
+        print("OK.....")
+        XCTAssertNotNil(app)
+        XCTAssertEqual(app.port, 61263, "Application port number should match.")
+        XCTAssertEqual(app.id, "e582416a-9771-453f-8df1-7b467f6d78e4", "Application ID value should match.")
+        XCTAssertEqual(app.version, "e5e029d1-4a1a-4004-9f79-655d550183fb", "Application version number should match.")
+        XCTAssertEqual(app.name, "swift-test", "App name should match.")
+        XCTAssertEqual(app.instanceId, "7d4f24cfba06462ba23d68aaf1d7354a", "Application instance ID value should match.")
+        XCTAssertEqual(app.instanceIndex, 0, "Application instance index value should match.")
+        XCTAssertEqual(app.spaceId, "b15eb0bb-cbf3-43b6-bfbc-f76d495981e5", "Application space ID value should match.")
+        let limits = app.limits
+        //print("limits: \(limits)")
+        //XCTAssertNotNil(limits)
+        XCTAssertEqual(limits.memory, 128, "Memory value should match.")
+        XCTAssertEqual(limits.disk, 1024, "Disk value should match.")
+        XCTAssertEqual(limits.fds, 16384, "FDS value should match.")
+        let uris = app.uris
+        //XCTAssertNotNil(uris)
+        XCTAssertEqual(uris.count, 1, "There should be only 1 uri in the uris array.")
+        //XCTAssertEqual(uris[0], "swift-test.mybluemix.net", "URI value should match.") //???????????????????
+        XCTAssertEqual(app.name, "swift-test", "Application name should match.")
+        let startedAt: Date? = app.startedAt
+        XCTAssertNotNil(startedAt)
+        let dateUtils = DateUtils()
+        let startedAtStr = dateUtils.convertNSDateToString(nsDate: startedAt)
+        XCTAssertEqual(startedAtStr, "2016-03-04 02:43:07 +0000", "Application startedAt date should match.")
+        XCTAssertNotNil(app.startedAtTs, "Application startedAt ts should not be nil.")
+        XCTAssertEqual(app.startedAtTs, 1457059387, "Application startedAt ts should match.")
+
+      } else {
+        XCTFail("Could not get App object!")
+      }
+    } catch let error as NSError {
+      Log.error("Error domain: \(error.domain)")
+      Log.error("Error code: \(error.code)")
+      XCTFail("Could not get AppEnv object!")
+    }
+  }
+
   func testGetApp() {
     do {
+      print("jsonOptions: \(jsonOptions)")
       let appEnv = try CloudFoundryEnv.getAppEnv(options: jsonOptions)
       if let app = appEnv.getApp() {
         XCTAssertNotNil(app)

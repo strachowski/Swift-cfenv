@@ -1,0 +1,48 @@
+{
+  "VCAP_APPLICATION": {
+    "application_id": "e582416a-9771-453f-8df1-7b467f6d78e4",
+    "application_name": "swift-test",
+    "application_uris": ["swift-test.mybluemix.net"],
+    "application_version": "e5e029d1-4a1a-4004-9f79-655d550183fb",
+    "host": "0.0.0.0",
+    "instance_id": "7d4f24cfba06462ba23d68aaf1d7354a",
+    "instance_index": 0,
+    "limits": {
+      "disk": 1024,
+      "fds": 16384,
+      "mem": 128
+    },
+    "name": "swift-test",
+    "port": 61263,
+    "space_id": "b15eb0bb-cbf3-43b6-bfbc-f76d495981e5",
+    "space_name": "dev",
+    "start": "2016-03-04 02:43:07 +0000",
+    "started_at": "2016-03-04 02:43:07 +0000",
+    "started_at_timestamp": 1457059387,
+    "state_timestamp": 1457059387,
+    "uris": ["swift-test.mybluemix.net"],
+    "users": null,
+    "version": "e5e029d1-4a1a-4004-9f79-655d550183fb",
+  },
+  "VCAP_SERVICES": {
+    "cloudantNoSQLDB": [
+      {
+        "credentials":                 {
+          "host": "09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix.cloudant.com",
+          "password": "06c19ae06b1915d8a6649df5901eca85e885182421ffa9ef89e14bbc1b76efd4",
+          "port": 443,
+          "url": "https://09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix:06c19ae06b1915d8a6649df5901eca85e885182421ffa9ef89e14bbc1b76efd4@09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix.cloudant.com",
+          "username": "09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix",
+        },
+        "label": "cloudantNoSQLDB",
+        "name": "Cloudant NoSQL DB-kd",
+        "plan": "Shared",
+        "tags":[
+          "data_management",
+          "ibm_created",
+          "ibm_dedicated_public"
+        ],
+      }
+    ],
+  }
+}
