@@ -71,10 +71,10 @@ class MainTests: XCTestCase {
     let manager = ConfigurationManager()
     do {
       try manager.loadFile(filePath.path)
-      let servs = manager.getValue(for: "VCAP_SERVICES")
+      let servs = manager["VCAP_SERVICES"]
       print("servs: \(servs)")
-      let app = manager.getValue(for: "VCAP_APPLICATION") as? [String:Any]
-      let name = manager.getValue(for: "VCAP_APPLICATION:name")
+      let app = manager["VCAP_APPLICATION"] as? [String:Any]
+      let name = manager["VCAP_APPLICATION:name"]
       let namee = app!["name"]// as? String
       print("name2: \(namee)")
       print("name: \(name)")
@@ -105,7 +105,7 @@ class MainTests: XCTestCase {
         let uris = app.uris
         //XCTAssertNotNil(uris)
         XCTAssertEqual(uris.count, 1, "There should be only 1 uri in the uris array.")
-        //XCTAssertEqual(uris[0], "swift-test.mybluemix.net", "URI value should match.") //???????????????????
+        XCTAssertEqual(uris[0], "swift-test.mybluemix.net", "URI value should match.") //???????????????????
         XCTAssertEqual(app.name, "swift-test", "Application name should match.")
         let startedAt: Date? = app.startedAt
         XCTAssertNotNil(startedAt)
@@ -156,6 +156,19 @@ class MainTests: XCTestCase {
         XCTAssertEqual(startedAtStr, "2016-03-04 02:43:07 +0000", "Application startedAt date should match.")
         XCTAssertNotNil(app.startedAtTs, "Application startedAt ts should not be nil.")
         XCTAssertEqual(app.startedAtTs, 1457059387, "Application startedAt ts should match.")
+
+
+
+        let services = appEnv.getServices()
+        //print("services \(services)")
+        XCTAssertEqual(services.count, 1, "There should be only 1 service in the services dictionary.")
+        let name = "Cloudant NoSQL DB-kd"
+        if let service = services[name] {
+          XCTAssertEqual(service.name, name, "Key in dictionary and service name should match.")
+          verifyService(service: service)
+        } else {
+          XCTFail("A service object should have been found for '\(name)'.")
+        }
       } else {
         XCTFail("Could not get App object!")
       }
