@@ -120,6 +120,27 @@ public struct AppEnv {
   }
 
   /**
+  * Returns a list of Service objects that match the specified type. If there are
+  * no services that match the type parameter, this method returns an empty array.
+  */
+  public func getServices(type: String) -> [Service] {
+    let servs = services[type] as? [[String:Any]] ?? [[:]]
+    let results = servs.map { (serv) -> Service? in
+      let tags = JSONUtils.convertJSONArrayToStringArray(json: serv, fieldName: "tags")
+      let credentials: [String:Any]? = serv["credentials"] as? [String:Any]
+      let service = Service.Builder()
+        .setName(name: serv["name"] as? String)
+        .setLabel(label: serv["label"] as? String)
+        .setTags(tags: tags)
+        .setPlan(plan: serv["plan"] as? String)
+        .setCredentials(credentials: credentials)
+        .build()
+      return service
+       }
+    return results.flatMap { $0 }
+  }
+
+  /**
   * Returns a Service object with the properties for the specified Cloud Foundry
   * service. The spec parameter should be the name of the service
   * or a regex to look up the service. If there is no service that matches the
