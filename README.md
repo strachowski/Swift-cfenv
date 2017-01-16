@@ -74,7 +74,7 @@ If the `VCAP_APPLICATION` isn't set, it is then assumed that your application is
 ### `CloudFoundryEnv`
 To get an instance of the [`AppEnv`](#appenv) structure, you can use one of the following methods of the `CloudFoundryEnv` structure:
 
-- `getAppEnv(options: JSON)`
+- `getAppEnv(options: [String:Any])`
 - `getAppEnv()`
 
 An instance of the `AppEnv` structure gives you access to the Cloud Foundry configuration data as an object.
@@ -109,11 +109,13 @@ The following are the instance methods for an `AppEnv` object:
 
 - `getServices()`: Returns all services bound to the application in a dictionary. The key in the dictionary is the name of the service, while the value is a Service object. Please note that this returned value is different than the `services` property returned from the `AppEnv` instance.
 
+- `getServices(type: String)`: Returns an array of Service objects that match the specified service type argument.
+
 - `appEnv.getService(spec: String)`: Returns a [Service](#service) object for the specified Cloud Foundry service. The `spec` parameter should be the name of the service or a regular expression to look up the service. If there is no service that matches the `spec` parameter, this method returns nil.
 
-- `getServiceURL(spec: String, replacements: JSON?)`: Returns a service URL generated from the `VCAP_SERVICES` environment variable for the specified service or nil if service cannot be found. The `spec` parameter should be the name of the service or a regular expression to look up the service. The `replacements` parameter is a JSON object with the properties (e.g. `user`, `password`, `port`, etc.) found in Foundation's [URLComponents](https://developer.apple.com/reference/foundation/urlcomponents) class. To generate the service URL, the `url` property in the service credentials is first used to create an instance of the URLComponents object. The initial set of properties in the URLComponents instance can then be overridden by properties specified in the optional `replacements` JSON parameter. If there is not a `url` property in the service credentials, this method returns nil. Having said this, note that you have the capability to override the `url` property in the service credentials, with a `replacements` property of `url` and a value that specifies the name of the property in the service credentials that contains the base URL. For instance, you may find this useful in the case there is no `url` property in the service credentials.
+- `getServiceURL(spec: String, replacements: [String:Any]?)`: Returns a service URL generated from the `VCAP_SERVICES` environment variable for the specified service or nil if service cannot be found. The `spec` parameter should be the name of the service or a regular expression to look up the service. The `replacements` parameter is a dictionary with the properties (e.g. `user`, `password`, `port`, etc.) found in Foundation's [URLComponents](https://developer.apple.com/reference/foundation/urlcomponents) class. To generate the service URL, the `url` property in the service credentials is first used to create an instance of the URLComponents object. The initial set of properties in the URLComponents instance can then be overridden by properties specified in the optional `replacements` dictionary parameter. If there is not a `url` property in the service credentials, this method returns nil. Having said this, note that you have the capability to override the `url` property in the service credentials, with a `replacements` property of `url` and a value that specifies the name of the property in the service credentials that contains the base URL. For instance, you may find this useful in the case there is no `url` property in the service credentials.
 
-- `appEnv.getServiceCreds(spec: String)`: Returns a JSON object that contains the credentials for the specified service. The `spec` parameter should be the name of the service or a regular expression to look up the service. If there is no service that matches the `spec` parameter, this method returns nil. In the case there is no credentials property for the specified service, an empty JSON object is returned.
+- `appEnv.getServiceCreds(spec: String)`: Returns a dictionary that contains the credentials for the specified service. The `spec` parameter should be the name of the service or a regular expression to look up the service. If there is no service that matches the `spec` parameter, this method returns nil. In the case there is no credentials property for the specified service, an empty dictionary is returned.
 
 ### App
 App is a structure that contains the following [`VCAP_APPLICATION`](https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-APPLICATION) environment variable properties:
@@ -138,13 +140,13 @@ The App.Limits structure contains the memory, disk, and number of files for an a
 - `fds`: An integer that represents the number of files.
 
 ### Service
-Service is a structure that contains the following properties for a Cloud Foundry [service](https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-SERVICES):
+Service is a class that contains the following properties for a Cloud Foundry [service](https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-SERVICES):
 
 - `name`: A string that contains the name assigned to the service instance.
 - `label`: A string that contains the name of the service offering.
 - `plan` : A string that states the service plan selected when the service instance was created. If the service has no plan, the string 'N/A' is assigned to this field.
 - `tags`: An array of strings that contains values to identify a service instance.
-- `credentials`: An optional JSON object that contains the service credentials required to access the service instance. Note that the credential properties for accessing a service could be completely different from one to another. For instance, the JSON credentials for a service may simply contain a `uri` property while the JSON credentials for another service may contain a `hostname`, `username`, and `password` properties.
+- `credentials`: An optional dictionary that contains the service credentials required to access the service instance. Note that the credential properties for accessing a service could be completely different from one to another. For instance, the credentials dictionary for a service may simply contain a `uri` property while the credentials dictionary for another service may contain a `hostname`, `username`, and `password` properties.
 
 ## Testing with Bluemix (or other Cloud Foundry PaaS)
 To test this Swift library on Bluemix, you can follow the steps described in this section.

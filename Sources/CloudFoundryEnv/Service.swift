@@ -1,5 +1,5 @@
 /**
- * Copyright IBM Corporation 2016
+ * Copyright IBM Corporation 2016,2017
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,52 @@
 /**
 * See https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-SERVICES.
 */
-public struct Service {
+public class Service {
+
+  public class Builder {
+    var name: String?
+    var label: String?
+    var plan: String?
+    var tags: [String]?
+    var credentials: [String:Any]?
+
+    init() {}
+
+    func setName(name: String?) -> Builder {
+      self.name = name
+      return self
+    }
+
+    func setLabel(label: String?) -> Builder {
+      self.label = label
+      return self
+    }
+
+    func setPlan(plan: String?) -> Builder {
+      self.plan = plan
+      return self
+    }
+
+    func setTags(tags: [String]?) -> Builder {
+      self.tags = tags
+      return self
+    }
+
+    func setCredentials(credentials: [String:Any]?) -> Builder {
+      self.credentials = credentials
+      return self
+    }
+
+    func build() -> Service? {
+      guard let name = name, let label = label, let tags = tags else {
+        return nil
+      }
+
+      return Service(name: name, label: label, plan: plan, tags: tags,
+        credentials: credentials)
+    }
+  }
+
   public let name: String
   public let label: String
   public let plan: String
@@ -32,5 +77,13 @@ public struct Service {
     self.plan = (plan != nil) ? plan! : "N/A"
     self.tags = tags
     self.credentials = credentials
+  }
+
+  public init(service: Service) {
+    self.name = service.name
+    self.label = service.label
+    self.plan = service.plan
+    self.tags = service.tags
+    self.credentials = service.credentials
   }
 }
