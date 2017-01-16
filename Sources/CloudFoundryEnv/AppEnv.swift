@@ -103,24 +103,28 @@ public struct AppEnv {
     var results: [String:Service] = [:]
     for (_, servs) in services {
       if let servsArray = servs as? [[String:Any]] {
-        for service in servsArray {
+        for serv in servsArray {
           // A service must have a name and a label
-          if let name: String = service["name"] as? String,
-            let label: String = service["label"] as? String {
-              let tags = JSONUtils.convertJSONArrayToStringArray(json: service, fieldName: "tags")
-              let plan: String? = service["plan"] as? String
-              let credentials: [String:Any]? = service["credentials"] as? [String:Any]
-              results[name] =
-                Service(name: name, label: label, plan: plan, tags: tags, credentials: credentials)
-              }
+          let tags = JSONUtils.convertJSONArrayToStringArray(json: serv, fieldName: "tags")
+          let credentials: [String:Any]? = serv["credentials"] as? [String:Any]
+          if let name: String = serv["name"] as? String,
+          let service = Service.Builder()
+            .setName(name: serv["name"] as? String)
+            .setLabel(label: serv["label"] as? String)
+            .setTags(tags: tags)
+            .setPlan(plan: serv["plan"] as? String)
+            .setCredentials(credentials: credentials)
+            .build() {
+              results[name] = service
             }
-          }
         }
+      }
+    }
     return results
   }
 
   /**
-  * Returns a list of Service objects that match the specified type. If there are
+  * Returns an array of Service objects that match the specified type. If there are
   * no services that match the type parameter, this method returns an empty array.
   */
   public func getServices(type: String) -> [Service] {
@@ -136,7 +140,7 @@ public struct AppEnv {
         .setCredentials(credentials: credentials)
         .build()
       return service
-       }
+    }
     return results.flatMap { $0 }
   }
 
