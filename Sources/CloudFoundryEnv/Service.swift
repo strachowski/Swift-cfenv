@@ -17,7 +17,7 @@
 /**
 * See https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-SERVICES.
 */
-public struct Service {
+public class Service {
 
   public class Builder {
     var name: String?
@@ -77,5 +77,13 @@ public struct Service {
     self.plan = (plan != nil) ? plan! : "N/A"
     self.tags = tags
     self.credentials = credentials
+  }
+
+  public init(service: Service) {
+    self.name = service.name
+    self.label = service.label
+    self.plan = service.plan
+    self.tags = service.tags
+    self.credentials = service.credentials
   }
 }

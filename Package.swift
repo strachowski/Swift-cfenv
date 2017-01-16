@@ -26,7 +26,6 @@ let package = Package(
     ],
     dependencies: [
       //.Package(url: "https://github.com/behrang/YamlSwift.git", majorVersion: 1),
-      .Package(url: "https://github.com/IBM-Swift/LoggerAPI.git", majorVersion: 1, minor: 4),
-      .Package(url: "git@github.ibm.com:IBM-Swift/swift-configuration.git", majorVersion: 0, minor: 0)
+      .Package(url: "https://github.com/IBM-Swift/LoggerAPI.git", majorVersion: 1, minor: 5),
     ]
 )
