@@ -51,7 +51,7 @@ class MainTests: XCTestCase {
   override func setUp() {
     super.setUp()
     // Load default config JSON
-    let filePath = URL(fileURLWithPath: #file).appendingPathComponent("../resources/config-default.json").standardized
+    let filePath = URL(fileURLWithPath: #file).appendingPathComponent("../resources/config.json").standardized
     let configData = try! Data(contentsOf: filePath)
     jsonOptions = try! JSONSerialization.jsonObject(with: configData, options: []) as! [String:Any]
   }
@@ -60,7 +60,7 @@ class MainTests: XCTestCase {
     super.tearDown()
     jsonOptions = [:]
   }
-  
+
   func testGetApp() {
     do {
       let appEnv = try CloudFoundryEnv.getAppEnv(options: jsonOptions)
