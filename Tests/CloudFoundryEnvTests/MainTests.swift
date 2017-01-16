@@ -23,7 +23,6 @@
 import XCTest
 import Foundation
 import LoggerAPI
-import SwiftConfiguration
 
 @testable import CloudFoundryEnv
 
