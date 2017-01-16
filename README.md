@@ -140,7 +140,7 @@ The App.Limits structure contains the memory, disk, and number of files for an a
 - `fds`: An integer that represents the number of files.
 
 ### Service
-Service is a structure that contains the following properties for a Cloud Foundry [service](https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-SERVICES):
+Service is a class that contains the following properties for a Cloud Foundry [service](https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-SERVICES):
 
 - `name`: A string that contains the name assigned to the service instance.
 - `label`: A string that contains the name of the service offering.
