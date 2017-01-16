@@ -1,5 +1,5 @@
 /**
-* Copyright IBM Corporation 2016
+* Copyright IBM Corporation 2016,2017
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -27,9 +27,10 @@ import LoggerAPI
 @testable import CloudFoundryEnv
 
 /**
-* Online tool for escaping JSON: http://www.freeformatter.com/javascript-escape.html
-* Online tool for removing new lines: http://www.textfixer.com/tools/remove-line-breaks.php
-* Online JSON editor: http://jsonviewer.stack.hu/
+* Useful online resources/tools:
+* - Escape JSON: http://www.freeformatter.com/javascript-escape.html
+* - Remove new lines: http://www.textfixer.com/tools/remove-line-breaks.php
+* - JSON editor: http://jsonviewer.stack.hu/
 */
 class MainTests: XCTestCase {
 
@@ -44,12 +45,14 @@ class MainTests: XCTestCase {
     ]
   }
 
-  let options = "{ \"vcap\": { \"application\": { \"limits\": { \"mem\": 128, \"disk\": 1024, \"fds\": 16384 }, \"application_id\": \"e582416a-9771-453f-8df1-7b467f6d78e4\", \"application_version\": \"e5e029d1-4a1a-4004-9f79-655d550183fb\", \"application_name\": \"swift-test\", \"application_uris\": [ \"swift-test.mybluemix.net\" ], \"version\": \"e5e029d1-4a1a-4004-9f79-655d550183fb\", \"name\": \"swift-test\", \"space_name\": \"dev\", \"space_id\": \"b15eb0bb-cbf3-43b6-bfbc-f76d495981e5\", \"uris\": [ \"swift-test.mybluemix.net\" ], \"users\": null, \"instance_id\": \"7d4f24cfba06462ba23d68aaf1d7354a\", \"instance_index\": 0, \"host\": \"0.0.0.0\", \"port\": 61263, \"started_at\": \"2016-03-04 02:43:07 +0000\", \"started_at_timestamp\": 1457059387, \"start\": \"2016-03-04 02:43:07 +0000\", \"state_timestamp\": 1457059387 }, \"services\": { \"cloudantNoSQLDB\": [ { \"name\": \"Cloudant NoSQL DB-kd\", \"label\": \"cloudantNoSQLDB\", \"tags\": [ \"data_management\", \"ibm_created\", \"ibm_dedicated_public\" ], \"plan\": \"Shared\", \"credentials\": { \"username\": \"09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix\", \"password\": \"06c19ae06b1915d8a6649df5901eca85e885182421ffa9ef89e14bbc1b76efd4\", \"host\": \"09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix.cloudant.com\", \"port\": 443, \"url\": \"https://09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix:06c19ae06b1915d8a6649df5901eca85e885182421ffa9ef89e14bbc1b76efd4@09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix.cloudant.com\" } } ] } } }"
   var jsonOptions: [String:Any] = [:]
 
   override func setUp() {
     super.setUp()
-    jsonOptions = JSONUtils.convertStringToJSON(text: options)!
+    // Load default config JSON
+    let filePath = URL(fileURLWithPath: #file).appendingPathComponent("../resources/config.json").standardized
+    let configData = try! Data(contentsOf: filePath)
+    jsonOptions = try! JSONSerialization.jsonObject(with: configData, options: []) as! [String:Any]
   }
 
   override func tearDown() {
@@ -113,6 +116,21 @@ class MainTests: XCTestCase {
       } else {
         XCTFail("A service object should have been found for '\(name)'.")
       }
+    } catch let error as NSError {
+      Log.error("Error domain: \(error.domain)")
+      Log.error("Error code: \(error.code)")
+      XCTFail("Could not get AppEnv object!")
+    }
+  }
+
+  func testGetServicesByType() {
+    do {
+      let appEnv = try CloudFoundryEnv.getAppEnv(options: jsonOptions)
+      var services: [Service] = appEnv.getServices(type: "cloudantNoSQLDB")
+      XCTAssertEqual(services.count, 1, "There should be only 1 service in the services array.")
+      verifyService(service: services[0])
+      services = appEnv.getServices(type: "invalidType")
+      XCTAssertEqual(services.count, 0, "There should be 0 items in the services array.")
     } catch let error as NSError {
       Log.error("Error domain: \(error.domain)")
       Log.error("Error code: \(error.code)")
