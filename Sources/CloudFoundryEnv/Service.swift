@@ -17,7 +17,7 @@
 /**
 * See https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-SERVICES.
 */
-public class Service {
+open class Service {
 
   public class Builder {
     var name: String?
