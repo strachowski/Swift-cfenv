@@ -17,7 +17,7 @@
 /**
 * See https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-SERVICES.
 */
-public class Service {
+open class Service {
 
   public class Builder {
     var name: String?
@@ -74,7 +74,7 @@ public class Service {
 
     self.name = name
     self.label = label
-    self.plan = (plan != nil) ? plan! : "N/A"
+    self.plan = plan ?? "N/A"
     self.tags = tags
     self.credentials = credentials
   }
