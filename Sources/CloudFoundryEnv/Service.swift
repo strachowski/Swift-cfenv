@@ -74,7 +74,7 @@ public class Service {
 
     self.name = name
     self.label = label
-    self.plan = (plan != nil) ? plan! : "N/A"
+    self.plan = plan ?? "N/A"
     self.tags = tags
     self.credentials = credentials
   }
