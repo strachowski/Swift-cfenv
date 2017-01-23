@@ -290,15 +290,15 @@ public struct AppEnv {
   */
   private static func parsePort(environmentVars: [String:String], app: [String : Any]) throws -> Int {
     let portString: String = environmentVars["PORT"] ?? environmentVars["CF_INSTANCE_PORT"] ??
-      environmentVars["VCAP_APP_PORT"] ?? "8090"
+      environmentVars["VCAP_APP_PORT"] ?? "8080"
 
     // TODO: Are there any benefits in implementing logic similar to ports.getPort() (npm module)...?
     // if portString == nil {
     //   if app["name"].string == nil {
-    //     portString = "8090"
+    //     portString = "8080"
     //   }
     //   //portString = "" + (ports.getPort(appEnv.name));
-    //   portString = "8090"
+    //   portString = "8080"
     // }
     //let number: Int? = (portString != nil) ? Int(portString!) : nil
 
