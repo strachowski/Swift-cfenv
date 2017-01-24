@@ -168,23 +168,23 @@ class MainTests: XCTestCase {
       // Case #1 - Running locally, no options
       var appEnv = try CloudFoundryEnv.getAppEnv()
       XCTAssertEqual(appEnv.isLocal, true, "AppEnv's isLocal should be true.")
-      XCTAssertEqual(appEnv.port, 8090, "AppEnv's port should be 8090.")
+      XCTAssertEqual(appEnv.port, 8080, "AppEnv's port should be 8080.")
       XCTAssertNil(appEnv.name, "AppEnv's name should be nil.")
       XCTAssertEqual(appEnv.bind, "0.0.0.0", "AppEnv's bind should be '0.0.0.0'.")
       var urls: [String] = appEnv.urls
       XCTAssertEqual(urls.count, 1, "AppEnv's urls array should contain only 1 element.")
-      XCTAssertEqual(urls[0], "http://localhost:8090", "AppEnv's urls[0] should be 'http://localhost:8090'.")
+      XCTAssertEqual(urls[0], "http://localhost:8080", "AppEnv's urls[0] should be 'http://localhost:8080'.")
       XCTAssertEqual(appEnv.services.count, 0, "AppEnv's services array should contain 0 elements.")
 
       // Case #2 - Running locally with options
       appEnv = try CloudFoundryEnv.getAppEnv(options: jsonOptions)
       XCTAssertEqual(appEnv.isLocal, true, "AppEnv's isLocal should be true.")
-      XCTAssertEqual(appEnv.port, 8090, "AppEnv's port should be 8090.")
+      XCTAssertEqual(appEnv.port, 8080, "AppEnv's port should be 8080.")
       XCTAssertEqual(appEnv.name, "swift-test")
       XCTAssertEqual(appEnv.bind, "0.0.0.0", "AppEnv's bind should be 0.0.0.0.")
       urls = appEnv.urls
       XCTAssertEqual(urls.count, 1, "AppEnv's urls array should contain only 1 element.")
-      XCTAssertEqual(urls[0], "http://localhost:8090", "AppEnv's urls[0] should be 'http://localhost:8090'.")
+      XCTAssertEqual(urls[0], "http://localhost:8080", "AppEnv's urls[0] should be 'http://localhost:8080'.")
       XCTAssertEqual(appEnv.services.count, 1, "AppEnv's services array should contain 1 element.")
     } catch let error as NSError {
       Log.error("Error domain: \(error.domain)")

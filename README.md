@@ -97,7 +97,7 @@ An instance of the `AppEnv` structure has the following properties:
 - `urls`: A string array that contains the URLs for accessing the servers.
 - `url`: The first string in the urls array.
 
-If no value can be determined for the `port` property, a default port of 8090 is assigned to it.
+If no value can be determined for the `port` property, a default port of 8080 is assigned to it.
 
 If running locally, the protocol used for the URLs will be `http`, otherwise it will be `https`. You can override this logic by specifying a particular protocol using the `protocol` property on the `options` parameter.
 
