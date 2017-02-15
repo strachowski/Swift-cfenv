@@ -35,7 +35,7 @@ extension ConfigurationManager {
   }
 
   var name: String? {
-    let name: String? = app["name"] as? String
+    let name: String? =  self["name"] as? String ?? app["name"] as? String
     // TODO: Add logic for parsing manifest.yml to get name
     // https://github.com/behrang/YamlSwift
     // http://stackoverflow.com/questions/24097826/read-and-write-data-from-text-file

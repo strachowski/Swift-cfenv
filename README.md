@@ -14,7 +14,7 @@ For the implementation of this Swift package, we used as inspiration a similar m
 The latest version of Swift-cfenv works with the `3.0.2` version of the Swift binaries. You can download this version of the Swift binaries by following this [link](https://swift.org/download/#snapshots).
 
 ## Configuration
-The latest version of Swift-cfenv relies on the Configuration (https://github.com/IBM-Swift/Configuration) package to load and merge configuration data from multiple sources, such as environment variables or JSON files. In previous versions of Swift-cfenv, the library was responsible for accessing the environment variables directly. Moving forward, Swift-cfenv will simply depend on the configuration data loaded into a ConfigurationManager instance. For further details on the Configuration package, see the [README](https://github.com/IBM-Swift/Configuration) file.
+The latest version of Swift-cfenv relies on the [Configuration](https://github.com/IBM-Swift/Configuration) package to load and merge configuration data from multiple sources, such as environment variables or JSON files. In previous versions of Swift-cfenv, the library was responsible for accessing the environment variables directly. Moving forward, Swift-cfenv will simply depend on the configuration data loaded into a ConfigurationManager instance. For further details on the Configuration package, see the [README](https://github.com/IBM-Swift/Configuration) file.
 
 ## Usage
 To leverage the Swift-cfenv package in your Swift application, you should specify a dependency for it in your `Package.swift` file:
@@ -35,7 +35,7 @@ To leverage the Swift-cfenv package in your Swift application, you should specif
      ])
  ```
 
- Once the Package.swift file of your application has been updated accordingly, you can import the `CloudFoundryEnv` module in your code:
+ Once the Package.swift file of your application has been updated accordingly, you can import the `CloudFoundryEnv` and `Configuration` modules in your code:
 
 ```swift
 import Configuration
@@ -61,29 +61,31 @@ let port: Int = configManager.port
 print("Server is starting on \(appEnv.url).")
 ```
 
-The code snippet above gets the binding host and port values through the [`ConfigurationManager`](#appenv) object, which the application creates and populates according to its needs (e.g. a JSON file, environment variables, etc.). Swift-cfenv queries the `ConfigurationManager` instance to obtain those configuration properties that pertain to the Cloud Foundry environment. These values can then be used for biding the server. Also, the url value for the application (also obtained from environment variables) is used for logging purposes.
+The code snippet above gets the binding host and port values through the [`ConfigurationManager`](#configurationmanager) object, which your Swift application creates and populates according to its needs (e.g. a JSON file, environment variables, etc.). Swift-cfenv queries the `ConfigurationManager` instance to obtain those configuration properties that pertain to Cloud Foundry. These values are then used for binding the server. Also, the URL value for the application (also obtained from configuration properties) can be used for logging purposes as shown above.
 
 This library simplifies accessing the configuration values provided by Cloud Foundry.
 
 ## Running your application in Cloud Foundry vs. locally
-The following environment variables, which are set when your application is running in Cloud Foundry, are inspected by the Swift-cfenv package:
+The following configuration properties are set when your application is running in Cloud Foundry as environment variables:
 
 - `VCAP_APPLICATION`
 - `VCAP_SERVICES`
 - `PORT`
 
-If the `VCAP_APPLICATION` isn't set, it is then assumed that your application is running locally. For such cases, the [`ConfigurationManager`](#appenv) instance returns values that are still useful for starting your application. Therefore, this Swift package can be used when running in Cloud Foundry and when running locally.
+When running in Cloud Foundry, Swift-cfenv expects these properties to be loaded in the `ConfigurationManager` instance your application instantiates.
+
+If the `VCAP_APPLICATION` isn't found when querying `ConfigurationManager`, it is then assumed that your application is running locally. For such cases, the [`ConfigurationManager`](#configurationmanager) instance returns values that are still useful for starting your application. Therefore, this Swift package can be used when running in Cloud Foundry and when running locally.
+
+## `ConfigurationManager`
+`ConfigurationManager` is a class provided by the [Configuration](https://github.com/IBM-Swift/Configuration) Swift package. Swift-cfenv simply adds extension points to this class, which gives you direct access to the Cloud Foundry configuration data. In your Swift application, you probably will first load configuration data from a local JSON file (this allows you to run locally) and then from environment variables.
+
+If you would like to create a JSON file that your application can leverage for local development, we recommend creating one that follows the following format:
+
+  - `name` - A string value for the name of the application. If this property is not specified in the JSON file, the `name` property of the `VCAP_APPLICATION` environment variable is used.
+  - `protocol` - The protocol used in the generated URLs. It overrides the default protocol used when generating the URLs for the `ConfigurationManager` object.
+  - `vcap` - JSON object that provides values when running locally for the `VCAP_APPLICATION` and `VCAP_SERVICES` environment variables. This JSON object can have application and/or services properties, whose values are the same as the values serialized in the `VCAP_APPLICATION` and `VCAP_SERVICES` variables. Please, note that, when running locally, the `url` and `urls` extended properties of the `ConfigurationManager` instance are not based on the `vcap` application object (it defaults to `localhost` in those cases). Also, note that the `vcap` property is ignored if not running locally.
 
 ## API
-### `CloudFoundryEnv`
-Swift-env adds extension points to the `ConfigurationManager` class, which gives you direct access to the Cloud Foundry configuration data. In your Swift application, you probably will first load configuration data from a local JSON file (this allows you to run locally) and then from environment variables.
-
-The `options` JSON parameter can contain the following properties:
-
-  - `name` - A string value for the name of the application. This value is used as the default name property of the `AppEnv` object. If the property is not specified, the `name` property of the `VCAP_APPLICATION` environment variable is used.
-  - `protocol` - The protocol used in the generated URLs. It overrides the default protocol used when generating the URLs in the `AppEnv` object.
-  - `vcap` - JSON object that provides values when running locally for the `VCAP_APPLICATION` and `VCAP_SERVICES` environment variables. This JSON object can have application and/or services properties, whose values are the same as the values serialized in the `VCAP_APPLICATION` and `VCAP_SERVICES` variables. Please, note that, when running locally, the `url` and `urls` properties of the `AppEnv` instance are not based on the `vcap` application object. Also, note that the `vcap` property is ignored if not running locally.
-
 ### Extensions for `ConfigurationManager`
 An instance of the `ConfigurationManager` class has the following extended properties:
 
