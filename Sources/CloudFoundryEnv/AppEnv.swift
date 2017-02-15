@@ -75,6 +75,29 @@ extension ConfigurationManager {
     return services
   }
 
+  public func load(url: URL) -> Bool {
+    do {
+      try self.load(url: url, deserializerName: "JSONDeserializer.name")
+      return true
+    } catch {
+      Log.error("Could not load from: \(url.path)")
+      return false
+    }
+  }
+
+  public func load(file: String, relativeFrom: BasePath = .executable) -> Bool {
+    do {
+      print("relativeFrom: \(relativeFrom)")
+      try self.load(file: file,
+        relativeFrom: relativeFrom,
+        deserializerName: "JSONDeserializer.name")
+      return true
+    } catch {
+      Log.error("Could not load from: \(file)")
+      return false
+    }
+  }
+
   /**
   * Returns an App object.
   */
