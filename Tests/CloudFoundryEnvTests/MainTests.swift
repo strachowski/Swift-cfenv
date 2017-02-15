@@ -63,142 +63,112 @@ class MainTests: XCTestCase {
 
   func testGetApp() {
     let configManager = ConfigurationManager()
-    do {
-      try configManager.load(jsonOptions)
-      if let app = configManager.getApp() {
-        XCTAssertNotNil(app)
-        XCTAssertEqual(app.port, 61263, "Application port number should match.")
-        XCTAssertEqual(app.id, "e582416a-9771-453f-8df1-7b467f6d78e4", "Application ID value should match.")
-        XCTAssertEqual(app.version, "e5e029d1-4a1a-4004-9f79-655d550183fb", "Application version number should match.")
-        XCTAssertEqual(app.name, "swift-test", "App name should match.")
-        XCTAssertEqual(app.instanceId, "7d4f24cfba06462ba23d68aaf1d7354a", "Application instance ID value should match.")
-        XCTAssertEqual(app.instanceIndex, 0, "Application instance index value should match.")
-        XCTAssertEqual(app.spaceId, "b15eb0bb-cbf3-43b6-bfbc-f76d495981e5", "Application space ID value should match.")
-        let limits = app.limits
-        //print("limits: \(limits)")
-        //XCTAssertNotNil(limits)
-        XCTAssertEqual(limits.memory, 128, "Memory value should match.")
-        XCTAssertEqual(limits.disk, 1024, "Disk value should match.")
-        XCTAssertEqual(limits.fds, 16384, "FDS value should match.")
-        let uris = app.uris
-        //XCTAssertNotNil(uris)
-        XCTAssertEqual(uris.count, 1, "There should be only 1 uri in the uris array.")
-        XCTAssertEqual(uris[0], "swift-test.mybluemix.net", "URI value should match.")
-        XCTAssertEqual(app.name, "swift-test", "Application name should match.")
-        let startedAt: Date? = app.startedAt
-        XCTAssertNotNil(startedAt)
-        let dateUtils = DateUtils()
-        let startedAtStr = dateUtils.convertNSDateToString(nsDate: startedAt)
-        XCTAssertEqual(startedAtStr, "2016-03-04 02:43:07 +0000", "Application startedAt date should match.")
-        XCTAssertNotNil(app.startedAtTs, "Application startedAt ts should not be nil.")
-        XCTAssertEqual(app.startedAtTs, 1457059387, "Application startedAt ts should match.")
-      } else {
-        XCTFail("Could not get App object!")
-      }
-    } catch let error as NSError {
-      Log.error("Error domain: \(error.domain)")
-      Log.error("Error code: \(error.code)")
-      XCTFail("Could not get AppEnv object!")
+    configManager.load(jsonOptions)
+    if let app = configManager.getApp() {
+      XCTAssertNotNil(app)
+      XCTAssertEqual(app.port, 61263, "Application port number should match.")
+      XCTAssertEqual(app.id, "e582416a-9771-453f-8df1-7b467f6d78e4", "Application ID value should match.")
+      XCTAssertEqual(app.version, "e5e029d1-4a1a-4004-9f79-655d550183fb", "Application version number should match.")
+      XCTAssertEqual(app.name, "swift-test", "App name should match.")
+      XCTAssertEqual(app.instanceId, "7d4f24cfba06462ba23d68aaf1d7354a", "Application instance ID value should match.")
+      XCTAssertEqual(app.instanceIndex, 0, "Application instance index value should match.")
+      XCTAssertEqual(app.spaceId, "b15eb0bb-cbf3-43b6-bfbc-f76d495981e5", "Application space ID value should match.")
+      let limits = app.limits
+      //print("limits: \(limits)")
+      //XCTAssertNotNil(limits)
+      XCTAssertEqual(limits.memory, 128, "Memory value should match.")
+      XCTAssertEqual(limits.disk, 1024, "Disk value should match.")
+      XCTAssertEqual(limits.fds, 16384, "FDS value should match.")
+      let uris = app.uris
+      //XCTAssertNotNil(uris)
+      XCTAssertEqual(uris.count, 1, "There should be only 1 uri in the uris array.")
+      XCTAssertEqual(uris[0], "swift-test.mybluemix.net", "URI value should match.")
+      XCTAssertEqual(app.name, "swift-test", "Application name should match.")
+      let startedAt: Date? = app.startedAt
+      XCTAssertNotNil(startedAt)
+      let dateUtils = DateUtils()
+      let startedAtStr = dateUtils.convertNSDateToString(nsDate: startedAt)
+      XCTAssertEqual(startedAtStr, "2016-03-04 02:43:07 +0000", "Application startedAt date should match.")
+      XCTAssertNotNil(app.startedAtTs, "Application startedAt ts should not be nil.")
+      XCTAssertEqual(app.startedAtTs, 1457059387, "Application startedAt ts should match.")
+    } else {
+      XCTFail("Could not get App object!")
     }
   }
 
   func testGetServices() {
     let configManager = ConfigurationManager()
-    do {
-      try configManager.load(jsonOptions)
-      let services = configManager.getServices()
-      XCTAssertEqual(services.count, 1, "There should be only 1 service in the services dictionary.")
-      let name = "Cloudant NoSQL DB-kd"
-      if let service = services[name] {
-        XCTAssertEqual(service.name, name, "Key in dictionary and service name should match.")
-        verifyService(service: service)
-      } else {
-        XCTFail("A service object should have been found for '\(name)'.")
-      }
-    } catch let error as NSError {
-      Log.error("Error domain: \(error.domain)")
-      Log.error("Error code: \(error.code)")
-      XCTFail("Could not get AppEnv object!")
+    configManager.load(jsonOptions)
+    let services = configManager.getServices()
+    XCTAssertEqual(services.count, 1, "There should be only 1 service in the services dictionary.")
+    let name = "Cloudant NoSQL DB-kd"
+    if let service = services[name] {
+      XCTAssertEqual(service.name, name, "Key in dictionary and service name should match.")
+      verifyService(service: service)
+    } else {
+      XCTFail("A service object should have been found for '\(name)'.")
     }
   }
 
   func testGetServicesByType() {
     let configManager = ConfigurationManager()
-    do {
-      try configManager.load(jsonOptions)
-      var services: [Service] = configManager.getServices(type: "cloudantNoSQLDB")
-      XCTAssertEqual(services.count, 1, "There should be only 1 service in the services array.")
-      verifyService(service: services[0])
-      services = configManager.getServices(type: "invalidType")
-      XCTAssertEqual(services.count, 0, "There should be 0 items in the services array.")
-    } catch let error as NSError {
-      Log.error("Error domain: \(error.domain)")
-      Log.error("Error code: \(error.code)")
-      XCTFail("Could not get AppEnv object!")
-    }
+    configManager.load(jsonOptions)
+    var services: [Service] = configManager.getServices(type: "cloudantNoSQLDB")
+    XCTAssertEqual(services.count, 1, "There should be only 1 service in the services array.")
+    verifyService(service: services[0])
+    services = configManager.getServices(type: "invalidType")
+    XCTAssertEqual(services.count, 0, "There should be 0 items in the services array.")
+
   }
 
   func testGetService() {
     let configManager = ConfigurationManager()
-    do {
-      try configManager.load(jsonOptions)
-      let checkService = { (name: String) in
-        if let service = configManager.getService(spec: name) {
-          self.verifyService(service: service)
-        } else {
-          XCTFail("A service object should have been found for '\(name)'.")
-        }
+    configManager.load(jsonOptions)
+    let checkService = { (name: String) in
+      if let service = configManager.getService(spec: name) {
+        self.verifyService(service: service)
+      } else {
+        XCTFail("A service object should have been found for '\(name)'.")
       }
-
-      // Case #1
-      let name = "Cloudant NoSQL DB-kd"
-      checkService(name)
-
-      // Case #2
-      let regex = "Cloudant NoSQL*"
-      checkService(regex)
-    } catch let error as NSError {
-      Log.error("Error domain: \(error.domain)")
-      Log.error("Error code: \(error.code)")
-      XCTFail("Could not get AppEnv object!")
     }
+
+    // Case #1
+    let name = "Cloudant NoSQL DB-kd"
+    checkService(name)
+
+    // Case #2
+    let regex = "Cloudant NoSQL*"
+    checkService(regex)
   }
 
   func testGetAppEnv() {
-    do {
-      // Case #1 - Running locally, no options
-      let configManager = ConfigurationManager()
-      XCTAssertEqual(configManager.isLocal, true, "AppEnv's isLocal should be true.")
-      XCTAssertEqual(configManager.port, 8080, "AppEnv's port should be 8080.")
-      XCTAssertNil(configManager.name, "AppEnv's name should be nil.")
-      XCTAssertEqual(configManager.bind, "0.0.0.0", "AppEnv's bind should be '0.0.0.0'.")
-      var urls: [String] = configManager.urls
-      XCTAssertEqual(urls.count, 1, "AppEnv's urls array should contain only 1 element.")
-      XCTAssertEqual(urls[0], "http://localhost:8080", "AppEnv's urls[0] should be 'http://localhost:8080'.")
-      XCTAssertEqual(configManager.services.count, 0, "AppEnv's services array should contain 0 elements.")
+    // Case #1 - Running locally, no options
+    let configManager = ConfigurationManager()
+    XCTAssertEqual(configManager.isLocal, true, "AppEnv's isLocal should be true.")
+    XCTAssertEqual(configManager.port, 8080, "AppEnv's port should be 8080.")
+    XCTAssertNil(configManager.name, "AppEnv's name should be nil.")
+    XCTAssertEqual(configManager.bind, "0.0.0.0", "AppEnv's bind should be '0.0.0.0'.")
+    var urls: [String] = configManager.urls
+    XCTAssertEqual(urls.count, 1, "AppEnv's urls array should contain only 1 element.")
+    XCTAssertEqual(urls[0], "http://localhost:8080", "AppEnv's urls[0] should be 'http://localhost:8080'.")
+    XCTAssertEqual(configManager.services.count, 0, "AppEnv's services array should contain 0 elements.")
 
-      // Case #2 - Running locally with options
-      try configManager.load(jsonOptions)
-      XCTAssertEqual(configManager.isLocal, true, "AppEnv's isLocal should be true.")
-      XCTAssertEqual(configManager.port, 8080, "AppEnv's port should be 8080.")
-      XCTAssertEqual(configManager.name, "swift-test")
-      XCTAssertEqual(configManager.bind, "0.0.0.0", "AppEnv's bind should be 0.0.0.0.")
-      urls = configManager.urls
-      XCTAssertEqual(urls.count, 1, "AppEnv's urls array should contain only 1 element.")
-      XCTAssertEqual(urls[0], "http://localhost:8080", "AppEnv's urls[0] should be 'http://localhost:8080'.")
-      XCTAssertEqual(configManager.services.count, 1, "AppEnv's services array should contain 1 element.")
-    } catch let error as NSError {
-      Log.error("Error domain: \(error.domain)")
-      Log.error("Error code: \(error.code)")
-      XCTFail("Could not get AppEnv object!")
-    }
+    // Case #2 - Running locally with options
+    configManager.load(jsonOptions)
+    XCTAssertEqual(configManager.isLocal, true, "AppEnv's isLocal should be true.")
+    XCTAssertEqual(configManager.port, 8080, "AppEnv's port should be 8080.")
+    XCTAssertEqual(configManager.name, "swift-test")
+    XCTAssertEqual(configManager.bind, "0.0.0.0", "AppEnv's bind should be 0.0.0.0.")
+    urls = configManager.urls
+    XCTAssertEqual(urls.count, 1, "AppEnv's urls array should contain only 1 element.")
+    XCTAssertEqual(urls[0], "http://localhost:8080", "AppEnv's urls[0] should be 'http://localhost:8080'.")
+    XCTAssertEqual(configManager.services.count, 1, "AppEnv's services array should contain 1 element.")
   }
 
   func testGetServiceURL() {
     do {
       // Service name
       let name = "Cloudant NoSQL DB-kd"
-
       // Case #1 - Running locally, no options
       let configManager = ConfigurationManager()
       let serviceURL = configManager.getServiceURL(spec: name, replacements: nil)
@@ -226,9 +196,8 @@ class MainTests: XCTestCase {
   }
 
   func testGetServiceCreds() {
-    do {
       let configManager = ConfigurationManager()
-      try configManager.load(jsonOptions)
+      configManager.load(jsonOptions)
       let checkServiceCreds = { (name: String) in
         if let serviceCreds = configManager.getServiceCreds(spec: name) {
           self.verifyServiceCreds(serviceCreds: serviceCreds)
@@ -250,16 +219,12 @@ class MainTests: XCTestCase {
       if configManager.getServiceCreds(spec: badName) != nil {
         XCTFail("Service credentials should not have been found for '\(badName)'.")
       }
-    } catch let error as NSError {
-      Log.error("Error domain: \(error.domain)")
-      Log.error("Error code: \(error.code)")
-      XCTFail("Could not get AppEnv object!")
-    }
+
   }
 
   private func verifyServiceURLWithOptions(name: String, replacements: String?, expectedServiceURL: String) throws {
     let configManager = ConfigurationManager()
-    try configManager.load(jsonOptions)
+    configManager.load(jsonOptions)
     let substitutions = JSONUtils.convertStringToJSON(text: replacements)
     if let serviceURL = configManager.getServiceURL(spec: name, replacements: substitutions) {
         XCTAssertEqual(serviceURL, expectedServiceURL, "ServiceURL should match '\(expectedServiceURL)'.")
@@ -300,5 +265,4 @@ class MainTests: XCTestCase {
       }
     }
   }
-
- }
+}
