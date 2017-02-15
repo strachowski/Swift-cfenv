@@ -23,6 +23,7 @@
 import XCTest
 import Foundation
 import LoggerAPI
+import Configuration
 
 @testable import CloudFoundryEnv
 
@@ -61,9 +62,10 @@ class MainTests: XCTestCase {
   }
 
   func testGetApp() {
+    let configManager = ConfigurationManager()
     do {
-      let appEnv = try CloudFoundryEnv.getAppEnv(options: jsonOptions)
-      if let app = appEnv.getApp() {
+      try configManager.load(jsonOptions)
+      if let app = configManager.getApp() {
         XCTAssertNotNil(app)
         XCTAssertEqual(app.port, 61263, "Application port number should match.")
         XCTAssertEqual(app.id, "e582416a-9771-453f-8df1-7b467f6d78e4", "Application ID value should match.")
@@ -101,13 +103,10 @@ class MainTests: XCTestCase {
   }
 
   func testGetServices() {
+    let configManager = ConfigurationManager()
     do {
-      //print("json \(json)")
-      let appEnv = try CloudFoundryEnv.getAppEnv(options: jsonOptions)
-      //let servs = appEnv.services
-      //print("servs \(servs)")
-      let services = appEnv.getServices()
-      //print("services \(services)")
+      try configManager.load(jsonOptions)
+      let services = configManager.getServices()
       XCTAssertEqual(services.count, 1, "There should be only 1 service in the services dictionary.")
       let name = "Cloudant NoSQL DB-kd"
       if let service = services[name] {
@@ -124,12 +123,13 @@ class MainTests: XCTestCase {
   }
 
   func testGetServicesByType() {
+    let configManager = ConfigurationManager()
     do {
-      let appEnv = try CloudFoundryEnv.getAppEnv(options: jsonOptions)
-      var services: [Service] = appEnv.getServices(type: "cloudantNoSQLDB")
+      try configManager.load(jsonOptions)
+      var services: [Service] = configManager.getServices(type: "cloudantNoSQLDB")
       XCTAssertEqual(services.count, 1, "There should be only 1 service in the services array.")
       verifyService(service: services[0])
-      services = appEnv.getServices(type: "invalidType")
+      services = configManager.getServices(type: "invalidType")
       XCTAssertEqual(services.count, 0, "There should be 0 items in the services array.")
     } catch let error as NSError {
       Log.error("Error domain: \(error.domain)")
@@ -139,10 +139,11 @@ class MainTests: XCTestCase {
   }
 
   func testGetService() {
+    let configManager = ConfigurationManager()
     do {
-      let appEnv = try CloudFoundryEnv.getAppEnv(options: jsonOptions)
+      try configManager.load(jsonOptions)
       let checkService = { (name: String) in
-        if let service = appEnv.getService(spec: name) {
+        if let service = configManager.getService(spec: name) {
           self.verifyService(service: service)
         } else {
           XCTFail("A service object should have been found for '\(name)'.")
@@ -166,26 +167,26 @@ class MainTests: XCTestCase {
   func testGetAppEnv() {
     do {
       // Case #1 - Running locally, no options
-      var appEnv = try CloudFoundryEnv.getAppEnv()
-      XCTAssertEqual(appEnv.isLocal, true, "AppEnv's isLocal should be true.")
-      XCTAssertEqual(appEnv.port, 8080, "AppEnv's port should be 8080.")
-      XCTAssertNil(appEnv.name, "AppEnv's name should be nil.")
-      XCTAssertEqual(appEnv.bind, "0.0.0.0", "AppEnv's bind should be '0.0.0.0'.")
-      var urls: [String] = appEnv.urls
+      let configManager = ConfigurationManager()
+      XCTAssertEqual(configManager.isLocal, true, "AppEnv's isLocal should be true.")
+      XCTAssertEqual(configManager.port, 8080, "AppEnv's port should be 8080.")
+      XCTAssertNil(configManager.name, "AppEnv's name should be nil.")
+      XCTAssertEqual(configManager.bind, "0.0.0.0", "AppEnv's bind should be '0.0.0.0'.")
+      var urls: [String] = configManager.urls
       XCTAssertEqual(urls.count, 1, "AppEnv's urls array should contain only 1 element.")
       XCTAssertEqual(urls[0], "http://localhost:8080", "AppEnv's urls[0] should be 'http://localhost:8080'.")
-      XCTAssertEqual(appEnv.services.count, 0, "AppEnv's services array should contain 0 elements.")
+      XCTAssertEqual(configManager.services.count, 0, "AppEnv's services array should contain 0 elements.")
 
       // Case #2 - Running locally with options
-      appEnv = try CloudFoundryEnv.getAppEnv(options: jsonOptions)
-      XCTAssertEqual(appEnv.isLocal, true, "AppEnv's isLocal should be true.")
-      XCTAssertEqual(appEnv.port, 8080, "AppEnv's port should be 8080.")
-      XCTAssertEqual(appEnv.name, "swift-test")
-      XCTAssertEqual(appEnv.bind, "0.0.0.0", "AppEnv's bind should be 0.0.0.0.")
-      urls = appEnv.urls
+      try configManager.load(jsonOptions)
+      XCTAssertEqual(configManager.isLocal, true, "AppEnv's isLocal should be true.")
+      XCTAssertEqual(configManager.port, 8080, "AppEnv's port should be 8080.")
+      XCTAssertEqual(configManager.name, "swift-test")
+      XCTAssertEqual(configManager.bind, "0.0.0.0", "AppEnv's bind should be 0.0.0.0.")
+      urls = configManager.urls
       XCTAssertEqual(urls.count, 1, "AppEnv's urls array should contain only 1 element.")
       XCTAssertEqual(urls[0], "http://localhost:8080", "AppEnv's urls[0] should be 'http://localhost:8080'.")
-      XCTAssertEqual(appEnv.services.count, 1, "AppEnv's services array should contain 1 element.")
+      XCTAssertEqual(configManager.services.count, 1, "AppEnv's services array should contain 1 element.")
     } catch let error as NSError {
       Log.error("Error domain: \(error.domain)")
       Log.error("Error code: \(error.code)")
@@ -199,8 +200,8 @@ class MainTests: XCTestCase {
       let name = "Cloudant NoSQL DB-kd"
 
       // Case #1 - Running locally, no options
-      let appEnv = try CloudFoundryEnv.getAppEnv()
-      let serviceURL = appEnv.getServiceURL(spec: name, replacements: nil)
+      let configManager = ConfigurationManager()
+      let serviceURL = configManager.getServiceURL(spec: name, replacements: nil)
       XCTAssertNil(serviceURL, "The serviceURL should be nil.")
 
       // Case #2 - Running locally with options and no replacements
@@ -226,9 +227,10 @@ class MainTests: XCTestCase {
 
   func testGetServiceCreds() {
     do {
-      let appEnv = try CloudFoundryEnv.getAppEnv(options: jsonOptions)
+      let configManager = ConfigurationManager()
+      try configManager.load(jsonOptions)
       let checkServiceCreds = { (name: String) in
-        if let serviceCreds = appEnv.getServiceCreds(spec: name) {
+        if let serviceCreds = configManager.getServiceCreds(spec: name) {
           self.verifyServiceCreds(serviceCreds: serviceCreds)
         } else {
           XCTFail("Service credentials should have been found for '\(name)'.")
@@ -245,7 +247,7 @@ class MainTests: XCTestCase {
 
       // Case #3
       let badName = "Unknown Service"
-      if appEnv.getServiceCreds(spec: badName) != nil {
+      if configManager.getServiceCreds(spec: badName) != nil {
         XCTFail("Service credentials should not have been found for '\(badName)'.")
       }
     } catch let error as NSError {
@@ -256,9 +258,10 @@ class MainTests: XCTestCase {
   }
 
   private func verifyServiceURLWithOptions(name: String, replacements: String?, expectedServiceURL: String) throws {
-    let appEnv = try CloudFoundryEnv.getAppEnv(options: jsonOptions)
+    let configManager = ConfigurationManager()
+    try configManager.load(jsonOptions)
     let substitutions = JSONUtils.convertStringToJSON(text: replacements)
-    if let serviceURL = appEnv.getServiceURL(spec: name, replacements: substitutions) {
+    if let serviceURL = configManager.getServiceURL(spec: name, replacements: substitutions) {
         XCTAssertEqual(serviceURL, expectedServiceURL, "ServiceURL should match '\(expectedServiceURL)'.")
     } else {
       XCTFail("A serviceURL should have been returned!")
