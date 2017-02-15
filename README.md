@@ -6,12 +6,15 @@
 
 The Swift-cfenv package provides structures and methods to parse Cloud Foundry-provided environment variables, such as the port number, IP address, and URL of the application. It also provides default values when running the application locally.
 
-This library determines if you are running your application "locally" or on the cloud (i.e. Cloud Foundry app), based on whether the `VCAP_APPLICATION` environment variable is set. If not set, it is assumed you are running in "local" mode instead of "cloud mode".
+This library determines if you are running your application "locally" or on the cloud (i.e. Cloud Foundry app), based on whether the `VCAP_APPLICATION`  configuration variable is set. If not set, it is assumed you are running in "local" mode instead of "cloud mode".
 
 For the implementation of this Swift package, we used as inspiration a similar module that had been developed for Node.js applications, [node-cfenv](https://github.com/cloudfoundry-community/node-cfenv).
 
 ## Swift version
 The latest version of Swift-cfenv works with the `3.0.2` version of the Swift binaries. You can download this version of the Swift binaries by following this [link](https://swift.org/download/#snapshots).
+
+## Configuration
+The latest version of Swift-cfenv relies on the Configuration (https://github.com/IBM-Swift/Configuration) package to load and merge configuration data from multiple sources, such as environment variables or JSON files. In previous versions of Swift-cfenv, the library was responsible for accessing the environment variables directly. Moving forward, Swift-cfenv will simply depend on the configuration data loaded into a ConfigurationManager instance. For further details on the Configuration package, see the [README](https://github.com/IBM-Swift/Configuration) file.
 
 ## Usage
 To leverage the Swift-cfenv package in your Swift application, you should specify a dependency for it in your `Package.swift` file:
@@ -25,7 +28,7 @@ To leverage the Swift-cfenv package in your Swift application, you should specif
      ...
 
      dependencies: [
-         .Package(url: "https://github.com/IBM-Swift/Swift-cfenv.git", majorVersion: 2),
+         .Package(url: "https://github.com/IBM-Swift/Swift-cfenv.git", majorVersion: 3),
 
          ...
 
@@ -35,29 +38,30 @@ To leverage the Swift-cfenv package in your Swift application, you should specif
  Once the Package.swift file of your application has been updated accordingly, you can import the `CloudFoundryEnv` module in your code:
 
 ```swift
+import Configuration
 import CloudFoundryEnv
 
 ...
 
-do {
-  let appEnv = try CloudFoundryEnv.getAppEnv()
-  // Use the given port and binding host values to create a socket for our server...
-  let ip: String = appEnv.bind
-  let port: Int = appEnv.port
+let configFileURL: URL = ...
 
-  ...
+...
 
-  // Once the server starts, print the url value
-  print("Server is starting on \(appEnv.url).")
+let configManager = ConfigurationManager()
+configManager.load(url: configFileURL)
+             .load(.environmentVariables)
 
-  ...
+// Use the given port and binding host values to create a socket for our server...
+let ip: String = configManager.bind
+let port: Int = configManager.port
 
-} catch CloudFoundryEnvError.InvalidValue {
-  print("Oops, something went wrong... Server did not start!")
-}
+...
+
+// Once the server starts, print the url value
+print("Server is starting on \(appEnv.url).")
 ```
 
-The code snippet above gets the binding host and port values through the [`AppEnv`](#appenv) object, which were obtained from parsing the Cloud Foundry environment variables. These values can then be used for biding the server. Also, the url value for the application (also obtained from environment variables) is used for logging purposes.
+The code snippet above gets the binding host and port values through the [`ConfigurationManager`](#appenv) object, which the application creates and populates according to its needs (e.g. a JSON file, environment variables, etc.). Swift-cfenv queries the `ConfigurationManager` instance to obtain those configuration properties that pertain to the Cloud Foundry environment. These values can then be used for biding the server. Also, the url value for the application (also obtained from environment variables) is used for logging purposes.
 
 This library simplifies accessing the configuration values provided by Cloud Foundry.
 
@@ -68,16 +72,11 @@ The following environment variables, which are set when your application is runn
 - `VCAP_SERVICES`
 - `PORT`
 
-If the `VCAP_APPLICATION` isn't set, it is then assumed that your application is running locally. For such cases, the [`AppEnv`](#appenv) instance returns values that are still useful for starting your application. Therefore, this Swift package can be used when running in Cloud Foundry and when running locally.
+If the `VCAP_APPLICATION` isn't set, it is then assumed that your application is running locally. For such cases, the [`ConfigurationManager`](#appenv) instance returns values that are still useful for starting your application. Therefore, this Swift package can be used when running in Cloud Foundry and when running locally.
 
 ## API
 ### `CloudFoundryEnv`
-To get an instance of the [`AppEnv`](#appenv) structure, you can use one of the following methods of the `CloudFoundryEnv` structure:
-
-- `getAppEnv(options: [String:Any])`
-- `getAppEnv()`
-
-An instance of the `AppEnv` structure gives you access to the Cloud Foundry configuration data as an object.
+Swift-env adds extension points to the `ConfigurationManager` class, which gives you direct access to the Cloud Foundry configuration data. In your Swift application, you probably will first load configuration data from a local JSON file (this allows you to run locally) and then from environment variables.
 
 The `options` JSON parameter can contain the following properties:
 
@@ -85,8 +84,8 @@ The `options` JSON parameter can contain the following properties:
   - `protocol` - The protocol used in the generated URLs. It overrides the default protocol used when generating the URLs in the `AppEnv` object.
   - `vcap` - JSON object that provides values when running locally for the `VCAP_APPLICATION` and `VCAP_SERVICES` environment variables. This JSON object can have application and/or services properties, whose values are the same as the values serialized in the `VCAP_APPLICATION` and `VCAP_SERVICES` variables. Please, note that, when running locally, the `url` and `urls` properties of the `AppEnv` instance are not based on the `vcap` application object. Also, note that the `vcap` property is ignored if not running locally.
 
-### `AppEnv`
-An instance of the `AppEnv` structure has the following properties:
+### Extensions for `ConfigurationManager`
+An instance of the `ConfigurationManager` class has the following extended properties:
 
 - `isLocal`: Bool property is set to true if the VCAP_APPLICATION environment variable was set.
 - `app`: A JSON object version of the VCAP_APPLICATION environment variable.
@@ -103,7 +102,7 @@ If running locally, the protocol used for the URLs will be `http`, otherwise it 
 
 If the actual hostnames cannot be determined when running on the cloud (i.e. in Cloud Foundry), the url and urls values will have `localhost` as their hostname value.
 
-The following are the instance methods for an `AppEnv` object:
+The following are the instance method extensions for a `ConfigurationManager` object:
 
 - `getApp()`: Returns an [App](#app) object that encapsulates the properties for the [VCAP_APPLICATION](https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-APPLICATION) environment variable.
 
@@ -115,7 +114,7 @@ The following are the instance methods for an `AppEnv` object:
 
 - `getServiceURL(spec: String, replacements: [String:Any]?)`: Returns a service URL generated from the `VCAP_SERVICES` environment variable for the specified service or nil if service cannot be found. The `spec` parameter should be the name of the service or a regular expression to look up the service. The `replacements` parameter is a dictionary with the properties (e.g. `user`, `password`, `port`, etc.) found in Foundation's [URLComponents](https://developer.apple.com/reference/foundation/urlcomponents) class. To generate the service URL, the `url` property in the service credentials is first used to create an instance of the URLComponents object. The initial set of properties in the URLComponents instance can then be overridden by properties specified in the optional `replacements` dictionary parameter. If there is not a `url` property in the service credentials, this method returns nil. Having said this, note that you have the capability to override the `url` property in the service credentials, with a `replacements` property of `url` and a value that specifies the name of the property in the service credentials that contains the base URL. For instance, you may find this useful in the case there is no `url` property in the service credentials.
 
-- `appEnv.getServiceCreds(spec: String)`: Returns a dictionary that contains the credentials for the specified service. The `spec` parameter should be the name of the service or a regular expression to look up the service. If there is no service that matches the `spec` parameter, this method returns nil. In the case there is no credentials property for the specified service, an empty dictionary is returned.
+- `getServiceCreds(spec: String)`: Returns a dictionary that contains the credentials for the specified service. The `spec` parameter should be the name of the service or a regular expression to look up the service. If there is no service that matches the `spec` parameter, this method returns nil. In the case there is no credentials property for the specified service, an empty dictionary is returned.
 
 ### App
 App is a structure that contains the following [`VCAP_APPLICATION`](https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-APPLICATION) environment variable properties:
