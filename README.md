@@ -85,7 +85,7 @@ If you would like to create a JSON file that your application can leverage for l
 
   - `name` - A string value for the name of the application. If this property is not specified in the JSON file, the `name` property of the `VCAP_APPLICATION` environment variable is used.
   - `protocol` - The protocol used in the generated URLs. It overrides the default protocol used when generating the URLs for the `ConfigurationManager` object.
-  - `vcap` - JSON object that provides values when running locally for the `VCAP_APPLICATION` and `VCAP_SERVICES` environment variables. This JSON object can have application and/or services properties, whose values are the same as the values serialized in the `VCAP_APPLICATION` and `VCAP_SERVICES` variables. Please, note that, when running locally, the `url` and `urls` extended properties of the `ConfigurationManager` instance are not based on the `vcap` application object (it defaults to `localhost` in those cases). Also, note that the `vcap` property is ignored if not running locally.
+  - `vcap` - JSON object that provides values when running locally for the `VCAP_APPLICATION` and `VCAP_SERVICES` environment variables. This JSON object can have an `application` field and/or a `services` field, whose values are the same as the values serialized in the `VCAP_APPLICATION` and `VCAP_SERVICES` variables. Please, note that, when running locally, the `url` and `urls` extended properties of the `ConfigurationManager` instance are not based on the `vcap` application object (it defaults to `localhost` in those cases). Also, note that the `vcap` property is ignored if not running locally.
 
 ### Extensions for `ConfigurationManager`
 An instance of the `ConfigurationManager` class has the following extended properties:
