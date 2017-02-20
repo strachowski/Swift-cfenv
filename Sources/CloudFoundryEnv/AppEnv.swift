@@ -77,7 +77,7 @@ extension ConfigurationManager {
 
   public func load(url: URL) -> Bool {
     do {
-      try self.load(url: url, deserializerName: "JSONDeserializer.name")
+      try self.load(url: url, deserializerName: JSONDeserializer.shared.name)
       return true
     } catch {
       Log.error("Could not load from: \(url.path)")
@@ -90,7 +90,7 @@ extension ConfigurationManager {
       print("relativeFrom: \(relativeFrom)")
       try self.load(file: file,
         relativeFrom: relativeFrom,
-        deserializerName: "JSONDeserializer.name")
+        deserializerName: JSONDeserializer.shared.name)
       return true
     } catch {
       Log.error("Could not load from: \(file)")
