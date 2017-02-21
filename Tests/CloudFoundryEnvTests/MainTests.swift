@@ -66,8 +66,7 @@ class MainTests: XCTestCase {
 
   func testGetApp() {
     let configManager = ConfigurationManager()
-    let loaded: Bool = configManager.load(url: configFileURL)
-    XCTAssertTrue(loaded)
+    configManager.load(url: configFileURL)
     //configManager.load(jsonOptions)
     if let app = configManager.getApp() {
       XCTAssertNotNil(app, "Configuration was not loaded from file!")
@@ -103,8 +102,7 @@ class MainTests: XCTestCase {
 
   func testGetServices() {
     let configManager = ConfigurationManager()
-    let loaded = configManager.load(file: configFilePath, relativeFrom: .customPath(currentPath))
-    XCTAssertTrue(loaded)
+    configManager.load(file: configFilePath, relativeFrom: .customPath(currentPath))
     let services = configManager.getServices()
     XCTAssertEqual(services.count, 1, "There should be only 1 service in the services dictionary.")
     let name = "Cloudant NoSQL DB-kd"
@@ -118,8 +116,7 @@ class MainTests: XCTestCase {
 
   func testGetServicesByType() {
     let configManager = ConfigurationManager()
-    let loaded = configManager.load(file: configFilePath, relativeFrom: .customPath(currentPath))
-    XCTAssertTrue(loaded)
+    configManager.load(file: configFilePath, relativeFrom: .customPath(currentPath))
     var services: [Service] = configManager.getServices(type: "cloudantNoSQLDB")
     XCTAssertEqual(services.count, 1, "There should be only 1 service in the services array.")
     verifyService(service: services[0])
@@ -130,8 +127,7 @@ class MainTests: XCTestCase {
 
   func testGetService() {
     let configManager = ConfigurationManager()
-    let loaded = configManager.load(file: configFilePath, relativeFrom: .customPath(currentPath))
-    XCTAssertTrue(loaded)
+    configManager.load(file: configFilePath, relativeFrom: .customPath(currentPath))
     let checkService = { (name: String) in
       if let service = configManager.getService(spec: name) {
         self.verifyService(service: service)
@@ -162,8 +158,7 @@ class MainTests: XCTestCase {
     XCTAssertEqual(configManager.services.count, 0, "AppEnv's services array should contain 0 elements.")
 
     // Case #2 - Running locally with options
-    let loaded = configManager.load(file: configFilePath, relativeFrom: .customPath(currentPath))
-    XCTAssertTrue(loaded)
+    configManager.load(file: configFilePath, relativeFrom: .customPath(currentPath))
     XCTAssertEqual(configManager.isLocal, true, "AppEnv's isLocal should be true.")
     XCTAssertEqual(configManager.port, 8080, "AppEnv's port should be 8080.")
     XCTAssertEqual(configManager.name, "swift-test")
@@ -206,8 +201,7 @@ class MainTests: XCTestCase {
 
   func testGetServiceCreds() {
       let configManager = ConfigurationManager()
-      let loaded = configManager.load(file: configFilePath, relativeFrom: .customPath(currentPath))
-      XCTAssertTrue(loaded)
+      configManager.load(file: configFilePath, relativeFrom: .customPath(currentPath))
       let checkServiceCreds = { (name: String) in
         if let serviceCreds = configManager.getServiceCreds(spec: name) {
           self.verifyServiceCreds(serviceCreds: serviceCreds)
@@ -234,8 +228,7 @@ class MainTests: XCTestCase {
 
   private func verifyServiceURLWithOptions(name: String, replacements: String?, expectedServiceURL: String) throws {
     let configManager = ConfigurationManager()
-    let loaded = configManager.load(file: configFilePath, relativeFrom: .customPath(currentPath))
-    XCTAssertTrue(loaded)
+    configManager.load(file: configFilePath, relativeFrom: .customPath(currentPath))
     let substitutions = JSONUtils.convertStringToJSON(text: replacements)
     if let serviceURL = configManager.getServiceURL(spec: name, replacements: substitutions) {
         XCTAssertEqual(serviceURL, expectedServiceURL, "ServiceURL should match '\(expectedServiceURL)'.")
