@@ -19,22 +19,22 @@ import Configuration
 import LoggerAPI
 
 extension ConfigurationManager {
-  var isLocal: Bool {
+  public var isLocal: Bool {
     let vcapApplication = self["VCAP_APPLICATION"]
     return (vcapApplication == nil)
   }
 
-  var app: [String : Any] {
+  public var app: [String : Any] {
     let app = self["VCAP_APPLICATION"] as? [String : Any] ?? self["vcap:application"] as? [String : Any] ?? [:]
     return app
   }
 
-  var port: Int {
+  public var port: Int {
     let port: Int = self["PORT"] as? Int ?? self["CF_INSTANCE_PORT"] as? Int ?? self["VCAP_APP_PORT"] as? Int ?? 8080
     return port
   }
 
-  var name: String? {
+  public var name: String? {
     let name: String? =  self["name"] as? String ?? app["name"] as? String
     // TODO: Add logic for parsing manifest.yml to get name
     // https://github.com/behrang/YamlSwift
@@ -42,12 +42,12 @@ extension ConfigurationManager {
     return name
   }
 
-  var bind: String {
+  public var bind: String {
     let bind = app["host"] as? String ?? "0.0.0.0"
     return bind
   }
 
-  var urls: [String] {
+  public var urls: [String] {
     var uris: [String] = JSONUtils.convertJSONArrayToStringArray(json: app, fieldName: "uris")
     if isLocal {
       uris = ["localhost:\(port)"]
@@ -65,12 +65,12 @@ extension ConfigurationManager {
     return urls
   }
 
-  var url: String {
+  public var url: String {
     let url = urls[0]
     return url
   }
 
-  var services: [String : Any] {
+  public var services: [String : Any] {
     let services = self["VCAP_SERVICES"] as? [String : Any] ?? self["vcap:services"] as? [String : Any] ?? [:]
     return services
   }
