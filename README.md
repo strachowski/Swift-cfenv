@@ -59,7 +59,7 @@ let port: Int = configManager.port
 ...
 
 // Once the server starts, print the url value
-print("Server is starting on \(appEnv.url).")
+print("Server is starting on \(configManager.url).")
 ```
 
 The code snippet above gets the binding host and port values through the [`ConfigurationManager`](#configurationmanager) object, which your Swift application creates and populates according to its needs (e.g. a JSON file, environment variables, etc.). Swift-cfenv queries the `ConfigurationManager` instance to obtain those configuration properties that pertain to Cloud Foundry. These values are then used for binding the server. Also, the URL value for the application (also obtained from configuration properties) can be used for logging purposes as shown above.
@@ -109,11 +109,11 @@ The following are the instance method extensions for a `ConfigurationManager` ob
 
 - `getApp()`: Returns an [App](#app) object that encapsulates the properties for the [VCAP_APPLICATION](https://docs.run.pivotal.io/devguide/deploy-apps/environment-variable.html#VCAP-APPLICATION) environment variable.
 
-- `getServices()`: Returns all services bound to the application in a dictionary. The key in the dictionary is the name of the service, while the value is a Service object. Please note that this returned value is different than the `services` property returned from the `AppEnv` instance.
+- `getServices()`: Returns all services bound to the application in a dictionary. The key in the dictionary is the name of the service, while the value is a Service object. Please note that this returned value is different than the `services` property returned from the `ConfigurationManager` instance.
 
 - `getServices(type: String)`: Returns an array of Service objects that match the specified service type argument.
 
-- `appEnv.getService(spec: String)`: Returns a [Service](#service) object for the specified Cloud Foundry service. The `spec` parameter should be the name of the service or a regular expression to look up the service. If there is no service that matches the `spec` parameter, this method returns nil.
+- `getService(spec: String)`: Returns a [Service](#service) object for the specified Cloud Foundry service. The `spec` parameter should be the name of the service or a regular expression to look up the service. If there is no service that matches the `spec` parameter, this method returns nil.
 
 - `getServiceURL(spec: String, replacements: [String:Any]?)`: Returns a service URL generated from the `VCAP_SERVICES` environment variable for the specified service or nil if service cannot be found. The `spec` parameter should be the name of the service or a regular expression to look up the service. The `replacements` parameter is a dictionary with the properties (e.g. `user`, `password`, `port`, etc.) found in Foundation's [URLComponents](https://developer.apple.com/reference/foundation/urlcomponents) class. To generate the service URL, the `url` property in the service credentials is first used to create an instance of the URLComponents object. The initial set of properties in the URLComponents instance can then be overridden by properties specified in the optional `replacements` dictionary parameter. If there is not a `url` property in the service credentials, this method returns nil. Having said this, note that you have the capability to override the `url` property in the service credentials, with a `replacements` property of `url` and a value that specifies the name of the property in the service credentials that contains the base URL. For instance, you may find this useful in the case there is no `url` property in the service credentials.
 
