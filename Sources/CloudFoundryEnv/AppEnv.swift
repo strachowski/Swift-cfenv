@@ -149,23 +149,18 @@ extension ConfigurationManager {
       return parseServices(servs: servs)
     } else {
       let filteredServs = Array(services.filterDictionaryUsingRegex(withRegex: type).values)
-      var l: [[String:Any]] = []
-      for value in filteredServs {
-        print("Value: \(value)")
-        if let v2 = value as? [Any] {
-          for v3 in v2 {
-            if let myitem = v3 as? [String:Any] {
-              l.append(myitem)
+        .map { (array: Any) -> [String:Any] in
+          if let array = array as? [Any] {
+            for innerArray in array {
+              if let dict = innerArray as? [String:Any] {
+                return dict
+              }
             }
           }
+          return [:]
         }
-      }
-      print("l: \(l)")
-
-      let servs = l
-
-      print("servs: \(servs)")
-      return parseServices(servs: servs)
+        .filter{ (dict: [String:Any]) -> Bool in dict.count > 0 }
+      return parseServices(servs: filteredServs)
     }
   }
 
