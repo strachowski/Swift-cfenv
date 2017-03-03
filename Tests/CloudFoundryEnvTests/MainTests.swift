@@ -42,7 +42,8 @@ class MainTests: XCTestCase {
       ("testGetService", testGetService),
       ("testGetAppEnv", testGetAppEnv),
       ("testGetServiceURL", testGetServiceURL),
-      ("testGetServiceCreds", testGetServiceCreds)
+      ("testGetServiceCreds", testGetServiceCreds),
+      ("testGetServicesByType", testGetServicesByType)
     ]
   }
 
@@ -104,7 +105,7 @@ class MainTests: XCTestCase {
     let configManager = ConfigurationManager()
     configManager.load(file: configFilePath, relativeFrom: .customPath(currentPath))
     let services = configManager.getServices()
-    XCTAssertEqual(services.count, 1, "There should be only 1 service in the services dictionary.")
+    XCTAssertEqual(services.count, 4, "There should be only 4 services in the services dictionary.")
     let name = "Cloudant NoSQL DB-kd"
     if let service = services[name] {
       XCTAssertEqual(service.name, name, "Key in dictionary and service name should match.")
@@ -117,12 +118,18 @@ class MainTests: XCTestCase {
   func testGetServicesByType() {
     let configManager = ConfigurationManager()
     configManager.load(file: configFilePath, relativeFrom: .customPath(currentPath))
+    // Use exact type/label used in Bluemix
     var services: [Service] = configManager.getServices(type: "cloudantNoSQLDB")
     XCTAssertEqual(services.count, 1, "There should be only 1 service in the services array.")
     verifyService(service: services[0])
     services = configManager.getServices(type: "invalidType")
     XCTAssertEqual(services.count, 0, "There should be 0 items in the services array.")
-
+    // Use part of type/label used in Bluemix (prefix)
+    services = configManager.getServices(type: "cloudantNo")
+    XCTAssertEqual(services.count, 2, "There should be only 2 services in the services array.")
+    verifyService(service: services[0])
+    services = configManager.getServices(type: "alertnotification")
+    XCTAssertEqual(services.count, 1, "There should be only 1 service in the services array.")
   }
 
   func testGetService() {
@@ -166,7 +173,7 @@ class MainTests: XCTestCase {
     urls = configManager.urls
     XCTAssertEqual(urls.count, 1, "AppEnv's urls array should contain only 1 element.")
     XCTAssertEqual(urls[0], "http://localhost:8080", "AppEnv's urls[0] should be 'http://localhost:8080'.")
-    XCTAssertEqual(configManager.services.count, 1, "AppEnv's services array should contain 1 element.")
+    XCTAssertEqual(configManager.services.count, 4, "AppEnv's services array should contain 4 element.")
   }
 
   func testGetServiceURL() {

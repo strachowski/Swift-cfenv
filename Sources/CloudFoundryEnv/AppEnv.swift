@@ -1,5 +1,5 @@
 /**
-* Copyright IBM Corporation 2017
+* Copyright IBM Corporation 2016,2017
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -145,20 +145,23 @@ extension ConfigurationManager {
   * no services that match the type parameter, this method returns an empty array.
   */
   public func getServices(type: String) -> [Service] {
-    let servs = services[type] as? [[String:Any]] ?? [[:]]
-    let results = servs.map { (serv) -> Service? in
-      let tags = JSONUtils.convertJSONArrayToStringArray(json: serv, fieldName: "tags")
-      let credentials: [String:Any]? = serv["credentials"] as? [String:Any]
-      let service = Service.Builder()
-      .setName(name: serv["name"] as? String)
-      .setLabel(label: serv["label"] as? String)
-      .setTags(tags: tags)
-      .setPlan(plan: serv["plan"] as? String)
-      .setCredentials(credentials: credentials)
-      .build()
-      return service
+    if let servs = services[type] as? [[String:Any]] {
+      return parseServices(servs: servs)
+    } else {
+      let filteredServs = Array(services.filterDictionaryUsingRegex(withRegex: type).values)
+        .map { (array: Any) -> [String:Any] in
+          if let array = array as? [Any] {
+            for innerArray in array {
+              if let dict = innerArray as? [String:Any] {
+                return dict
+              }
+            }
+          }
+          return [:]
+        }
+        .filter{ (dict: [String:Any]) -> Bool in dict.count > 0 }
+      return parseServices(servs: filteredServs)
     }
-    return results.flatMap { $0 }
   }
 
   /**
@@ -278,6 +281,23 @@ extension ConfigurationManager {
     } else {
       return [:]
     }
+  }
+
+  private func parseServices(servs: [[String:Any]]) -> [Service] {
+    let results = servs.map { (serv) -> Service? in
+      let tags = JSONUtils.convertJSONArrayToStringArray(json: serv, fieldName: "tags")
+      let credentials: [String:Any]? = serv["credentials"] as? [String:Any]
+      let service = Service.Builder()
+      .setName(name: serv["name"] as? String)
+      .setLabel(label: serv["label"] as? String)
+      .setTags(tags: tags)
+      .setPlan(plan: serv["plan"] as? String)
+      .setCredentials(credentials: credentials)
+      .build()
+      return service
+    }
+    print("results: \(results)")
+    return results.flatMap { $0 }
   }
 
 }
