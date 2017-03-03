@@ -120,7 +120,6 @@ class MainTests: XCTestCase {
     configManager.load(file: configFilePath, relativeFrom: .customPath(currentPath))
     // Use exact type/label used in Bluemix
     var services: [Service] = configManager.getServices(type: "cloudantNoSQLDB")
-
     XCTAssertEqual(services.count, 1, "There should be only 1 service in the services array.")
     verifyService(service: services[0])
     services = configManager.getServices(type: "invalidType")
@@ -129,6 +128,8 @@ class MainTests: XCTestCase {
     services = configManager.getServices(type: "cloudantNo")
     XCTAssertEqual(services.count, 2, "There should be only 2 services in the services array.")
     verifyService(service: services[0])
+    services = configManager.getServices(type: "alertnotification")
+    XCTAssertEqual(services.count, 1, "There should be only 1 service in the services array.")
   }
 
   func testGetService() {
