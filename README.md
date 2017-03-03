@@ -111,7 +111,7 @@ The following are the instance method extensions for a `ConfigurationManager` ob
 
 - `getServices()`: Returns all services bound to the application in a dictionary. The key in the dictionary is the name of the service, while the value is a Service object. Please note that this returned value is different than the `services` property returned from the `ConfigurationManager` instance.
 
-- `getServices(type: String)`: Returns an array of Service objects that match the specified service type argument.
+- `getServices(type: String)`: Returns an array of Service objects that match the value of the service `type` parameter. The `type` parameter should be the label of the service (or a regular expression to look up the service by its label).
 
 - `getService(spec: String)`: Returns a [Service](#service) object for the specified Cloud Foundry service. The `spec` parameter should be the name of the service or a regular expression to look up the service. If there is no service that matches the `spec` parameter, this method returns nil.
 
