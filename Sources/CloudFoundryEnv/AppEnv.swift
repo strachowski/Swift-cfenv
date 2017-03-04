@@ -148,7 +148,7 @@ extension ConfigurationManager {
     if let servs = services[type] as? [[String:Any]] {
       return parseServices(servs: servs)
     } else {
-      let filteredServs = Array(services.filterDictionaryUsingRegex(withRegex: type).values)
+      let filteredServs = Array(services.filterWithRegex(regex: type).values)
         .map { (array: Any) -> [String:Any] in
           if let array = array as? [Any] {
             for innerArray in array {
