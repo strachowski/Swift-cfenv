@@ -18,8 +18,8 @@ extension Array
 {
   func toDictionary<K, V>(converter: (Element) -> (K, V)) -> Dictionary<K, V> {
     var dict = Dictionary<K,V>()
-    self.forEach({ element in
-      let (k,v) = converter(element)
+    self.forEach({ item in
+      let (k,v) = converter(item)
       dict[k] = v
     })
     return dict
@@ -29,9 +29,7 @@ extension Array
 extension Dictionary where Key: ExpressibleByStringLiteral, Value: Any {
   func filterWithRegex(regex: String) -> Dictionary<Key, Value> {
     return self.filter({
-      guard let k = $0.key as? String else {
-        return false
-      }
+      let k: String = String(describing: $0.key)
       return (k.range(of: regex, options: .regularExpression) != nil)
     }).toDictionary(converter: {$0})
   }
