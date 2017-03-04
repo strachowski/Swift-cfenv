@@ -16,18 +16,21 @@
 
 extension Array
 {
-  func toDictionary<H:Hashable, T>(byTransforming transformer: (Element) -> (H, T)) -> Dictionary<H, T> {
-    var result = Dictionary<H,T>()
-    self.forEach({ element in
-      let (key,value) = transformer(element)
-      result[key] = value
+  func toDictionary<K, V>(converter: (Element) -> (K, V)) -> Dictionary<K, V> {
+    var dict = Dictionary<K,V>()
+    self.forEach({ item in
+      let (k,v) = converter(item)
+      dict[k] = v
     })
-    return result
+    return dict
   }
 }
 
 extension Dictionary where Key: ExpressibleByStringLiteral, Value: Any {
-  func filterDictionaryUsingRegex(withRegex regex: String) -> Dictionary<Key, Value> {
-    return self.filter({($0.key as! String).range(of: regex, options: .regularExpression) != nil}).toDictionary(byTransforming: {$0})
+  func filterWithRegex(regex: String) -> Dictionary<Key, Value> {
+    return self.filter({
+      let k: String = String(describing: $0.key)
+      return (k.range(of: regex, options: .regularExpression) != nil)
+    }).toDictionary(converter: {$0})
   }
 }
