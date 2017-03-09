@@ -103,9 +103,9 @@ public struct App {
   }
 
   public struct Limits {
-    let memory: Int
-    let disk: Int
-    let fds: Int
+    public let memory: Int
+    public let disk: Int
+    public let fds: Int
 
     public init(memory: Int, disk: Int, fds: Int) {
       self.memory = memory
