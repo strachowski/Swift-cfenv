@@ -177,11 +177,7 @@ extension ConfigurationManager {
     }
 
     do {
-      #if os(Linux)
-      let regex = try RegularExpression(pattern: spec, options: RegularExpression.Options.caseInsensitive)
-      #else
       let regex = try NSRegularExpression(pattern: spec, options: NSRegularExpression.Options.caseInsensitive)
-      #endif
 
       for (name, serv) in services {
         let numberOfMatches = regex.numberOfMatches(in: name, options: [], range: NSMakeRange(0, name.characters.count))
@@ -189,8 +185,8 @@ extension ConfigurationManager {
           return serv
         }
       }
-    } catch let error as NSError {
-      Log.error("Error code: \(error.code)")
+    } catch {
+        Log.error("Error code: \(error)")
     }
     return nil
   }
