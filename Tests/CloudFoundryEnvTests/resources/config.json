@@ -27,8 +27,7 @@
         "swift-test.mybluemix.net"
       ],
       "users": null,
-      "version": "e5e029d1-4a1a-4004-9f79-655d550183fb",
-
+      "version": "e5e029d1-4a1a-4004-9f79-655d550183fb"
     },
     "services": {
       "cloudantNoSQLDB": [
@@ -38,8 +37,7 @@
             "password": "06c19ae06b1915d8a6649df5901eca85e885182421ffa9ef89e14bbc1b76efd4",
             "port": 443,
             "url": "https://09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix:06c19ae06b1915d8a6649df5901eca85e885182421ffa9ef89e14bbc1b76efd4@09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix.cloudant.com",
-            "username": "09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix",
-
+            "username": "09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix"
           },
           "label": "cloudantNoSQLDB",
           "name": "Cloudant NoSQL DB-kd",
@@ -48,8 +46,7 @@
             "data_management",
             "ibm_created",
             "ibm_dedicated_public"
-          ],
-
+          ]
         }
       ],
       "cloudantNoSQLDB-Test": [
@@ -59,8 +56,7 @@
             "password": "06c19ae06b1915d8a6649df5901eca85e885182421ffa9ef89e14bbc1b76efd4",
             "port": 443,
             "url": "https://09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix:06c19ae06b1915d8a6649df5901eca85e885182421ffa9ef89e14bbc1b76efd4@09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix.cloudant.com",
-            "username": "09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix",
-
+            "username": "09ed7c8a-fae8-48ea-affa-0b44b2224ec0-bluemix"
           },
           "label": "cloudantNoSQLDB-Test",
           "name": "Cloudant-Test NoSQL DB-kd",
@@ -69,8 +65,7 @@
             "data_management",
             "ibm_created",
             "ibm_dedicated_public"
-          ],
-
+          ]
         }
       ],
       "Auto-Scaling": [
@@ -80,8 +75,7 @@
             "agentUsername": "21a084f4-4eb56-74547-3bdc7be5df9/d2a85740-da7a-4615-aabf-5bdc35c63618",
             "agentPassword": "auto-scaling-pwd",
             "app_id": "auto-scaling-appID",
-            "service_id": "auto-scaling-serviceID",
-
+            "service_id": "auto-scaling-serviceID"
           },
           "label": "Auto-Scaling",
           "name": "IBM Auto Scaling-xs",
@@ -110,8 +104,7 @@
             "ibm_dedicated_public"
           ]
         }
-      ],
-
+      ]
     }
   }
 }
