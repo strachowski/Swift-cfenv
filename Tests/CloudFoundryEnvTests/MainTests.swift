@@ -177,12 +177,12 @@ class MainTests: XCTestCase {
     // Case #2 - Running locally with options
     configManager.load(file: configFilePath, relativeFrom: .customPath(currentPath))
     XCTAssertEqual(configManager.isLocal, true, "AppEnv's isLocal should be true.")
-    XCTAssertEqual(configManager.port, 8080, "AppEnv's port should be 8080.")
+    XCTAssertEqual(configManager.port, 8090, "AppEnv's port should be 8080.")
     XCTAssertEqual(configManager.name, "swift-test")
     XCTAssertEqual(configManager.bind, "0.0.0.0", "AppEnv's bind should be 0.0.0.0.")
     urls = configManager.urls
     XCTAssertEqual(urls.count, 1, "AppEnv's urls array should contain only 1 element.")
-    XCTAssertEqual(urls[0], "http://localhost:8080", "AppEnv's urls[0] should be 'http://localhost:8080'.")
+    XCTAssertEqual(urls[0], "http://localhost:8090", "AppEnv's urls[0] should be 'http://localhost:8090'.")
     XCTAssertEqual(configManager.services.count, 4, "AppEnv's services array should contain 4 element.")
   }
 

@@ -30,8 +30,12 @@ extension ConfigurationManager {
   }
 
   public var port: Int {
-    let port: Int = self["PORT"] as? Int ?? self["CF_INSTANCE_PORT"] as? Int ?? self["VCAP_APP_PORT"] as? Int ?? 8080
-    return port
+    if let portString: String = self["PORT"] as? String ?? self["CF_INSTANCE_PORT"] as? String ?? self["VCAP_APP_PORT"] as? String {
+      if let port = Int(portString) {
+        return port
+      }
+    }
+    return self["PORT"] as? Int ?? 8080
   }
 
   public var name: String? {
