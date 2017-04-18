@@ -151,13 +151,13 @@ Service is a class that contains the following properties for a Cloud Foundry [s
 - `credentials`: An optional dictionary that contains the service credentials required to access the service instance. Note that the credential properties for accessing a service could be completely different from one to another. For instance, the credentials dictionary for a service may simply contain a `uri` property while the credentials dictionary for another service may contain a `hostname`, `username`, and `password` properties.
 
 ## Testing with Bluemix
-To test this Swift library on Bluemix, you can follow the steps described in this section which use the Bluemix [command line](https://console.ng.bluemix.net/docs/cli/reference/bluemix_cli/index.html#getting-started), but map to similar commands for the Cloud Foundry [command line](https://docs.cloudfoundry.org/cf-cli/getting-started.html#user-provided).
+To test this Swift library on Bluemix, you can follow the steps described in this section which use the Bluemix [command line](https://console.ng.bluemix.net/docs/cli/reference/bluemix_cli/index.html#getting-started).
 
 Create a dummy service named `cf-dummy-service`:
 
 `bx service user-provided-create cf-dummy-service -p "url, username, password, database"`
 
-The Cloud Foundry command line will then prompt you for the following (please enter some reasonable values):
+The Bluemix command line will then prompt you for the following (please enter some reasonable values):
 
     url> http://swift-cfenv-service.test.com
     username> username00
