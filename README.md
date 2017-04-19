@@ -150,14 +150,14 @@ Service is a class that contains the following properties for a Cloud Foundry [s
 - `tags`: An array of strings that contains values to identify a service instance.
 - `credentials`: An optional dictionary that contains the service credentials required to access the service instance. Note that the credential properties for accessing a service could be completely different from one to another. For instance, the credentials dictionary for a service may simply contain a `uri` property while the credentials dictionary for another service may contain a `hostname`, `username`, and `password` properties.
 
-## Testing with Bluemix (or other Cloud Foundry PaaS)
-To test this Swift library on Bluemix, you can follow the steps described in this section.
+## Testing with Bluemix
+To test this Swift library on Bluemix, you can follow the steps described in this section which use the Bluemix [command line](https://console.ng.bluemix.net/docs/cli/reference/bluemix_cli/index.html#getting-started).
 
 Create a dummy service named `cf-dummy-service`:
 
-`cf cups cf-dummy-service -p "url, username, password, database"`
+`bx service user-provided-create cf-dummy-service -p "url, username, password, database"`
 
-The Cloud Foundry command line will then prompt you for the following (please enter some reasonable values):
+The Bluemix command line will then prompt you for the following (please enter some reasonable values):
 
     url> http://swift-cfenv-service.test.com
     username> username00
@@ -170,13 +170,13 @@ Once the dummy service is created, you can clone Bluemix's [swift-helloworld](ht
 
 Then push the swift-helloworld application using the following command:
 
-`cf push`
+`bx app push`
 
 Once the application is successfully pushed, you need to bind the service you created previously to the new application and then restage the application:
 
-`cf bind-service swift-helloworld cf-dummy-service`
+`bx service bind swift-helloworld cf-dummy-service`
 
-`cf restage swift-helloworld`
+`bx app restage swift-helloworld`
 
 After the application is restaged, you can visit the route (i.e. URL) assigned to the app and you should see the output of various Swift-cfenv invocations.
 
